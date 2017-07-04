@@ -71,7 +71,9 @@ open class TabView: UIScrollView {
     }
 
     fileprivate func setupContentView() {
-        contentView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height - 2)
+        let itemCount = dataSource.numberOfPages(in: self)
+        contentSize = CGSize(width: 100 * itemCount, height: 44)
+        contentView.frame = CGRect(x: 0, y: 0, width: CGFloat(100 * itemCount), height: frame.height - 2)
         contentView.axis = .horizontal
         contentView.backgroundColor = .clear
         contentView.distribution = .fillEqually
@@ -81,7 +83,7 @@ open class TabView: UIScrollView {
     fileprivate func setupTabItemViews() {
         let itemCount = dataSource.numberOfPages(in: self)
         for index in 0..<itemCount {
-            let tabItemView = TabItemView(frame: CGRect(x: 0, y: 0, width: frame.width / CGFloat(itemCount), height: frame.height - 2))
+            let tabItemView = TabItemView(frame: CGRect(x: 0, y: 0, width: 100, height: frame.height - 2))
             tabItemView.translatesAutoresizingMaskIntoConstraints = false
             tabItemView.backgroundColor = .black
             if let title = dataSource.tabView(self, viewForTitleinTabItem: index) {
@@ -130,28 +132,22 @@ open class TabView: UIScrollView {
         layoutIfNeeded()
     }
 
-    fileprivate func focusItemView() {
-        let isSelected: (TabItemView) -> Bool = { self.itemViews.index(of: $0) == self.currentIndex }
-
-        // make selected item focused
-        itemViews.forEach {
-            $0.isSelected = isSelected($0)
-            if $0.isSelected {
-                self.currentItemView = $0
-            }
+    fileprivate func focus(on target: TabItemView) {
+        let offset = target.center.x - self.frame.width / 2
+        if offset < 0 {
+            self.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        } else if contentView.frame.width - self.frame.width < offset {
+            self.setContentOffset(CGPoint(x: contentView.frame.width - self.frame.width, y: 0), animated: true)
+        }else {
+            self.setContentOffset(CGPoint(x: offset, y: 0), animated: true)
         }
-
-        // make selected item foreground
-        itemViews.forEach { $0.layer.zPosition = isSelected($0) ? 0 : -1 }
-
-        setNeedsLayout()
-        layoutIfNeeded()
     }
 
     func animateUnderlineView(index: Int) {
         UIView.animate(withDuration: 0.3, animations: { [weak self] _ in
-            if let target = self?.itemViews[index].frame {
-                self?       .underlineView.frame.origin.x = target.minX
+            if let target = self?.itemViews[index] {
+                self?.underlineView.frame.origin.x = target.frame.minX
+                self?.focus(on: target)
             }
         }, completion: { _ in
 
