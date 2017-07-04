@@ -3,7 +3,7 @@ import UIKit
 
 open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, SwipeMenuViewDataSource {
 
-    var swipeMenuView: SwipeMenuView!
+    open var swipeMenuView: SwipeMenuView!
 
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -14,7 +14,12 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
         view.addSubview(swipeMenuView)
     }
 
+    // MARK: - SwipeMenuViewDelegate
+
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, from fromIndex: Int, to toIndex: Int) { }
+
     // MARK - SwipeMenuViewDataSource
+
     open func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
         return 0
     }

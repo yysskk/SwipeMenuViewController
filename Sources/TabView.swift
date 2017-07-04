@@ -9,7 +9,6 @@ public protocol TabViewDataSource {
     func numberOfPages(in tabView: TabView) -> Int
 
     func tabView(_ tabView: TabView, viewForTitleinTabItem page: Int) -> String?
-
 }
 
 open class TabView: UIScrollView {
@@ -24,19 +23,15 @@ open class TabView: UIScrollView {
 
     var underlineView: UIView!
 
-    open var isUnderlineViewHidden: Bool = false {
-        didSet {
-            underlineView.isHidden = isUnderlineViewHidden
-        }
-    }
-
     var itemCount: Int {
         return itemViews.count
     }
 
     fileprivate var currentIndex: Int = 0
 
-    public override init(frame: CGRect) {
+    fileprivate var options: SwipeMenuViewOptions.TabView = SwipeMenuViewOptions.TabView()
+
+    public init(frame: CGRect, options: SwipeMenuViewOptions.TabView? = nil) {
         super.init(frame: frame)
     }
 
@@ -56,7 +51,13 @@ open class TabView: UIScrollView {
         setupScrollView()
         setupContentView()
         setupTabItemViews()
-        setupUnderlineView()
+
+        switch options.style {
+        case .underline:
+            setupUnderlineView()
+        case .none:
+            break
+        }
     }
 
     fileprivate func setupScrollView() {
@@ -72,8 +73,9 @@ open class TabView: UIScrollView {
 
     fileprivate func setupContentView() {
         let itemCount = dataSource.numberOfPages(in: self)
-        contentSize = CGSize(width: 100 * itemCount, height: 44)
-        contentView.frame = CGRect(x: 0, y: 0, width: CGFloat(100 * itemCount), height: frame.height - 2)
+        let contentWidth = options.itemView.width * CGFloat(itemCount)
+        contentSize = CGSize(width: contentWidth, height: options.height)
+        contentView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: frame.height - options.underlineView.height)
         contentView.axis = .horizontal
         contentView.backgroundColor = .clear
         contentView.distribution = .fillEqually
@@ -83,9 +85,9 @@ open class TabView: UIScrollView {
     fileprivate func setupTabItemViews() {
         let itemCount = dataSource.numberOfPages(in: self)
         for index in 0..<itemCount {
-            let tabItemView = TabItemView(frame: CGRect(x: 0, y: 0, width: 100, height: frame.height - 2))
+            let tabItemView = TabItemView(frame: CGRect(x: 0, y: 0, width: options.itemView.width, height: frame.height - options.underlineView.height))
             tabItemView.translatesAutoresizingMaskIntoConstraints = false
-            tabItemView.backgroundColor = .black
+            tabItemView.backgroundColor = options.backgroundColor
             if let title = dataSource.tabView(self, viewForTitleinTabItem: index) {
                 tabItemView.titleLabel.text = title
             }
@@ -94,42 +96,6 @@ open class TabView: UIScrollView {
 
             itemViews.append(tabItemView)
         }
-    }
-
-    fileprivate func setupUnderlineView() {
-        let itemView = itemViews[0]
-        underlineView = UIView(frame: CGRect(x: itemView.frame.minX, y: itemView.frame.height, width: itemView.frame.width, height: 2))
-        underlineView.backgroundColor = UIColor(red: 111/255, green: 185/255, blue: 0, alpha: 1.0)
-        addSubview(underlineView)
-    }
-
-
-    fileprivate func layoutTabItemViews() {
-        NSLayoutConstraint.deactivate(contentView.constraints)
-
-        for (index, tabItemView) in itemViews.enumerated() {
-            if index == 0 {
-                // H:|[tabItemView]
-                tabItemView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-            } else  {
-                if index == itemViews.count - 1 {
-                    // H:[tabItemView]|
-                    tabItemView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-                }
-                // H:[previousTabItemView][tabItemView]
-                let previousTabItemView = itemViews[index - 1]
-                previousTabItemView.trailingAnchor.constraint(equalTo: tabItemView.leadingAnchor, constant: 0).isActive = true
-            }
-
-            // V:|[tabItemView]|
-            NSLayoutConstraint.activate([
-                tabItemView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                tabItemView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-                ])
-        }
-
-        setNeedsLayout()
-        layoutIfNeeded()
     }
 
     fileprivate func focus(on target: TabItemView) {
@@ -142,15 +108,27 @@ open class TabView: UIScrollView {
             self.setContentOffset(CGPoint(x: offset, y: 0), animated: true)
         }
     }
+}
 
-    func animateUnderlineView(index: Int) {
+// MARK: - UnderlineView
+
+extension TabView {
+
+    fileprivate func setupUnderlineView() {
+        if itemViews.isEmpty { return }
+
+        let itemView = itemViews[0]
+        underlineView = UIView(frame: CGRect(x: itemView.frame.minX, y: itemView.frame.height, width: itemView.frame.width, height: options.underlineView.height))
+        underlineView.backgroundColor = options.underlineView.backgroundColor
+        addSubview(underlineView)
+    }
+
+    public func animateUnderlineView(index: Int) {
         UIView.animate(withDuration: 0.3, animations: { [weak self] _ in
             if let target = self?.itemViews[index] {
                 self?.underlineView.frame.origin.x = target.frame.minX
                 self?.focus(on: target)
             }
-        }, completion: { _ in
-
         })
     }
 }
