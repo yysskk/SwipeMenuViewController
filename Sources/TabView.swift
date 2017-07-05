@@ -79,7 +79,9 @@ open class TabView: UIScrollView {
         contentView.axis = .horizontal
         contentView.backgroundColor = .clear
         contentView.distribution = .fillEqually
+        contentView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(contentView)
+        layout(contentView: contentView, contentWidth: contentWidth)
     }
 
     fileprivate func setupTabItemViews() {
@@ -98,9 +100,49 @@ open class TabView: UIScrollView {
         }
     }
 
+    private func layout(contentView: UIStackView, contentWidth: CGFloat) {
+        self.addConstraints([
+            NSLayoutConstraint(
+                item: contentView,
+                attribute: .top,
+                relatedBy: .equal,
+                toItem: self,
+                attribute: .top,
+                multiplier: 1,
+                constant: 0.0),
+
+            NSLayoutConstraint(
+                item: contentView,
+                attribute: .leading,
+                relatedBy: .equal,
+                toItem: self,
+                attribute: .leading,
+                multiplier: 1,
+                constant: options.underlineView.height),
+
+            NSLayoutConstraint(
+                item: contentView,
+                attribute: .width,
+                relatedBy: .equal,
+                toItem: nil,
+                attribute: .width,
+                multiplier: 1,
+                constant: contentWidth),
+
+            NSLayoutConstraint(
+                item: contentView,
+                attribute: .height,
+                relatedBy: .equal,
+                toItem:  nil,
+                attribute: .height,
+                multiplier: 1,
+                constant: options.height - options.underlineView.height)
+            ])
+    }
+
     fileprivate func focus(on target: TabItemView) {
         let offset = target.center.x - self.frame.width / 2
-        if offset < 0 {
+        if offset < 0 || self.frame.width > contentView.frame.width {
             self.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
         } else if contentView.frame.width - self.frame.width < offset {
             self.setContentOffset(CGPoint(x: contentView.frame.width - self.frame.width, y: 0), animated: true)

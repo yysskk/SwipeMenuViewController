@@ -61,14 +61,18 @@ open class SwipeMenuView: UIView {
         didSet {
             guard let tabView = tabView else { return }
             tabView.dataSource = self
+            tabView.translatesAutoresizingMaskIntoConstraints = false
             addSubview(tabView)
+            layout(tabView: tabView)
         }
     }
 
     open fileprivate(set) var pageView: UIView? {
         didSet {
             guard let pageView = pageView else { return }
+            pageView.translatesAutoresizingMaskIntoConstraints = false
             addSubview(pageView)
+            layout(pageView: pageView)
         }
     }
 
@@ -83,9 +87,9 @@ open class SwipeMenuView: UIView {
 
     fileprivate var currentIndex: Int = 0
 
-    var options = SwipeMenuViewOptions()
+    open var options = SwipeMenuViewOptions()
 
-    init(frame: CGRect, options: SwipeMenuViewOptions? = nil) {
+    public init(frame: CGRect, options: SwipeMenuViewOptions? = nil) {
         super.init(frame: frame)
 
         if let options = options {
@@ -101,6 +105,14 @@ open class SwipeMenuView: UIView {
 
     open override func didMoveToSuperview() {
         setup()
+    }
+
+    open override func layoutSubviews() {
+        super.layoutSubviews()
+
+        if let tabView = tabView {
+            tabView.animateUnderlineView(index: currentIndex)
+        }
     }
 
     public func reload() {
@@ -119,6 +131,26 @@ open class SwipeMenuView: UIView {
         pageView = UIView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height))
         pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
         pageViewController?.setViewControllers([dataSource.swipeMenuView(self, viewControllerForPageAt: 0)], direction: .forward, animated: false, completion: nil)
+    }
+
+    private func layout(tabView: TabView) {
+
+        NSLayoutConstraint.activate([
+            tabView.topAnchor.constraint(equalTo: self.topAnchor),
+            tabView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            tabView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            tabView.heightAnchor.constraint(equalToConstant: options.tabView.height)
+        ])
+    }
+
+    private func layout(pageView: UIView) {
+
+        NSLayoutConstraint.activate([
+            pageView.topAnchor.constraint(equalTo: self.topAnchor, constant: options.tabView.height),
+            pageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            pageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            pageView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+        ])
     }
 
     private func reset() {
