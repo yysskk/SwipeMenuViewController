@@ -39,5 +39,17 @@ class TabItemView: UIView {
         titleLabel.textColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
         titleLabel.backgroundColor = UIColor.clear
         addSubview(titleLabel)
+        layoutLabel()
+    }
+
+    private func layoutLabel() {
+
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: self.topAnchor),
+            titleLabel.widthAnchor.constraint(equalTo: self.widthAnchor),
+            titleLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+        ])
     }
 }

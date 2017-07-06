@@ -17,11 +17,13 @@ open class TabView: UIScrollView {
 
     var itemViews: [TabItemView] = []
 
-    fileprivate let contentView: UIStackView = UIStackView()
+    fileprivate let contentView: UIView = UIView()
 
     var currentItemView: TabItemView = TabItemView()
 
     var underlineView: UIView!
+
+    var cacheAdjustCellSizes: [CGSize] = []
 
     var itemCount: Int {
         return itemViews.count
@@ -33,6 +35,10 @@ open class TabView: UIScrollView {
 
     public init(frame: CGRect, options: SwipeMenuViewOptions.TabView? = nil) {
         super.init(frame: frame)
+
+        if let options = options {
+            self.options = options
+        }
     }
 
     public required init?(coder aDecoder: NSCoder) {
@@ -61,13 +67,14 @@ open class TabView: UIScrollView {
     }
 
     fileprivate func setupScrollView() {
-        backgroundColor = .black
+        backgroundColor = options.backgroundColor
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
         isScrollEnabled = true
         isDirectionalLockEnabled = true
         alwaysBounceHorizontal = false
         scrollsToTop = false
+        bouncesZoom = false
         translatesAutoresizingMaskIntoConstraints = false
     }
 
@@ -76,68 +83,75 @@ open class TabView: UIScrollView {
         let contentWidth = options.itemView.width * CGFloat(itemCount)
         contentSize = CGSize(width: contentWidth, height: options.height)
         contentView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: frame.height - options.underlineView.height)
-        contentView.axis = .horizontal
         contentView.backgroundColor = .clear
-        contentView.distribution = .fillEqually
         contentView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(contentView)
-        layout(contentView: contentView, contentWidth: contentWidth)
     }
 
     fileprivate func setupTabItemViews() {
         let itemCount = dataSource.numberOfPages(in: self)
+
+        var xPosition: CGFloat = 0
+
         for index in 0..<itemCount {
-            let tabItemView = TabItemView(frame: CGRect(x: 0, y: 0, width: options.itemView.width, height: frame.height - options.underlineView.height))
+            let tabItemView = TabItemView(frame: CGRect(x: xPosition, y: 0, width: options.itemView.width, height: frame.height - options.underlineView.height))
             tabItemView.translatesAutoresizingMaskIntoConstraints = false
             tabItemView.backgroundColor = options.backgroundColor
             if let title = dataSource.tabView(self, viewForTitleinTabItem: index) {
                 tabItemView.titleLabel.text = title
             }
-            tabItemView.isSelected = index == 0
-            contentView.addArrangedSubview(tabItemView)
 
-            itemViews.append(tabItemView)
+            tabItemView.isSelected = index == 0
+
+            if options.isAdjustItemWidth {
+                var adjustCellSize = tabItemView.frame.size
+                adjustCellSize.width = tabItemView.titleLabel.sizeThatFits(contentView.frame.size).width + options.itemView.margin * 2
+                tabItemView.frame.size = adjustCellSize
+                cacheAdjustCellSizes.append(adjustCellSize)
+
+                contentView.addSubview(tabItemView)
+                itemViews.append(tabItemView)
+
+                NSLayoutConstraint.activate([
+                    tabItemView.widthAnchor.constraint(equalToConstant: adjustCellSize.width)
+                ])
+            } else {
+                contentView.addSubview(tabItemView)
+                itemViews.append(tabItemView)
+
+                NSLayoutConstraint.activate([
+                    tabItemView.widthAnchor.constraint(equalToConstant: options.itemView.width)
+                ])
+            }
+
+            NSLayoutConstraint.activate([
+                tabItemView.topAnchor.constraint(equalTo: contentView.topAnchor),
+                tabItemView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: xPosition),
+                tabItemView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            ])
+
+            xPosition += tabItemView.frame.size.width
         }
+
+        layout(contentView: contentView, contentWidth: xPosition)
     }
 
-    private func layout(contentView: UIStackView, contentWidth: CGFloat) {
-        self.addConstraints([
-            NSLayoutConstraint(
-                item: contentView,
-                attribute: .top,
-                relatedBy: .equal,
-                toItem: self,
-                attribute: .top,
-                multiplier: 1,
-                constant: 0.0),
+    private func layout(contentView: UIView, contentWidth: CGFloat) {
 
-            NSLayoutConstraint(
-                item: contentView,
-                attribute: .leading,
-                relatedBy: .equal,
-                toItem: self,
-                attribute: .leading,
-                multiplier: 1,
-                constant: options.underlineView.height),
+        self.contentSize.width = contentWidth
+        
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: self.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            contentView.widthAnchor.constraint(equalToConstant: contentWidth),
+            contentView.heightAnchor.constraint(equalToConstant: options.height - options.underlineView.height)
+        ])
 
-            NSLayoutConstraint(
-                item: contentView,
-                attribute: .width,
-                relatedBy: .equal,
-                toItem: nil,
-                attribute: .width,
-                multiplier: 1,
-                constant: contentWidth),
+        self.layoutIfNeeded()
+        self.layoutSubviews()
 
-            NSLayoutConstraint(
-                item: contentView,
-                attribute: .height,
-                relatedBy: .equal,
-                toItem:  nil,
-                attribute: .height,
-                multiplier: 1,
-                constant: options.height - options.underlineView.height)
-            ])
+        print(contentSize.width)
     }
 
     fileprivate func focus(on target: TabItemView) {
@@ -166,11 +180,15 @@ extension TabView {
     }
 
     public func animateUnderlineView(index: Int) {
-        UIView.animate(withDuration: 0.3, animations: { [weak self] _ in
-            if let target = self?.itemViews[index] {
-                self?.underlineView.frame.origin.x = target.frame.minX
-                self?.focus(on: target)
+        UIView.animate(withDuration: 0.3, animations: { _ in
+            let target = self.itemViews[index]
+            self.underlineView.frame.origin.x = target.frame.origin.x
+
+            if self.options.isAdjustItemWidth {
+                self.underlineView.frame.size.width = self.cacheAdjustCellSizes[index].width
             }
+
+            self.focus(on: target)
         })
     }
 }

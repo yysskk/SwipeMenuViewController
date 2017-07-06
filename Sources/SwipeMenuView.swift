@@ -12,7 +12,7 @@ public struct SwipeMenuViewOptions {
 
         public struct ItemView {
             public var width: CGFloat = 100.0
-            public var autoWidthEnabled: Bool = false
+            public var margin: CGFloat = 5.0
         }
 
         public struct UndelineView {
@@ -25,6 +25,7 @@ public struct SwipeMenuViewOptions {
         public var height: CGFloat = 44.0
         public var backgroundColor: UIColor = .black
         public var style: TabStyle = .underline
+        public var isAdjustItemWidth: Bool = true
 
         // item
         public var itemView = ItemView()
@@ -35,6 +36,8 @@ public struct SwipeMenuViewOptions {
 
     // TabView
     public var tabView = TabView()
+
+    public init() { }
 }
 
 public protocol SwipeMenuViewDelegate: NSObjectProtocol, UIScrollViewDelegate {
@@ -124,8 +127,7 @@ open class SwipeMenuView: UIView {
     private func setup() {
         guard let dataSource = dataSource else { return }
 
-        tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height))
-        tabView?.contentSize = CGSize(width: options.tabView.itemView.width * CGFloat(dataSource.numberOfPages(in: self)), height: options.tabView.height)
+        tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         addTapGestureHandler()
 
         pageView = UIView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height))

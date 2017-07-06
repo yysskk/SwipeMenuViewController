@@ -8,12 +8,17 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
     open override func viewDidLoad() {
         super.viewDidLoad()
 
-        swipeMenuView = SwipeMenuView(frame: view.frame)
+        swipeMenuView = SwipeMenuView(frame: view.frame, options: setOptions())
         swipeMenuView.delegate = self
         swipeMenuView.dataSource = self
         view.addSubview(swipeMenuView)
         swipeMenuView.translatesAutoresizingMaskIntoConstraints = false
         addSwipeMenuViewConstraints()
+    }
+
+    open func setOptions() -> SwipeMenuViewOptions {
+        let options = SwipeMenuViewOptions()
+        return options
     }
 
     private func addSwipeMenuViewConstraints() {

@@ -9,16 +9,25 @@ struct MenuContent {
 
 class ViewController: SwipeMenuViewController {
 
-    let data: [MenuContent] = [MenuContent(title: "Section1", vc: ContentViewController()),
-                               MenuContent(title: "Section2", vc: ContentViewController()),
-                               MenuContent(title: "Section3", vc: ContentViewController()),
-                               MenuContent(title: "Section4", vc: ContentViewController()),
-                               MenuContent(title: "Section5", vc: ContentViewController())]
+    let data: [MenuContent] = [MenuContent(title: "Bulbasaur", vc: ContentViewController()),
+                               MenuContent(title: "Caterpie", vc: ContentViewController()),
+                               MenuContent(title: "Golem", vc: ContentViewController()),
+                               MenuContent(title: "Jynx", vc: ContentViewController()),
+                               MenuContent(title: "Marshtomp", vc: ContentViewController()),
+                               MenuContent(title: "Salamence", vc: ContentViewController()),
+                               MenuContent(title: "Riolu", vc: ContentViewController()),
+                               MenuContent(title: "Araquanid", vc: ContentViewController())]
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .black
+    }
+
+    override func setOptions() -> SwipeMenuViewOptions {
+        var options = SwipeMenuViewOptions()
+        options.tabView.isAdjustItemWidth = false
+        return options
     }
 
     // MARK: - SwipeMenuViewDelegate
