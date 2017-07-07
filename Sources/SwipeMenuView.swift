@@ -34,9 +34,18 @@ public struct SwipeMenuViewOptions {
         public var underlineView = UndelineView()
     }
 
+    public struct ContentView {
+
+        // self
+        public var backgroundColor: UIColor = .clear
+    }
+
     // TabView
     public var tabView = TabView()
 
+    // ContentView
+    public var contentView = ContentView()
+    
     public init() { }
 }
 
@@ -70,25 +79,25 @@ open class SwipeMenuView: UIView {
         }
     }
 
-    open fileprivate(set) var pageView: UIView? {
+    open fileprivate(set) var contentView: ContentView? {
         didSet {
-            guard let pageView = pageView else { return }
-            pageView.translatesAutoresizingMaskIntoConstraints = false
-            addSubview(pageView)
-            layout(pageView: pageView)
-        }
-    }
-
-    open fileprivate(set) var pageViewController: UIPageViewController? {
-        didSet  {
-            guard let pageViewController = pageViewController, let pageView = pageView else { return }
-            pageViewController.dataSource = self
-            pageViewController.delegate = self
-            pageView.addSubview(pageViewController.view)
+            guard let contentView = contentView else { return }
+            contentView.translatesAutoresizingMaskIntoConstraints = false
+            contentView.delegate = self
+            contentView.dataSource = self
+            addSubview(contentView)
+            layout(contentView: contentView)
         }
     }
 
     fileprivate var currentIndex: Int = 0
+    fileprivate var currentOffset: CGPoint = .zero
+
+    fileprivate var pageCount: Int {
+        return dataSource?.numberOfPages(in: self) ?? 0
+    }
+
+    fileprivate var isJump: Bool = false
 
     open var options = SwipeMenuViewOptions()
 
@@ -118,21 +127,23 @@ open class SwipeMenuView: UIView {
         }
     }
 
-    public func reload() {
+    public func reload(options: SwipeMenuViewOptions? = nil) {
+
+        if let options = options {
+            self.options = options
+        }
+
         reset()
         setup()
     }
 
     // MARK: - Setup
     private func setup() {
-        guard let dataSource = dataSource else { return }
 
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         addTapGestureHandler()
 
-        pageView = UIView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height))
-        pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-        pageViewController?.setViewControllers([dataSource.swipeMenuView(self, viewControllerForPageAt: 0)], direction: .forward, animated: false, completion: nil)
+        contentView = ContentView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height))
     }
 
     private func layout(tabView: TabView) {
@@ -145,30 +156,30 @@ open class SwipeMenuView: UIView {
         ])
     }
 
-    private func layout(pageView: UIView) {
+    private func layout(contentView: ContentView) {
 
         NSLayoutConstraint.activate([
-            pageView.topAnchor.constraint(equalTo: self.topAnchor, constant: options.tabView.height),
-            pageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            pageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            pageView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            contentView.topAnchor.constraint(equalTo: self.topAnchor, constant: options.tabView.height),
+            contentView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
     }
 
     private func reset() {
         tabView?.removeFromSuperview()
-        pageView?.removeFromSuperview()
+        contentView?.removeFromSuperview()
     }
 }
 
-extension SwipeMenuView: TabViewDataSource, TabViewDelegate {
+extension SwipeMenuView: TabViewDataSource {
 
-    public func numberOfPages(in menuView: TabView) -> Int {
+    public func numberOfItems(in menuView: TabView) -> Int {
         return dataSource?.numberOfPages(in: self) ?? 0
     }
 
-    public func tabView(_ tabView: TabView, viewForTitleinTabItem page: Int) -> String? {
-        return dataSource?.swipeMenuView(self, titleForPageAt: page)
+    public func tabView(_ tabView: TabView, titleForItemAt index: Int) -> String? {
+        return dataSource?.swipeMenuView(self, titleForPageAt: index)
     }
 }
 
@@ -197,16 +208,13 @@ extension SwipeMenuView {
 
     func tapItemView(_ recognizer: UITapGestureRecognizer) {
 
-        guard let dataSource = dataSource, let itemView = recognizer.view as? TabItemView, let tabView = tabView, let index: Int = tabView.itemViews.index(of: itemView) else { return }
+        guard let itemView = recognizer.view as? TabItemView, let tabView = tabView, let index: Int = tabView.itemViews.index(of: itemView), let contentView = contentView else { return }
+        if currentIndex == index { return }
 
-        if  currentIndex == index { return }
+        isJump = true
 
         moveTabItem(tabView: tabView, index: index)
-
-        pageViewController?.setViewControllers([dataSource.swipeMenuView(self, viewControllerForPageAt: index)],
-                                               direction: currentIndex > index ? .reverse : .forward,
-                                               animated: true,
-                                               completion: nil)
+        contentView.jump(to: index)
 
         delegate?.swipeMenuView(self, from: currentIndex, to: index)
 
@@ -214,82 +222,78 @@ extension SwipeMenuView {
     }
 
     func moveTabItem(tabView: TabView, index: Int) {
-        for (i, itemView) in tabView.itemViews.enumerated() {
-            itemView.isSelected = i == index
-        }
 
+        tabView.update(index: index)
+        
         switch options.tabView.style {
         case .underline:
-            tabView.animateUnderlineView(index: index)
+            tabView.animateUnderlineView(index: index, completion: { _ -> Swift.Void in self.isJump = false })
         case .none:
             break
         }
     }
 }
 
-// MARK: - UIPageViewControllerDelegate, UIPageViewControllerDataSource
-extension SwipeMenuView: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
+// MARK: - UIScrollViewDelegate
 
-    private enum Direction {
-        case next
-        case previous
+extension SwipeMenuView: UIScrollViewDelegate {
+
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+
+        if isJump { return }
+
+        if currentIndex == pageCount - 2 && scrollView.contentOffset.x > frame.width * CGFloat(currentIndex + 1) - 1.0 {
+            scrollView.setContentOffset(scrollView.contentOffset, animated: false)
+            update(from: currentIndex, to: currentIndex + 1)
+        } else if currentIndex == 1 && scrollView.contentOffset.x < frame.width * CGFloat(currentIndex - 1) + 1.0 {
+            scrollView.setContentOffset(scrollView.contentOffset, animated: false)
+            update(from: currentIndex, to: currentIndex - 1)
+        } else if scrollView.contentOffset.x > frame.width * CGFloat(currentIndex + 1) {
+            scrollView.setContentOffset(scrollView.contentOffset, animated: false)
+            update(from: currentIndex, to: currentIndex + 1)
+        } else if scrollView.contentOffset.x < frame.width * CGFloat(currentIndex - 1) {
+            scrollView.setContentOffset(scrollView.contentOffset, animated: false)
+            update(from: currentIndex, to: currentIndex - 1)
+        }
+
+        if let tabView = tabView, let contentView = contentView {
+            let ratio = scrollView.contentOffset.x.truncatingRemainder(dividingBy: contentView.frame.width) / contentView.frame.width
+            tabView.moveUnderlineView(index: currentIndex, ratio: ratio, direction: scrollView.contentOffset.x > currentOffset.x ? .forward : .reverse)
+        }
+
+        currentOffset = scrollView.contentOffset
     }
 
-    public func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
 
-        guard let dataSource = dataSource else { return }
-
-        if !finished {
-            return
-        }
-
-        if let currentVC = pageViewController.viewControllers?.first {
-            for index in 0..<dataSource.numberOfPages(in: self) {
-                if dataSource.swipeMenuView(self, viewControllerForPageAt: index) == currentVC {
-                    delegate?.swipeMenuView(self, from: currentIndex, to: index)
-                    currentIndex = index
-                    break
-                }
-            }
-        }
-
-        if let tabView = tabView {
-            moveTabItem(tabView: tabView, index: currentIndex)
+        scrollView.decelerationRate = 0
+        if scrollView.contentOffset.x > frame.width * (CGFloat(currentIndex) + 0.5) {
+            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex + 1), y: 0), animated: true)
+            update(from: currentIndex, to: currentIndex + 1)
+        } else if scrollView.contentOffset.x < frame.width * (CGFloat(currentIndex) - 0.5) {
+            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex - 1), y: 0), animated: true)
+            update(from: currentIndex, to: currentIndex - 1)
+        } else {
+            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex), y: 0), animated: true)
         }
     }
 
-    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    private func update(from fromIndex: Int, to toIndex: Int) {
+        delegate?.swipeMenuView(self, from: fromIndex, to: toIndex)
+        tabView?.update(index: toIndex)
+        currentIndex = toIndex
+    }
+}
 
-        return transiotion(from: viewController, direction: .previous)
+// MARK: - ContentViewDataSource
+
+extension SwipeMenuView: ContentViewDataSource {
+
+    public func numberOfPages(in contentView: ContentView) -> Int {
+        return dataSource?.numberOfPages(in: self) ?? 0
     }
 
-    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-
-        return transiotion(from: viewController, direction: .next)
-    }
-
-    private func transiotion(from viewController: UIViewController, direction: Direction) -> UIViewController? {
-
-        guard let dataSource = dataSource else { return nil }
-
-        var index: Int = 0
-
-        for i in 0..<dataSource.numberOfPages(in: self) {
-            if dataSource.swipeMenuView(self, viewControllerForPageAt: i) == viewController {
-                switch direction {
-                case .next:
-                    index = i + 1
-                case .previous:
-                    index = i - 1
-                }
-                break
-            }
-        }
-
-        if index >= 0 && index < dataSource.numberOfPages(in: self) {
-            return dataSource.swipeMenuView(self, viewControllerForPageAt: index)
-        }
-
-        return nil
+    public func contentView(_ contentView: ContentView, viewForPageAt index: Int) -> UIView? {
+        return dataSource?.swipeMenuView(self, viewControllerForPageAt: index).view
     }
 }

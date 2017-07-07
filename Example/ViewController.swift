@@ -26,7 +26,7 @@ class ViewController: SwipeMenuViewController {
 
     override func setOptions() -> SwipeMenuViewOptions {
         var options = SwipeMenuViewOptions()
-        options.tabView.isAdjustItemWidth = false
+//        options.tabView.isAdjustItemWidth = false
         return options
     }
 
