@@ -160,13 +160,19 @@ open class TabView: UIScrollView {
         }
     }
 
-    public func update(index: Int) {
-
-        currentIndex = index
-
+    /// update selected item by new index
+    /// - parameter index: newIndex
+    private func updateSelectedItem(by newIndex: Int) {
         for (i, itemView) in itemViews.enumerated() {
-            itemView.isSelected = i == index
+            itemView.isSelected = i == newIndex
         }
+    }
+
+    /// update index
+    /// - parameter index: newIndex
+    public func update(_ index: Int) {
+        currentIndex = index
+        updateSelectedItem(by: currentIndex)
     }
 }
 
@@ -203,17 +209,18 @@ extension TabView {
 
     public func moveUnderlineView(index: Int, ratio: CGFloat, direction: Direction) {
 
+        currentIndex = index
+
         switch direction {
         case .forward:
             underlineView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio
             underlineView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio
         case .reverse:
-            underlineView.frame.origin.x = previousItem.frame.origin.x - (previousItem.frame.origin.x - currentItem.frame.origin.x) * ratio
+            underlineView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio
             underlineView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio
         }
 
         focus(on: underlineView, animated: false)
-        currentIndex = index
     }
 }
 

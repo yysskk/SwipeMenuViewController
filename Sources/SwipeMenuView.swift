@@ -91,7 +91,6 @@ open class SwipeMenuView: UIView {
     }
 
     fileprivate var currentIndex: Int = 0
-    fileprivate var currentOffset: CGPoint = .zero
 
     fileprivate var pageCount: Int {
         return dataSource?.numberOfPages(in: self) ?? 0
@@ -170,6 +169,16 @@ open class SwipeMenuView: UIView {
         tabView?.removeFromSuperview()
         contentView?.removeFromSuperview()
     }
+
+    /// update currentIndex
+    /// - parameter from    : fromIndex
+    /// - parameter to      : toIndex
+    fileprivate func update(from fromIndex: Int, to toIndex: Int) {
+        delegate?.swipeMenuView(self, from: fromIndex, to: toIndex)
+        tabView?.update(toIndex)
+        contentView?.update(toIndex)
+        currentIndex = toIndex
+    }
 }
 
 extension SwipeMenuView: TabViewDataSource {
@@ -216,14 +225,12 @@ extension SwipeMenuView {
         moveTabItem(tabView: tabView, index: index)
         contentView.jump(to: index)
 
-        delegate?.swipeMenuView(self, from: currentIndex, to: index)
-
-        currentIndex = index
+        update(from: currentIndex, to: index)
     }
 
-    func moveTabItem(tabView: TabView, index: Int) {
+    private func moveTabItem(tabView: TabView, index: Int) {
 
-        tabView.update(index: index)
+        tabView.update(index)
         
         switch options.tabView.style {
         case .underline:
@@ -242,46 +249,39 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
         if isJump { return }
 
-        if currentIndex == pageCount - 2 && scrollView.contentOffset.x > frame.width * CGFloat(currentIndex + 1) - 1.0 {
-            scrollView.setContentOffset(scrollView.contentOffset, animated: false)
+        // update currentIndex
+        if scrollView.contentOffset.x + 1.0 > frame.width * CGFloat(currentIndex + 1) {
             update(from: currentIndex, to: currentIndex + 1)
-        } else if currentIndex == 1 && scrollView.contentOffset.x < frame.width * CGFloat(currentIndex - 1) + 1.0 {
-            scrollView.setContentOffset(scrollView.contentOffset, animated: false)
-            update(from: currentIndex, to: currentIndex - 1)
-        } else if scrollView.contentOffset.x > frame.width * CGFloat(currentIndex + 1) {
-            scrollView.setContentOffset(scrollView.contentOffset, animated: false)
-            update(from: currentIndex, to: currentIndex + 1)
-        } else if scrollView.contentOffset.x < frame.width * CGFloat(currentIndex - 1) {
-            scrollView.setContentOffset(scrollView.contentOffset, animated: false)
+        } else if scrollView.contentOffset.x - 1.0 < frame.width * CGFloat(currentIndex - 1) {
             update(from: currentIndex, to: currentIndex - 1)
         }
 
+        // update underbar position
         if let tabView = tabView, let contentView = contentView {
-            let ratio = scrollView.contentOffset.x.truncatingRemainder(dividingBy: contentView.frame.width) / contentView.frame.width
-            tabView.moveUnderlineView(index: currentIndex, ratio: ratio, direction: scrollView.contentOffset.x > currentOffset.x ? .forward : .reverse)
-        }
 
-        currentOffset = scrollView.contentOffset
+            let ratio = scrollView.contentOffset.x.truncatingRemainder(dividingBy: contentView.frame.width) / contentView.frame.width
+
+            switch scrollView.contentOffset.x {
+            case let offset where offset > frame.width * CGFloat(currentIndex):
+                tabView.moveUnderlineView(index: currentIndex, ratio: ratio, direction: .forward)
+            case let offset where offset < frame.width * CGFloat(currentIndex):
+                tabView.moveUnderlineView(index: currentIndex, ratio: ratio, direction: .reverse)
+            default:
+                break
+            }
+        }
     }
 
-    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    public func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
 
         scrollView.decelerationRate = 0
         if scrollView.contentOffset.x > frame.width * (CGFloat(currentIndex) + 0.5) {
             scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex + 1), y: 0), animated: true)
-            update(from: currentIndex, to: currentIndex + 1)
         } else if scrollView.contentOffset.x < frame.width * (CGFloat(currentIndex) - 0.5) {
             scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex - 1), y: 0), animated: true)
-            update(from: currentIndex, to: currentIndex - 1)
         } else {
             scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex), y: 0), animated: true)
         }
-    }
-
-    private func update(from fromIndex: Int, to toIndex: Int) {
-        delegate?.swipeMenuView(self, from: fromIndex, to: toIndex)
-        tabView?.update(index: toIndex)
-        currentIndex = toIndex
     }
 }
 

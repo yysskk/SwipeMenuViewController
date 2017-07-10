@@ -99,6 +99,11 @@ open class ContentView: UIScrollView {
         self.layoutIfNeeded()
         self.layoutSubviews()
     }
+
+    // update currentIndex
+    public func update(_ index: Int) {
+        currentIndex = index
+    }
 }
 
 extension ContentView: Pagable {
