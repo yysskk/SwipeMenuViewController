@@ -1,6 +1,7 @@
 
 import UIKit
 
+// MARK: - SwipeMenuViewOptions
 public struct SwipeMenuViewOptions {
 
     public struct TabView {
@@ -49,11 +50,14 @@ public struct SwipeMenuViewOptions {
     public init() { }
 }
 
+// MARK: - SwipeMenuViewDelegate
+
 public protocol SwipeMenuViewDelegate: NSObjectProtocol, UIScrollViewDelegate {
 
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, from fromIndex: Int, to toIndex: Int)
 }
 
+// MARK: - SwipeMenuViewDataSource
 
 public protocol SwipeMenuViewDataSource {
 
@@ -62,6 +66,8 @@ public protocol SwipeMenuViewDataSource {
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController
 }
+
+// MARK: - SwipeMenuView
 
 open class SwipeMenuView: UIView {
 
@@ -73,7 +79,6 @@ open class SwipeMenuView: UIView {
         didSet {
             guard let tabView = tabView else { return }
             tabView.dataSource = self
-            tabView.translatesAutoresizingMaskIntoConstraints = false
             addSubview(tabView)
             layout(tabView: tabView)
         }
@@ -82,7 +87,6 @@ open class SwipeMenuView: UIView {
     open fileprivate(set) var contentView: ContentView? {
         didSet {
             guard let contentView = contentView else { return }
-            contentView.translatesAutoresizingMaskIntoConstraints = false
             contentView.delegate = self
             contentView.dataSource = self
             addSubview(contentView)
@@ -144,6 +148,8 @@ open class SwipeMenuView: UIView {
 
     private func layout(tabView: TabView) {
 
+        tabView.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
             tabView.topAnchor.constraint(equalTo: self.topAnchor),
             tabView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
@@ -153,6 +159,8 @@ open class SwipeMenuView: UIView {
     }
 
     private func layout(contentView: ContentView) {
+
+        contentView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(equalTo: self.topAnchor, constant: options.tabView.height),
@@ -271,6 +279,29 @@ extension SwipeMenuView: UIScrollViewDelegate {
             update(from: currentIndex, to: currentIndex - 1)
         }
 
+
+        switch options.tabView.style {
+        case .underline:
+            moveUnderlineView(scrollView: scrollView)
+        case .none:
+            break
+        }
+    }
+
+
+    public func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
+
+        scrollView.decelerationRate = 0
+        if scrollView.contentOffset.x > frame.width * (CGFloat(currentIndex) + 0.5) {
+            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex + 1), y: 0), animated: true)
+        } else if scrollView.contentOffset.x < frame.width * (CGFloat(currentIndex) - 0.5) {
+            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex - 1), y: 0), animated: true)
+        } else {
+            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex), y: 0), animated: true)
+        }
+    }
+
+    private func moveUnderlineView(scrollView: UIScrollView) {
         // update underbar position
         if let tabView = tabView, let contentView = contentView {
 
@@ -284,18 +315,6 @@ extension SwipeMenuView: UIScrollViewDelegate {
             default:
                 break
             }
-        }
-    }
-
-    public func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-
-        scrollView.decelerationRate = 0
-        if scrollView.contentOffset.x > frame.width * (CGFloat(currentIndex) + 0.5) {
-            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex + 1), y: 0), animated: true)
-        } else if scrollView.contentOffset.x < frame.width * (CGFloat(currentIndex) - 0.5) {
-            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex - 1), y: 0), animated: true)
-        } else {
-            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex), y: 0), animated: true)
         }
     }
 }

@@ -168,8 +168,12 @@ open class TabView: UIScrollView {
     /// update index
     /// - parameter index: newIndex
     public func update(_ index: Int) {
+
+        if currentIndex == index { return }
+
         currentIndex = index
         updateSelectedItem(by: currentIndex)
+        focus(on: currentItem)
     }
 
     /// update selected item by new index
@@ -229,6 +233,8 @@ extension TabView {
             underlineView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio
             underlineView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio
         }
+
+        focus(on: underlineView, animated: false)
     }
 }
 
@@ -254,8 +260,10 @@ extension TabView {
     func jump(to index: Int) {
         update(index)
 
-        underlineView.frame.origin.x = currentItem.frame.origin.x
-        underlineView.frame.size.width = currentItem.frame.size.width
+        if options.style == .underline {
+            underlineView.frame.origin.x = currentItem.frame.origin.x
+            underlineView.frame.size.width = currentItem.frame.size.width
+        }
 
         focus(on: currentItem, animated: false)
     }
