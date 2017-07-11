@@ -22,6 +22,7 @@ open class ContentView: UIScrollView {
     open var dataSource: ContentViewDataSource?
 
     var pageViews: [UIView] = []
+    fileprivate let containerView: UIView = UIView()
 
     var pageCount: Int {
         return pageViews.count
@@ -54,6 +55,7 @@ open class ContentView: UIScrollView {
     fileprivate func setup() {
 
         setupScrollView()
+        setupContainerView()
         setupPages()
     }
 
@@ -62,11 +64,30 @@ open class ContentView: UIScrollView {
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
         isScrollEnabled = true
-        isDirectionalLockEnabled = true
+        isDirectionalLockEnabled = false
         alwaysBounceHorizontal = false
         scrollsToTop = false
         bounces = false
         bouncesZoom = false
+    }
+
+    private func setupContainerView() {
+        let itemCount = dataSource?.numberOfPages(in: self) ?? 0
+        let containerWidth = frame.width * CGFloat(itemCount)
+        contentSize = CGSize(width: containerWidth, height: frame.height)
+        containerView.frame = CGRect(x: 0, y: 0, width: containerWidth, height: frame.height)
+        containerView.backgroundColor = .clear
+        addSubview(containerView)
+
+        self.contentSize.width = containerWidth
+
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            containerView.topAnchor.constraint(equalTo: self.topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            containerView.widthAnchor.constraint(equalToConstant: containerWidth),
+            containerView.heightAnchor.constraint(equalTo: self.heightAnchor)
+        ])
     }
 
     private func setupPages() {
@@ -78,9 +99,39 @@ open class ContentView: UIScrollView {
         for index in 0..<dataSource.numberOfPages(in: self) {
             guard let pageView = dataSource.contentView(self, viewForPageAt: index) else { return }
             pageView.translatesAutoresizingMaskIntoConstraints = false
-            self.addSubview(pageView)
-                pageViews.append(pageView)
+            containerView.addSubview(pageView)
+            pageViews.append(pageView)
 
+            pageView.translatesAutoresizingMaskIntoConstraints = false
+            if index > 0 {
+                NSLayoutConstraint.activate([
+                    pageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+                    pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
+                    pageView.heightAnchor.constraint(equalTo: containerView.heightAnchor),
+                    pageView.leadingAnchor.constraint(equalTo: pageViews[index - 1].trailingAnchor),
+                    pageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+                ])
+            }
+
+            xPosition += pageView.frame.size.width
+        }
+
+        NSLayoutConstraint.activate([
+            pageViews[0].topAnchor.constraint(equalTo: containerView.topAnchor),
+            pageViews[0].widthAnchor.constraint(equalTo: self.widthAnchor),
+            pageViews[0].heightAnchor.constraint(equalTo: containerView.heightAnchor),
+            pageViews[0].leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            pageViews[pageCount-1].trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
+    }
+
+    public func layout() {
+
+        var xPosition: CGFloat = 0
+
+        for pageView in pageViews {
+
+            pageView.translatesAutoresizingMaskIntoConstraints = false
 
             NSLayoutConstraint.activate([
                 pageView.topAnchor.constraint(equalTo: self.topAnchor),
@@ -95,27 +146,39 @@ open class ContentView: UIScrollView {
         NSLayoutConstraint.activate([
             pageViews[pageCount-1].trailingAnchor.constraint(equalTo: self.trailingAnchor)
         ])
+        
+        contentSize.width = xPosition
 
         self.layoutIfNeeded()
         self.layoutSubviews()
     }
 
-    // update currentIndex
-    public func update(_ index: Int) {
-        currentIndex = index
+    public func reload() {
+
+        self.didMoveToSuperview()
+    }
+
+    /// update currentIndex
+    /// parameter index : newIndex
+    public func update(_ newIndex: Int) {
+        currentIndex = newIndex
     }
 }
 
 extension ContentView: Pagable {
 
     var currentPage: UIView {
-        return dataSource?.contentView(self, viewForPageAt: currentIndex) ?? UIView()
+        if currentIndex < pageCount && currentIndex >= 0 {
+            return pageViews[currentIndex]
+        } else {
+            return UIView()
+        }
     }
 
     var nextPage: UIView? {
 
         if currentIndex < pageCount - 1 {
-            return dataSource?.contentView(self, viewForPageAt: currentIndex)
+            return pageViews[currentIndex + 1]
         }
 
         return nil
@@ -124,7 +187,7 @@ extension ContentView: Pagable {
     var previousPage: UIView? {
 
         if currentIndex > 0 {
-            return dataSource?.contentView(self, viewForPageAt: currentIndex - 1)
+            return pageViews[currentIndex - 1]
         }
 
         return nil
@@ -132,8 +195,7 @@ extension ContentView: Pagable {
 
     func jump(to index: Int) {
 
-        currentIndex = index
-
-        self.setContentOffset(CGPoint(x: self.frame.width * CGFloat(currentIndex), y: 0), animated: true)
+        update(index)
+        self.setContentOffset(CGPoint(x: self.frame.width * CGFloat(currentIndex), y: 0), animated: false)
     }
 }

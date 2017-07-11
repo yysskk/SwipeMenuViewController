@@ -97,6 +97,7 @@ open class SwipeMenuView: UIView {
     }
 
     fileprivate var isJump: Bool = false
+    fileprivate var isPortrait: Bool = true
 
     open var options = SwipeMenuViewOptions()
 
@@ -114,16 +115,10 @@ open class SwipeMenuView: UIView {
 
     deinit { }
 
-    open override func didMoveToSuperview() {
-        setup()
-    }
-
     open override func layoutSubviews() {
         super.layoutSubviews()
 
-        if let tabView = tabView {
-            tabView.animateUnderlineView(index: currentIndex)
-        }
+        reload()
     }
 
     public func reload(options: SwipeMenuViewOptions? = nil) {
@@ -134,6 +129,8 @@ open class SwipeMenuView: UIView {
 
         reset()
         setup()
+
+        jump(to: currentIndex)
     }
 
     // MARK: - Setup
@@ -166,8 +163,21 @@ open class SwipeMenuView: UIView {
     }
 
     private func reset() {
-        tabView?.removeFromSuperview()
-        contentView?.removeFromSuperview()
+        if let tabView = tabView, let contentView = contentView {
+            tabView.removeFromSuperview()
+            contentView.removeFromSuperview()
+        }
+
+        tabView = nil
+        contentView = nil
+    }
+
+    public func jump(to index: Int) {
+
+        if let tabView = tabView, let contentView = contentView {
+            tabView.jump(to: index)
+            contentView.jump(to: index)
+        }
     }
 
     /// update currentIndex
@@ -180,6 +190,8 @@ open class SwipeMenuView: UIView {
         currentIndex = toIndex
     }
 }
+
+// MARK: - TabViewDataSource
 
 extension SwipeMenuView: TabViewDataSource {
 
@@ -230,11 +242,9 @@ extension SwipeMenuView {
 
     private func moveTabItem(tabView: TabView, index: Int) {
 
-        tabView.update(index)
-        
         switch options.tabView.style {
         case .underline:
-            tabView.animateUnderlineView(index: index, completion: { _ -> Swift.Void in self.isJump = false })
+            tabView.animateUnderlineView(index: index, completion: { _ in self.isJump = false })
         case .none:
             break
         }
@@ -246,6 +256,11 @@ extension SwipeMenuView {
 extension SwipeMenuView: UIScrollViewDelegate {
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+
+        if isPortrait != (frame.height > frame.width) {
+            isPortrait = !isPortrait
+            return
+        }
 
         if isJump { return }
 
