@@ -100,6 +100,8 @@ open class TabView: UIScrollView {
             tabItemView.backgroundColor = options.backgroundColor
             if let title = dataSource.tabView(self, titleForItemAt: index) {
                 tabItemView.titleLabel.text = title
+                tabItemView.textColor = options.itemView.textColor
+                tabItemView.selectedTextColor = options.itemView.selectedTextColor
             }
 
             tabItemView.isSelected = index == 0
@@ -198,7 +200,7 @@ extension TabView {
         if itemViews.isEmpty { return }
 
         let itemView = itemViews[currentIndex]
-        underlineView = UIView(frame: CGRect(x: itemView.frame.origin.x, y: itemView.frame.height, width: itemView.frame.width, height: options.underlineView.height))
+        underlineView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.underlineView.margin, y: itemView.frame.height, width: itemView.frame.width - options.underlineView.margin * 2, height: options.underlineView.height))
         underlineView.backgroundColor = options.underlineView.backgroundColor
         addSubview(underlineView)
 
@@ -211,10 +213,10 @@ extension TabView {
 
         UIView.animate(withDuration: 0.3, animations: { _ in
             let target = self.currentItem
-            self.underlineView.frame.origin.x = target.frame.origin.x
+            self.underlineView.frame.origin.x = target.frame.origin.x + self.options.underlineView.margin
 
             if self.options.isAdjustItemWidth {
-                self.underlineView.frame.size.width = self.cacheAdjustCellSizes[index].width
+                self.underlineView.frame.size.width = self.cacheAdjustCellSizes[index].width - self.options.underlineView.margin * 2
             }
 
             self.focus(on: target)
@@ -227,14 +229,14 @@ extension TabView {
 
         switch direction {
         case .forward:
-            underlineView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio
-            underlineView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio
+            underlineView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.underlineView.margin
+            underlineView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.underlineView.margin * 2
         case .reverse:
-            underlineView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio
-            underlineView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio
+            underlineView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.underlineView.margin
+            underlineView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.underlineView.margin * 2
         }
 
-        focus(on: underlineView, animated: false)
+        focus(on: underlineView, animated: true)
     }
 }
 

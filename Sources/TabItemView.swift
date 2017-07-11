@@ -5,12 +5,15 @@ class TabItemView: UIView {
 
     open var titleLabel: UILabel = UILabel()
 
+    open var textColor: UIColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
+    open var selectedTextColor: UIColor = .white
+    
     open var isSelected: Bool = false {
         didSet {
             if isSelected {
-                titleLabel.textColor = .white
+                titleLabel.textColor = selectedTextColor
             } else {
-                titleLabel.textColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
+                titleLabel.textColor = textColor
             }
         }
     }

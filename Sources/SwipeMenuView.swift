@@ -4,6 +4,12 @@ import UIKit
 // MARK: - SwipeMenuViewOptions
 public struct SwipeMenuViewOptions {
 
+    public enum SwipeMenuViewStyle {
+        case flexible
+// TODO: case segmented
+// TODO: case infinity
+    }
+
     public struct TabView {
 
         public enum TabStyle {
@@ -14,10 +20,13 @@ public struct SwipeMenuViewOptions {
         public struct ItemView {
             public var width: CGFloat = 100.0
             public var margin: CGFloat = 5.0
+            public var textColor: UIColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
+            public var selectedTextColor: UIColor = .white
         }
 
         public struct UndelineView {
             public var height: CGFloat = 2.0
+            public var margin: CGFloat = 0.0
             public var backgroundColor: UIColor = UIColor(red: 111/255, green: 185/255, blue: 0, alpha: 1.0)
             public var animationDuration: CGFloat = 0.3
         }
@@ -41,6 +50,9 @@ public struct SwipeMenuViewOptions {
         public var backgroundColor: UIColor = .clear
     }
 
+    // self
+    public var style: SwipeMenuViewStyle = .flexible
+
     // TabView
     public var tabView = TabView()
 
@@ -52,9 +64,38 @@ public struct SwipeMenuViewOptions {
 
 // MARK: - SwipeMenuViewDelegate
 
-public protocol SwipeMenuViewDelegate: NSObjectProtocol, UIScrollViewDelegate {
+public protocol SwipeMenuViewDelegate {
 
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, from fromIndex: Int, to toIndex: Int)
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, style: SwipeMenuViewOptions.SwipeMenuViewStyle) -> SwipeMenuViewOptions.SwipeMenuViewStyle
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.TabView) -> SwipeMenuViewOptions.TabView
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.TabView.ItemView) -> SwipeMenuViewOptions.TabView.ItemView
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.ContentView) -> SwipeMenuViewOptions.ContentView
+}
+
+extension SwipeMenuViewDelegate {
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, from fromIndex: Int, to toIndex: Int) { }
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, isScrolling: Bool) {}
+}
+
+extension SwipeMenuViewDelegate {
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, style: SwipeMenuViewOptions.SwipeMenuViewStyle) -> SwipeMenuViewOptions.SwipeMenuViewStyle {
+        return style
+    }
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.TabView) -> SwipeMenuViewOptions.TabView {
+        return options
+    }
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.TabView.ItemView) -> SwipeMenuViewOptions.TabView.ItemView {
+        return options
+    }
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.ContentView) -> SwipeMenuViewOptions.ContentView {
+        return options
+    }
 }
 
 // MARK: - SwipeMenuViewDataSource
@@ -139,6 +180,13 @@ open class SwipeMenuView: UIView {
 
     // MARK: - Setup
     private func setup() {
+
+        if let delegate = delegate {
+            options.style = delegate.swipeMenuView(self, style: options.style)
+            options.tabView = delegate.swipeMenuView(self, options: options.tabView)
+            options.tabView.itemView = delegate.swipeMenuView(self, options: options.tabView.itemView)
+            options.contentView = delegate.swipeMenuView(self, options: options.contentView)
+        }
 
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         addTapGestureHandler()
@@ -301,8 +349,9 @@ extension SwipeMenuView: UIScrollViewDelegate {
         }
     }
 
+    /// update underbar position
     private func moveUnderlineView(scrollView: UIScrollView) {
-        // update underbar position
+
         if let tabView = tabView, let contentView = contentView {
 
             let ratio = scrollView.contentOffset.x.truncatingRemainder(dividingBy: contentView.frame.width) / contentView.frame.width

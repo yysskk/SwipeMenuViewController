@@ -12,18 +12,29 @@ class ViewController: SwipeMenuViewController {
         view.backgroundColor = .black
     }
 
-    override func setOptions() -> SwipeMenuViewOptions {
-        var options = SwipeMenuViewOptions()
-        options.tabView.isAdjustItemWidth = false
-        return options
-    }
-
     // MARK: - SwipeMenuViewDelegate
 
     override func swipeMenuView(_ swipeMenuView: SwipeMenuView, from fromIndex: Int, to toIndex: Int) {
         print("change from section\(fromIndex + 1)  to section\(toIndex + 1)")
     }
 
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, style: SwipeMenuViewOptions.SwipeMenuViewStyle) -> SwipeMenuViewOptions.SwipeMenuViewStyle {
+        return style
+    }
+
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.TabView) -> SwipeMenuViewOptions.TabView {
+        var options = options
+        options.isAdjustItemWidth = false
+        return options
+    }
+
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.TabView.ItemView) -> SwipeMenuViewOptions.TabView.ItemView {
+        return options
+    }
+
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.ContentView) -> SwipeMenuViewOptions.ContentView {
+        return options
+    }
 
     // MARK - SwipeMenuViewDataSource
 
