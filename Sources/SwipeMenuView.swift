@@ -220,11 +220,18 @@ open class SwipeMenuView: UIView {
     /// - parameter from    : fromIndex
     /// - parameter to      : toIndex
     fileprivate func update(from fromIndex: Int, to toIndex: Int) {
-        delegate?.swipeMenuView(self, willChangeIndexfrom: fromIndex, to: toIndex)
+
+        if !isOrientationChange {
+            delegate?.swipeMenuView(self, willChangeIndexfrom: fromIndex, to: toIndex)
+        }
+
         tabView?.update(toIndex)
         contentView?.update(toIndex)
         currentIndex = toIndex
-        delegate?.swipeMenuView(self, didChangeIndexfrom: fromIndex, to: toIndex)
+
+        if !isOrientationChange {
+            delegate?.swipeMenuView(self, didChangeIndexfrom: fromIndex, to: toIndex)
+        }
     }
 
     func onOrientationChange(_ notification: Notification) {
@@ -316,10 +323,16 @@ extension SwipeMenuView: UIScrollViewDelegate {
         }
     }
 
+    public func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
+        setContentOffset(of: scrollView)
+     }
 
-    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        setContentOffset(of: scrollView)
+    }
 
-        scrollView.decelerationRate = 0
+    private func setContentOffset(of scrollView: UIScrollView) {
+
         if scrollView.contentOffset.x > frame.width * (CGFloat(currentIndex) + 0.5) {
             scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex + 1), y: 0), animated: true)
         } else if scrollView.contentOffset.x < frame.width * (CGFloat(currentIndex) - 0.5) {

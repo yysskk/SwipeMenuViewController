@@ -274,7 +274,7 @@ extension TabView {
             underlineView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.underlineView.margin * 2
         }
 
-        focus(on: underlineView, animated: true)
+        focus(on: underlineView, animated: false)
     }
 }
 
