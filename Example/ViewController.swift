@@ -4,35 +4,43 @@ import SwipeMenuViewController
 
 class ViewController: SwipeMenuViewController {
 
-    let datas: [String] = ["Bulbasaur","Caterpie", "Golem", "Jynx", "Marshtomp", "Salamence", "Riolu", "Araquanid"]
+    var datas: [String] = ["Bulbasaur","Caterpie", "Golem", "Jynx", "Marshtomp", "Salamence", "Riolu", "Araquanid"]
+
+    var options = SwipeMenuViewOptions()
+
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .black
+        view.bringSubview(toFront: segmentedControl)
     }
 
+    @IBAction func changeTabStyle(_ sender: UISegmentedControl) {
+
+        switch sender.selectedSegmentIndex {
+        case 0:
+            options.tabView.style = .flexible
+            datas = ["Bulbasaur","Caterpie", "Golem", "Jynx", "Marshtomp", "Salamence", "Riolu", "Araquanid"]
+        case 1:
+            options.tabView.style = .segmented
+            datas = ["Bulbasaur","Caterpie"]
+        default:
+            break
+        }
+
+        swipeMenuView.reload(options: options)
+    }
     // MARK: - SwipeMenuViewDelegate
 
     override func swipeMenuView(_ swipeMenuView: SwipeMenuView, from fromIndex: Int, to toIndex: Int) {
         print("change from section\(fromIndex + 1)  to section\(toIndex + 1)")
     }
 
-    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, style: SwipeMenuViewOptions.SwipeMenuViewStyle) -> SwipeMenuViewOptions.SwipeMenuViewStyle {
-        return style
-    }
-
-    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.TabView) -> SwipeMenuViewOptions.TabView {
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions) -> SwipeMenuViewOptions {
         var options = options
-        options.isAdjustItemWidth = false
-        return options
-    }
-
-    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.TabView.ItemView) -> SwipeMenuViewOptions.TabView.ItemView {
-        return options
-    }
-
-    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.ContentView) -> SwipeMenuViewOptions.ContentView {
+        options.tabView.isAdjustItemViewWidth = true
         return options
     }
 
