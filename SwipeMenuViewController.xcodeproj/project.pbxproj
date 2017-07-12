@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		982CF1071EFBD7040086649C /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982CF1061EFBD7040086649C /* TabView.swift */; };
 		982CF1091EFBD70B0086649C /* TabItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982CF1081EFBD70B0086649C /* TabItemView.swift */; };
+		98B984871F15C57800FCDD0B /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B984861F15C57800FCDD0B /* UIViewExtension.swift */; };
+		98B984891F15CAEB00FCDD0B /* PopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B984881F15CAEB00FCDD0B /* PopupViewController.swift */; };
 		98D59CA01F09E2150028EAEA /* SwipeMenuViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98EEED431EFA627000A149EB /* SwipeMenuViewController.framework */; };
 		98D59CA11F09E2150028EAEA /* SwipeMenuViewController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 98EEED431EFA627000A149EB /* SwipeMenuViewController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		98E73FB81F0B95DD0063DF18 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E73FB71F0B95DD0063DF18 /* ContentViewController.swift */; };
@@ -50,6 +52,8 @@
 /* Begin PBXFileReference section */
 		982CF1061EFBD7040086649C /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		982CF1081EFBD70B0086649C /* TabItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabItemView.swift; sourceTree = "<group>"; };
+		98B984861F15C57800FCDD0B /* UIViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
+		98B984881F15CAEB00FCDD0B /* PopupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopupViewController.swift; sourceTree = "<group>"; };
 		98E73FB71F0B95DD0063DF18 /* ContentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
 		98E73FC01F0E1D230063DF18 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		98EEED431EFA627000A149EB /* SwipeMenuViewController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwipeMenuViewController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -134,6 +138,8 @@
 				98EEED611EFA62D900A149EB /* Info.plist */,
 				98EEED5E1EFA62D900A149EB /* LaunchScreen.storyboard */,
 				98EEED591EFA62D900A149EB /* Main.storyboard */,
+				98B984881F15CAEB00FCDD0B /* PopupViewController.swift */,
+				98B984861F15C57800FCDD0B /* UIViewExtension.swift */,
 				98EEED571EFA62D900A149EB /* ViewController.swift */,
 			);
 			path = Example;
@@ -207,7 +213,7 @@
 					};
 					98EEED521EFA62D900A149EB = {
 						CreatedOnToolsVersion = 8.3;
-                        ProvisioningStyle = Manual;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -267,8 +273,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				98B984891F15CAEB00FCDD0B /* PopupViewController.swift in Sources */,
 				98EEED581EFA62D900A149EB /* ViewController.swift in Sources */,
 				98E73FB81F0B95DD0063DF18 /* ContentViewController.swift in Sources */,
+				98B984871F15C57800FCDD0B /* UIViewExtension.swift in Sources */,
 				98EEED561EFA62D900A149EB /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -455,7 +463,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-                DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cc.yysskk.Example;
@@ -470,8 +478,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-                DEVELOPMENT_TEAM = "";
-                INFOPLIST_FILE = Example/Info.plist;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cc.yysskk.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";

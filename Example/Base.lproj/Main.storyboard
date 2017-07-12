@@ -21,35 +21,266 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="qhn-JM-kPF">
-                                <rect key="frame" x="16" y="619" width="343" height="29"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g7u-0R-yRV">
+                                <rect key="frame" x="16" y="617" width="343" height="30"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="28" id="Duj-0k-HeZ"/>
+                                    <constraint firstAttribute="height" constant="30" id="Vbe-o1-8WM"/>
                                 </constraints>
-                                <segments>
-                                    <segment title="Flexible"/>
-                                    <segment title="Segmented"/>
-                                </segments>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <state key="normal" title="Setting">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="3"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <action selector="changeTabStyle:" destination="BYZ-38-t0r" eventType="valueChanged" id="P5y-gk-4Ej"/>
+                                    <segue destination="Cbb-L4-MOy" kind="presentation" identifier="popupSegue" modalTransitionStyle="crossDissolve" id="PhM-dc-pFw"/>
                                 </connections>
-                            </segmentedControl>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="qhn-JM-kPF" secondAttribute="bottom" constant="20" id="QN7-64-Qdy"/>
-                            <constraint firstAttribute="trailing" secondItem="qhn-JM-kPF" secondAttribute="trailing" constant="16" id="sNK-7B-yF4"/>
-                            <constraint firstItem="qhn-JM-kPF" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="16" id="wVW-g7-Xrz"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="g7u-0R-yRV" secondAttribute="bottom" constant="20" id="4ms-kt-bai"/>
+                            <constraint firstItem="g7u-0R-yRV" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="16" id="BHn-gF-cxp"/>
+                            <constraint firstAttribute="trailing" secondItem="g7u-0R-yRV" secondAttribute="trailing" constant="16" id="NLO-DU-caQ"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="segmentedControl" destination="qhn-JM-kPF" id="JAc-wS-xME"/>
+                        <outlet property="settingButton" destination="g7u-0R-yRV" id="3Er-xR-DHR"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="32.799999999999997" y="38.23088455772114"/>
+        </scene>
+        <!--Popup View Controller-->
+        <scene sceneID="zbj-G4-RBb">
+            <objects>
+                <viewController modalTransitionStyle="crossDissolve" modalPresentationStyle="overCurrentContext" id="Cbb-L4-MOy" customClass="PopupViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="SHa-wH-wWE"/>
+                        <viewControllerLayoutGuide type="bottom" id="M6A-tu-BJV"/>
+                    </layoutGuides>
+                    <view key="view" tag="1" contentMode="scaleToFill" id="K7A-2E-Xte">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view tag="2" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VOm-Qd-6BU">
+                                <rect key="frame" x="27" y="76" width="320" height="516"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="iBq-WB-ocX">
+                                        <rect key="frame" x="10" y="0.0" width="300" height="506"/>
+                                        <subviews>
+                                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wBh-tP-IIN">
+                                                <rect key="frame" x="0.0" y="0.0" width="300" height="430"/>
+                                                <subviews>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="2b2-xK-eWv">
+                                                        <rect key="frame" x="0.5" y="0.0" width="300" height="350"/>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Style" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zTD-Nr-aHx">
+                                                                <rect key="frame" x="135" y="0.0" width="30.5" height="35"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="kcj-NS-rtY">
+                                                                <rect key="frame" x="20.5" y="35" width="259" height="36"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="259" id="IDq-U5-mVH"/>
+                                                                </constraints>
+                                                                <segments>
+                                                                    <segment title="Flexible"/>
+                                                                    <segment title="Segmented"/>
+                                                                </segments>
+                                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                                <connections>
+                                                                    <action selector="changeStyle:" destination="Cbb-L4-MOy" eventType="valueChanged" id="MeN-Hc-ceN"/>
+                                                                </connections>
+                                                            </segmentedControl>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Adjust TabItem Width" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="avh-1H-pWf">
+                                                                <rect key="frame" x="85" y="70" width="130.5" height="35"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Bin-QX-LTN">
+                                                                <rect key="frame" x="20.5" y="105" width="259" height="36"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="259" id="yWI-wM-SWg"/>
+                                                                </constraints>
+                                                                <segments>
+                                                                    <segment title="Enable"/>
+                                                                    <segment title="Disable"/>
+                                                                </segments>
+                                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                                <connections>
+                                                                    <action selector="changeAdjustTabItemWidthEnabled:" destination="Cbb-L4-MOy" eventType="valueChanged" id="Auy-bm-nNP"/>
+                                                                </connections>
+                                                            </segmentedControl>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Custom TabItem Width" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3HF-bf-90C">
+                                                                <rect key="frame" x="80.5" y="140" width="139" height="35"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="150" minValue="100" maxValue="300" translatesAutoresizingMaskIntoConstraints="NO" id="OQQ-jm-h8c">
+                                                                <rect key="frame" x="18.5" y="175" width="263" height="36"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="259" id="5T1-Rk-EIM"/>
+                                                                </constraints>
+                                                                <color key="minimumTrackTintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                                <connections>
+                                                                    <action selector="changeTabItemWidthSlider:" destination="Cbb-L4-MOy" eventType="valueChanged" id="F2n-ZH-PoZ"/>
+                                                                </connections>
+                                                            </slider>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Custom Tab Addition" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zix-he-J3b">
+                                                                <rect key="frame" x="87" y="210" width="126.5" height="35"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Lm5-Dk-QNp">
+                                                                <rect key="frame" x="20.5" y="245" width="259" height="36"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="259" id="zgd-EH-y9F"/>
+                                                                </constraints>
+                                                                <segments>
+                                                                    <segment title="Underbar"/>
+                                                                    <segment title="None"/>
+                                                                </segments>
+                                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                                <connections>
+                                                                    <action selector="changeTabAddition:" destination="Cbb-L4-MOy" eventType="valueChanged" id="uVT-Pc-WQ6"/>
+                                                                </connections>
+                                                            </segmentedControl>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Content Scroll Enable" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T1z-oP-t7V">
+                                                                <rect key="frame" x="85" y="280" width="130.5" height="35"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="lO2-uE-mds">
+                                                                <rect key="frame" x="20.5" y="315" width="259" height="36"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="259" id="Ok0-kA-Aid"/>
+                                                                </constraints>
+                                                                <segments>
+                                                                    <segment title="Enable"/>
+                                                                    <segment title="Disable"/>
+                                                                </segments>
+                                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                                <connections>
+                                                                    <action selector="changeContentScrollEnabled:" destination="Cbb-L4-MOy" eventType="valueChanged" id="6sd-ka-rFk"/>
+                                                                </connections>
+                                                            </segmentedControl>
+                                                        </subviews>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="350" id="Ueb-OX-qZz"/>
+                                                            <constraint firstItem="avh-1H-pWf" firstAttribute="trailing" secondItem="T1z-oP-t7V" secondAttribute="trailing" id="gfb-wD-WIT"/>
+                                                        </constraints>
+                                                    </stackView>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstItem="2b2-xK-eWv" firstAttribute="width" secondItem="wBh-tP-IIN" secondAttribute="width" id="B0k-Dd-0Dc"/>
+                                                    <constraint firstItem="2b2-xK-eWv" firstAttribute="centerX" secondItem="wBh-tP-IIN" secondAttribute="centerX" id="OWL-Ff-agt"/>
+                                                    <constraint firstAttribute="trailing" secondItem="2b2-xK-eWv" secondAttribute="trailing" constant="-1" id="QVE-tX-wZI"/>
+                                                    <constraint firstAttribute="bottom" secondItem="2b2-xK-eWv" secondAttribute="bottom" constant="80" id="cMx-gW-h77"/>
+                                                    <constraint firstItem="2b2-xK-eWv" firstAttribute="top" secondItem="wBh-tP-IIN" secondAttribute="top" id="hM7-lR-7T6"/>
+                                                </constraints>
+                                            </scrollView>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KIZ-Qs-33a">
+                                                <rect key="frame" x="0.0" y="438" width="300" height="30"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="30" id="lPB-HP-0xA"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                <state key="normal" title="OK">
+                                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                                        <color key="value" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                                        <real key="value" value="1"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                        <real key="value" value="3"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <action selector="changeOptions:" destination="Cbb-L4-MOy" eventType="touchUpInside" id="ysb-YL-abJ"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uSd-pz-0mn">
+                                                <rect key="frame" x="0.0" y="476" width="300" height="30"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="30" id="beg-tR-TqM"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                <state key="normal" title="Reset">
+                                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                                        <color key="value" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                                        <real key="value" value="1"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                        <real key="value" value="3"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <action selector="resetOptions:" destination="Cbb-L4-MOy" eventType="touchUpInside" id="za7-uk-emC"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.90399925599999997" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="iBq-WB-ocX" secondAttribute="bottom" constant="10" id="3eC-OH-Lp9"/>
+                                    <constraint firstItem="iBq-WB-ocX" firstAttribute="top" secondItem="VOm-Qd-6BU" secondAttribute="top" id="5px-uP-XpS"/>
+                                    <constraint firstAttribute="trailing" secondItem="iBq-WB-ocX" secondAttribute="trailing" constant="10" id="efs-c4-wrE"/>
+                                    <constraint firstItem="iBq-WB-ocX" firstAttribute="leading" secondItem="VOm-Qd-6BU" secondAttribute="leading" constant="10" id="fMa-4A-MHh"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.69999999999999996" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="M6A-tu-BJV" firstAttribute="top" secondItem="VOm-Qd-6BU" secondAttribute="bottom" constant="75.5" id="IT1-uP-EuC"/>
+                            <constraint firstItem="VOm-Qd-6BU" firstAttribute="centerX" secondItem="K7A-2E-Xte" secondAttribute="centerX" id="f4s-A6-5O1"/>
+                            <constraint firstItem="VOm-Qd-6BU" firstAttribute="top" secondItem="SHa-wH-wWE" secondAttribute="bottom" constant="55.5" id="g7p-mG-eMH"/>
+                            <constraint firstItem="VOm-Qd-6BU" firstAttribute="leading" secondItem="K7A-2E-Xte" secondAttribute="leading" constant="27" id="gti-QN-LwH"/>
+                            <constraint firstItem="VOm-Qd-6BU" firstAttribute="centerY" secondItem="K7A-2E-Xte" secondAttribute="centerY" id="mZZ-J3-p8q"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="adjustTabItemSegmentedControl" destination="Bin-QX-LTN" id="46r-P7-EGR"/>
+                        <outlet property="contentScrolEnabledSegmentedControl" destination="lO2-uE-mds" id="akJ-rJ-DT3"/>
+                        <outlet property="styleSegmentedControl" destination="kcj-NS-rtY" id="GwN-dc-p3e"/>
+                        <outlet property="tabAdditionSegmentedControl" destination="Lm5-Dk-QNp" id="rO2-ut-VCw"/>
+                        <outlet property="tabItemViewWidthSlider" destination="OQQ-jm-h8c" id="hbw-eQ-WJB"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4Js-y1-Vsr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="780" y="37.331334332833585"/>
         </scene>
     </scenes>
 </document>

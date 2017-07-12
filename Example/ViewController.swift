@@ -8,41 +8,45 @@ class ViewController: SwipeMenuViewController {
 
     var options = SwipeMenuViewOptions()
 
-    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    @IBOutlet weak var settingButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .black
-        view.bringSubview(toFront: segmentedControl)
+        view.bringSubview(toFront: settingButton)
     }
 
-    @IBAction func changeTabStyle(_ sender: UISegmentedControl) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "popupSegue" {
+            let vc = segue.destination as! PopupViewController
+            vc.options = options
+            vc.reloadClosure = { self.reload() }
+        }
+    }
 
-        switch sender.selectedSegmentIndex {
-        case 0:
-            options.tabView.style = .flexible
-            datas = ["Bulbasaur","Caterpie", "Golem", "Jynx", "Marshtomp", "Salamence", "Riolu", "Araquanid"]
-        case 1:
-            options.tabView.style = .segmented
-            datas = ["Bulbasaur","Caterpie"]
-        default:
-            break
+    func reload() {
+
+        switch  options.tabView.style {
+        case .flexible:
+            datas =  ["Bulbasaur","Caterpie", "Golem", "Jynx", "Marshtomp", "Salamence", "Riolu", "Araquanid"]
+        case .segmented:
+            datas =  ["Bulbasaur","Caterpie", "Golem"]
         }
 
         swipeMenuView.reload(options: options)
     }
+
     // MARK: - SwipeMenuViewDelegate
 
-    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, from fromIndex: Int, to toIndex: Int) {
-        print("change from section\(fromIndex + 1)  to section\(toIndex + 1)")
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexfrom fromIndex: Int, to toIndex: Int) {
+        print("will change from section\(fromIndex + 1)  to section\(toIndex + 1)")
     }
 
-    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions) -> SwipeMenuViewOptions {
-        var options = options
-        options.tabView.isAdjustItemViewWidth = true
-        return options
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexfrom fromIndex: Int, to toIndex: Int) {
+        print("did change from section\(fromIndex + 1)  to section\(toIndex + 1)")
     }
+
 
     // MARK - SwipeMenuViewDataSource
 
