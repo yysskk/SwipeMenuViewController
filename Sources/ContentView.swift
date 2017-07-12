@@ -172,6 +172,11 @@ open class ContentView: UIScrollView {
     public func update(_ newIndex: Int) {
         currentIndex = newIndex
     }
+
+    public func animate(to index: Int) {
+        update(index)
+        self.setContentOffset(CGPoint(x: self.frame.width * CGFloat(currentIndex), y: 0), animated: true)
+    }
 }
 
 extension ContentView: Pagable {
@@ -202,9 +207,9 @@ extension ContentView: Pagable {
         return nil
     }
 
-    func jump(to index: Int) {
+    public func jump(to index: Int) {
 
         update(index)
-        self.setContentOffset(CGPoint(x: self.frame.width * CGFloat(currentIndex), y: 0), animated: true)
+        self.setContentOffset(CGPoint(x: self.frame.width * CGFloat(currentIndex), y: 0), animated: false)
     }
 }

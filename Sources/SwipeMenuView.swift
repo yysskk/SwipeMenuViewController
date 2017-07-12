@@ -282,7 +282,7 @@ extension SwipeMenuView {
         isJumping = true
 
         moveTabItem(tabView: tabView, index: index)
-        contentView.jump(to: index)
+        contentView.animate(to: index)
 
         update(from: currentIndex, to: index)
     }
