@@ -70,7 +70,7 @@ open class ContentView: UIScrollView {
         isDirectionalLockEnabled = false
         alwaysBounceHorizontal = false
         scrollsToTop = false
-        bounces = false
+        bounces = true
         bouncesZoom = false
         setContentOffset(.zero, animated: false)
     }
@@ -205,6 +205,6 @@ extension ContentView: Pagable {
     func jump(to index: Int) {
 
         update(index)
-        self.setContentOffset(CGPoint(x: self.frame.width * CGFloat(currentIndex), y: 0), animated: false)
+        self.setContentOffset(CGPoint(x: self.frame.width * CGFloat(currentIndex), y: 0), animated: true)
     }
 }

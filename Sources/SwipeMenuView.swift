@@ -64,28 +64,21 @@ public struct SwipeMenuViewOptions {
 
 // MARK: - SwipeMenuViewDelegate
 
-public protocol SwipeMenuViewDelegate {
+public protocol SwipeMenuViewDelegate: class {
 
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, from fromIndex: Int, to toIndex: Int)
-
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions) -> SwipeMenuViewOptions
-}
-
-extension SwipeMenuViewDelegate {
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, from fromIndex: Int, to toIndex: Int) { }
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, isScrolling: Bool) {}
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexfrom fromIndex: Int, to toIndex: Int)
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexfrom fromIndex: Int, to toIndex: Int)
 }
 
 extension SwipeMenuViewDelegate {
 
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions) -> SwipeMenuViewOptions {
-        return options
-    }
+    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexfrom fromIndex: Int, to toIndex: Int) { }
+    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexfrom fromIndex: Int, to toIndex: Int) { }
 }
 
 // MARK: - SwipeMenuViewDataSource
 
-public protocol SwipeMenuViewDataSource {
+public protocol SwipeMenuViewDataSource: class {
 
     func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int
 
@@ -97,9 +90,9 @@ public protocol SwipeMenuViewDataSource {
 
 open class SwipeMenuView: UIView {
 
-    open var delegate: SwipeMenuViewDelegate?
+    open weak var delegate: SwipeMenuViewDelegate?
 
-    open var dataSource: SwipeMenuViewDataSource?
+    open weak var dataSource: SwipeMenuViewDataSource?
 
     open fileprivate(set) var tabView: TabView? {
         didSet {
@@ -126,7 +119,7 @@ open class SwipeMenuView: UIView {
         return dataSource?.numberOfPages(in: self) ?? 0
     }
 
-    fileprivate var isJump: Bool = false
+    fileprivate var isJumping: Bool = false
     fileprivate var isOrientationChange: Bool = false
     fileprivate var isPortrait: Bool = true
 
@@ -156,12 +149,6 @@ open class SwipeMenuView: UIView {
 
     public func reload(options: SwipeMenuViewOptions? = nil) {
 
-        isJump = true
-
-        if let delegate = delegate {
-            self.options = delegate.swipeMenuView(self, options: self.options)
-        }
-
         if let options = options {
             self.options = options
         }
@@ -178,9 +165,9 @@ open class SwipeMenuView: UIView {
     private func setup() {
 
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
-        addTapGestureHandler()
+        addTabItemGestures()
 
-        contentView = ContentView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height))
+        contentView = ContentView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height), options: options.contentView)
     }
 
     private func layout(tabView: TabView) {
@@ -233,10 +220,11 @@ open class SwipeMenuView: UIView {
     /// - parameter from    : fromIndex
     /// - parameter to      : toIndex
     fileprivate func update(from fromIndex: Int, to toIndex: Int) {
-        delegate?.swipeMenuView(self, from: fromIndex, to: toIndex)
+        delegate?.swipeMenuView(self, willChangeIndexfrom: fromIndex, to: toIndex)
         tabView?.update(toIndex)
         contentView?.update(toIndex)
         currentIndex = toIndex
+        delegate?.swipeMenuView(self, didChangeIndexfrom: fromIndex, to: toIndex)
     }
 
     func onOrientationChange(_ notification: Notification) {
@@ -267,19 +255,13 @@ extension SwipeMenuView: TabViewDataSource {
 extension SwipeMenuView {
 
     fileprivate var tapGestureRecognizer: UITapGestureRecognizer {
-        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapItemView))
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapItemView(_:)))
         gestureRecognizer.numberOfTapsRequired = 1
         gestureRecognizer.cancelsTouchesInView = false
         return gestureRecognizer
     }
 
-    fileprivate func addTapGestureHandler() {
-        tabView?.itemViews.forEach {
-            $0.addGestureRecognizer(tapGestureRecognizer)
-        }
-    }
-
-    func addTabItemGestures() {
+    fileprivate func addTabItemGestures() {
         tabView?.itemViews.forEach {
             $0.addGestureRecognizer(tapGestureRecognizer)
         }
@@ -290,7 +272,7 @@ extension SwipeMenuView {
         guard let itemView = recognizer.view as? TabItemView, let tabView = tabView, let index: Int = tabView.itemViews.index(of: itemView), let contentView = contentView else { return }
         if currentIndex == index { return }
 
-        isJump = true
+        isJumping = true
 
         moveTabItem(tabView: tabView, index: index)
         contentView.jump(to: index)
@@ -302,9 +284,10 @@ extension SwipeMenuView {
 
         switch options.tabView.addition {
         case .underline:
-            tabView.animateUnderlineView(index: index, completion: { _ in self.isJump = false })
+            tabView.animateUnderlineView(index: index, completion: { _ in self.isJumping = false })
         case .none:
-            break
+            tabView.update(index)
+            isJumping = false
         }
     }
 }
@@ -315,7 +298,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-        if isJump || isOrientationChange { return }
+        if isJumping || isOrientationChange { return }
 
         // update currentIndex
         if scrollView.contentOffset.x + 1.0 > frame.width * CGFloat(currentIndex + 1) {
@@ -329,12 +312,12 @@ extension SwipeMenuView: UIScrollViewDelegate {
         case .underline:
             moveUnderlineView(scrollView: scrollView)
         case .none:
-            break
+            tabView?.update(currentIndex)
         }
     }
 
 
-    public func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
 
         scrollView.decelerationRate = 0
         if scrollView.contentOffset.x > frame.width * (CGFloat(currentIndex) + 0.5) {

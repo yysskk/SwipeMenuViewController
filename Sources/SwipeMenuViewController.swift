@@ -29,12 +29,9 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
 
     // MARK: - SwipeMenuViewDelegate
 
-    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, from fromIndex: Int, to toIndex: Int) { }
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexfrom fromIndex: Int, to toIndex: Int) { }
 
-
-    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions) -> SwipeMenuViewOptions {
-        return options
-    }
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexfrom fromIndex: Int, to toIndex: Int) { }
 
     // MARK - SwipeMenuViewDataSource
 
