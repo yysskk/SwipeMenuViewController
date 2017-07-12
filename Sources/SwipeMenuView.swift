@@ -4,15 +4,16 @@ import UIKit
 // MARK: - SwipeMenuViewOptions
 public struct SwipeMenuViewOptions {
 
-    public enum SwipeMenuViewStyle {
-        case flexible
-// TODO: case segmented
-// TODO: case infinity
-    }
 
     public struct TabView {
 
-        public enum TabStyle {
+        public enum Style {
+            case flexible
+            case segmented
+            // TODO: case infinity
+        }
+
+        public enum Addition {
             case underline
             case none
         }
@@ -34,8 +35,9 @@ public struct SwipeMenuViewOptions {
         // self
         public var height: CGFloat = 44.0
         public var backgroundColor: UIColor = .black
-        public var style: TabStyle = .underline
-        public var isAdjustItemWidth: Bool = true
+        public var style: Style = .flexible
+        public var addition: Addition = .underline
+        public var isAdjustItemViewWidth: Bool = true
 
         // item
         public var itemView = ItemView()
@@ -48,10 +50,8 @@ public struct SwipeMenuViewOptions {
 
         // self
         public var backgroundColor: UIColor = .clear
+        public var isScrollEnabled: Bool = true
     }
-
-    // self
-    public var style: SwipeMenuViewStyle = .flexible
 
     // TabView
     public var tabView = TabView()
@@ -68,10 +68,7 @@ public protocol SwipeMenuViewDelegate {
 
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, from fromIndex: Int, to toIndex: Int)
 
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, style: SwipeMenuViewOptions.SwipeMenuViewStyle) -> SwipeMenuViewOptions.SwipeMenuViewStyle
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.TabView) -> SwipeMenuViewOptions.TabView
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.TabView.ItemView) -> SwipeMenuViewOptions.TabView.ItemView
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.ContentView) -> SwipeMenuViewOptions.ContentView
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions) -> SwipeMenuViewOptions
 }
 
 extension SwipeMenuViewDelegate {
@@ -81,19 +78,7 @@ extension SwipeMenuViewDelegate {
 
 extension SwipeMenuViewDelegate {
 
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, style: SwipeMenuViewOptions.SwipeMenuViewStyle) -> SwipeMenuViewOptions.SwipeMenuViewStyle {
-        return style
-    }
-
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.TabView) -> SwipeMenuViewOptions.TabView {
-        return options
-    }
-
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.TabView.ItemView) -> SwipeMenuViewOptions.TabView.ItemView {
-        return options
-    }
-
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions.ContentView) -> SwipeMenuViewOptions.ContentView {
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, options: SwipeMenuViewOptions) -> SwipeMenuViewOptions {
         return options
     }
 }
@@ -142,6 +127,7 @@ open class SwipeMenuView: UIView {
     }
 
     fileprivate var isJump: Bool = false
+    fileprivate var isOrientationChange: Bool = false
     fileprivate var isPortrait: Bool = true
 
     open var options = SwipeMenuViewOptions()
@@ -152,6 +138,8 @@ open class SwipeMenuView: UIView {
         if let options = options {
             self.options = options
         }
+
+        NotificationCenter.default.addObserver(self, selector: #selector(onOrientationChange(_:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
     }
 
     public required init?(coder aDecoder: NSCoder) {
@@ -160,13 +148,19 @@ open class SwipeMenuView: UIView {
 
     deinit { }
 
-    open override func layoutSubviews() {
-        super.layoutSubviews()
+    open override func didMoveToSuperview() {
+        super.didMoveToSuperview()
 
-        reload()
+        setup()
     }
 
     public func reload(options: SwipeMenuViewOptions? = nil) {
+
+        isJump = true
+
+        if let delegate = delegate {
+            self.options = delegate.swipeMenuView(self, options: self.options)
+        }
 
         if let options = options {
             self.options = options
@@ -176,17 +170,12 @@ open class SwipeMenuView: UIView {
         setup()
 
         jump(to: currentIndex)
+
+        isOrientationChange = false
     }
 
     // MARK: - Setup
     private func setup() {
-
-        if let delegate = delegate {
-            options.style = delegate.swipeMenuView(self, style: options.style)
-            options.tabView = delegate.swipeMenuView(self, options: options.tabView)
-            options.tabView.itemView = delegate.swipeMenuView(self, options: options.tabView.itemView)
-            options.contentView = delegate.swipeMenuView(self, options: options.contentView)
-        }
 
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         addTapGestureHandler()
@@ -219,13 +208,17 @@ open class SwipeMenuView: UIView {
     }
 
     private func reset() {
+
+        if !isOrientationChange {
+            currentIndex = 0
+        }
+
         if let tabView = tabView, let contentView = contentView {
             tabView.removeFromSuperview()
             contentView.removeFromSuperview()
+            tabView.reset()
+            contentView.reset()
         }
-
-        tabView = nil
-        contentView = nil
     }
 
     public func jump(to index: Int) {
@@ -244,6 +237,15 @@ open class SwipeMenuView: UIView {
         tabView?.update(toIndex)
         contentView?.update(toIndex)
         currentIndex = toIndex
+    }
+
+    func onOrientationChange(_ notification: Notification) {
+
+        let deviceOrientation: UIDeviceOrientation!  = UIDevice.current.orientation
+        isPortrait = !UIDeviceOrientationIsLandscape(deviceOrientation)
+        isOrientationChange = true
+
+        reload()
     }
 }
 
@@ -298,7 +300,7 @@ extension SwipeMenuView {
 
     private func moveTabItem(tabView: TabView, index: Int) {
 
-        switch options.tabView.style {
+        switch options.tabView.addition {
         case .underline:
             tabView.animateUnderlineView(index: index, completion: { _ in self.isJump = false })
         case .none:
@@ -313,12 +315,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-        if isPortrait != (frame.height > frame.width) {
-            isPortrait = !isPortrait
-            return
-        }
-
-        if isJump { return }
+        if isJump || isOrientationChange { return }
 
         // update currentIndex
         if scrollView.contentOffset.x + 1.0 > frame.width * CGFloat(currentIndex + 1) {
@@ -328,7 +325,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
         }
 
 
-        switch options.tabView.style {
+        switch options.tabView.addition {
         case .underline:
             moveUnderlineView(scrollView: scrollView)
         case .none:

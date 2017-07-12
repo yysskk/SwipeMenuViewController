@@ -54,6 +54,9 @@ open class ContentView: UIScrollView {
 
     fileprivate func setup() {
 
+        guard let dataSource = dataSource else { return }
+        if dataSource.numberOfPages(in: self) <= 0 { return }
+
         setupScrollView()
         setupContainerView()
         setupPages()
@@ -63,12 +66,13 @@ open class ContentView: UIScrollView {
         backgroundColor = options.backgroundColor
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
-        isScrollEnabled = true
+        isScrollEnabled = options.isScrollEnabled
         isDirectionalLockEnabled = false
         alwaysBounceHorizontal = false
         scrollsToTop = false
         bounces = false
         bouncesZoom = false
+        setContentOffset(.zero, animated: false)
     }
 
     private func setupContainerView() {
@@ -151,6 +155,11 @@ open class ContentView: UIScrollView {
 
         self.layoutIfNeeded()
         self.layoutSubviews()
+    }
+
+    public func reset() {
+        pageViews = []
+        currentIndex = 0
     }
 
     public func reload() {

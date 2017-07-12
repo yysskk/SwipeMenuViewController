@@ -51,11 +51,13 @@ open class TabView: UIScrollView {
     // MARK: - Setup
 
     fileprivate func setup() {
+
+        reset()
         setupScrollView()
         setupContainerView()
         setupTabItemViews()
 
-        switch options.style {
+        switch options.addition {
         case .underline:
             setupUnderlineView()
         case .none:
@@ -77,11 +79,26 @@ open class TabView: UIScrollView {
 
     fileprivate func setupContainerView() {
         let itemCount = dataSource.numberOfItems(in: self)
-        let containerWidth = options.itemView.width * CGFloat(itemCount)
-        contentSize = CGSize(width: containerWidth, height: options.height)
-        containerView.frame = CGRect(x: 0, y: 0, width: containerWidth, height: frame.height - options.underlineView.height)
+        var containerHeight: CGFloat = 0.0
+
+        switch options.addition {
+        case .underline:
+            containerHeight = frame.height - options.underlineView.height
+        case .none:
+            containerHeight = frame.height
+        }
+
+        switch options.style {
+        case .flexible:
+            let containerWidth = options.itemView.width * CGFloat(itemCount)
+            contentSize = CGSize(width: containerWidth, height: options.height)
+            containerView.frame = CGRect(x: 0, y: 0, width: containerWidth, height: containerHeight)
+        case .segmented:
+            contentSize = CGSize(width: frame.width, height: options.height)
+            containerView.frame = CGRect(x: 0, y: 0, width: frame.width, height: containerHeight)
+        }
+
         containerView.backgroundColor = .clear
-        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
@@ -95,7 +112,7 @@ open class TabView: UIScrollView {
         var xPosition: CGFloat = 0
 
         for index in 0..<itemCount {
-            let tabItemView = TabItemView(frame: CGRect(x: xPosition, y: 0, width: options.itemView.width, height: frame.height - options.underlineView.height))
+            let tabItemView = TabItemView(frame: CGRect(x: xPosition, y: 0, width: options.itemView.width, height: containerView.frame.size.height))
             tabItemView.translatesAutoresizingMaskIntoConstraints = false
             tabItemView.backgroundColor = options.backgroundColor
             if let title = dataSource.tabView(self, titleForItemAt: index) {
@@ -106,9 +123,30 @@ open class TabView: UIScrollView {
 
             tabItemView.isSelected = index == 0
 
-            if options.isAdjustItemWidth {
-                var adjustCellSize = tabItemView.frame.size
-                adjustCellSize.width = tabItemView.titleLabel.sizeThatFits(containerView.frame.size).width + options.itemView.margin * 2
+            switch options.style {
+            case .flexible:
+                if options.isAdjustItemViewWidth {
+                    var adjustCellSize = tabItemView.frame.size
+                    adjustCellSize.width = tabItemView.titleLabel.sizeThatFits(containerView.frame.size).width + options.itemView.margin * 2
+                    tabItemView.frame.size = adjustCellSize
+                    cacheAdjustCellSizes.append(adjustCellSize)
+
+                    containerView.addSubview(tabItemView)
+                    itemViews.append(tabItemView)
+
+                    NSLayoutConstraint.activate([
+                        tabItemView.widthAnchor.constraint(equalToConstant: adjustCellSize.width)
+                        ])
+                } else {
+                    containerView.addSubview(tabItemView)
+                    itemViews.append(tabItemView)
+
+                    NSLayoutConstraint.activate([
+                        tabItemView.widthAnchor.constraint(equalToConstant: options.itemView.width)
+                        ])
+                }
+            case .segmented:
+                let adjustCellSize = CGSize(width: frame.width / CGFloat(itemCount), height: tabItemView.frame.size.height)
                 tabItemView.frame.size = adjustCellSize
                 cacheAdjustCellSizes.append(adjustCellSize)
 
@@ -117,13 +155,6 @@ open class TabView: UIScrollView {
 
                 NSLayoutConstraint.activate([
                     tabItemView.widthAnchor.constraint(equalToConstant: adjustCellSize.width)
-                ])
-            } else {
-                containerView.addSubview(tabItemView)
-                itemViews.append(tabItemView)
-
-                NSLayoutConstraint.activate([
-                    tabItemView.widthAnchor.constraint(equalToConstant: options.itemView.width)
                 ])
             }
 
@@ -151,6 +182,13 @@ open class TabView: UIScrollView {
             containerView.widthAnchor.constraint(equalToConstant: containerWidth),
             containerView.heightAnchor.constraint(equalToConstant: options.height - options.underlineView.height)
         ])
+    }
+
+    public func reset() {
+        
+        itemViews = []
+        currentIndex = 0
+        cacheAdjustCellSizes = []
     }
 
     /// focus target
@@ -215,7 +253,7 @@ extension TabView {
             let target = self.currentItem
             self.underlineView.frame.origin.x = target.frame.origin.x + self.options.underlineView.margin
 
-            if self.options.isAdjustItemWidth {
+            if self.options.isAdjustItemViewWidth {
                 self.underlineView.frame.size.width = self.cacheAdjustCellSizes[index].width - self.options.underlineView.margin * 2
             }
 
@@ -262,7 +300,7 @@ extension TabView {
     func jump(to index: Int) {
         update(index)
 
-        if options.style == .underline {
+        if options.addition == .underline {
             underlineView.frame.origin.x = currentItem.frame.origin.x
             underlineView.frame.size.width = currentItem.frame.size.width
         }
