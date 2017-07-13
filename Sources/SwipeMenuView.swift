@@ -148,23 +148,25 @@ open class SwipeMenuView: UIView {
         setup()
     }
 
-    public func reload(options: SwipeMenuViewOptions? = nil) {
+    public func reload(options: SwipeMenuViewOptions? = nil, isOrientationChange: Bool = false) {
 
         if let options = options {
             self.options = options
         }
 
+        self.isOrientationChange = isOrientationChange
+        
         reset()
         setup()
 
         jump(to: currentIndex)
 
-        isOrientationChange = false
+        self.isOrientationChange = false
     }
 
     // MARK: - Setup
     private func setup() {
-
+        print(options.tabView.height)
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         addTabItemGestures()
 
@@ -237,11 +239,10 @@ open class SwipeMenuView: UIView {
 
     func onOrientationChange(_ notification: Notification) {
 
-        let deviceOrientation: UIDeviceOrientation!  = UIDevice.current.orientation
+        let deviceOrientation: UIDeviceOrientation  = UIDevice.current.orientation
         isPortrait = !UIDeviceOrientationIsLandscape(deviceOrientation)
-        isOrientationChange = true
 
-        reload()
+        reload(isOrientationChange: true)
     }
 }
 
@@ -282,8 +283,8 @@ extension SwipeMenuView {
 
         isJumping = true
 
-        moveTabItem(tabView: tabView, index: index)
         contentView.animate(to: index)
+        moveTabItem(tabView: tabView, index: index)
 
         update(from: currentIndex, to: index)
     }
@@ -292,10 +293,9 @@ extension SwipeMenuView {
 
         switch options.tabView.addition {
         case .underline:
-            tabView.animateUnderlineView(index: index, completion: { _ in self.isJumping = false })
+            tabView.animateUnderlineView(index: index, completion: nil)
         case .none:
             tabView.update(index)
-            isJumping = false
         }
     }
 }
@@ -305,6 +305,8 @@ extension SwipeMenuView {
 extension SwipeMenuView: UIScrollViewDelegate {
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+
+        if isJumping || isOrientationChange { return }
         updateTabViewAddition(by: scrollView)
     }
 
@@ -326,7 +328,12 @@ extension SwipeMenuView: UIScrollViewDelegate {
     }
 
     public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        if isJumping || isOrientationChange { return }
+
+        if isJumping || isOrientationChange {
+            isJumping = false
+            isOrientationChange = false
+            return
+        }
 
         // update currentIndex
         if scrollView.contentOffset.x + 1.0 > frame.width * CGFloat(currentIndex + 1) {
@@ -337,7 +344,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
         updateTabViewAddition(by: scrollView)
     }
-    
+
     private func setContentOffset(of scrollView: UIScrollView) {
 
         if scrollView.contentOffset.x > frame.width * (CGFloat(currentIndex) + 0.5) {

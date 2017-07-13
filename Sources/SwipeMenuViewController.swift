@@ -15,6 +15,10 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
         addSwipeMenuViewConstraints()
     }
 
+    open override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
+        swipeMenuView.reload(isOrientationChange: true)
+    }
+
     private func addSwipeMenuViewConstraints() {
 
         swipeMenuView.translatesAutoresizingMaskIntoConstraints = false

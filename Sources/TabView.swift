@@ -213,7 +213,6 @@ open class TabView: UIScrollView {
 
         currentIndex = index
         updateSelectedItem(by: currentIndex)
-        focus(on: currentItem)
     }
 
     /// update selected item by new index
