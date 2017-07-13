@@ -305,23 +305,7 @@ extension SwipeMenuView {
 extension SwipeMenuView: UIScrollViewDelegate {
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
-        if isJumping || isOrientationChange { return }
-
-        // update currentIndex
-        if scrollView.contentOffset.x + 1.0 > frame.width * CGFloat(currentIndex + 1) {
-            update(from: currentIndex, to: currentIndex + 1)
-        } else if scrollView.contentOffset.x - 1.0 < frame.width * CGFloat(currentIndex - 1) {
-            update(from: currentIndex, to: currentIndex - 1)
-        }
-
-
-        switch options.tabView.addition {
-        case .underline:
-            moveUnderlineView(scrollView: scrollView)
-        case .none:
-            tabView?.update(currentIndex)
-        }
+        updateTabViewAddition(by: scrollView)
     }
 
     public func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
@@ -341,6 +325,19 @@ extension SwipeMenuView: UIScrollViewDelegate {
         setContentOffset(of: scrollView)
     }
 
+    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        if isJumping || isOrientationChange { return }
+
+        // update currentIndex
+        if scrollView.contentOffset.x + 1.0 > frame.width * CGFloat(currentIndex + 1) {
+            update(from: currentIndex, to: currentIndex + 1)
+        } else if scrollView.contentOffset.x - 1.0 < frame.width * CGFloat(currentIndex - 1) {
+            update(from: currentIndex, to: currentIndex - 1)
+        }
+
+        updateTabViewAddition(by: scrollView)
+    }
+    
     private func setContentOffset(of scrollView: UIScrollView) {
 
         if scrollView.contentOffset.x > frame.width * (CGFloat(currentIndex) + 0.5) {
@@ -352,6 +349,16 @@ extension SwipeMenuView: UIScrollViewDelegate {
         }
     }
 
+    /// update addition in tab view
+    private func updateTabViewAddition(by scrollView: UIScrollView) {
+        switch options.tabView.addition {
+        case .underline:
+            moveUnderlineView(scrollView: scrollView)
+        case .none:
+            tabView?.update(currentIndex)
+        }
+    }
+
     /// update underbar position
     private func moveUnderlineView(scrollView: UIScrollView) {
 
@@ -360,7 +367,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
             let ratio = scrollView.contentOffset.x.truncatingRemainder(dividingBy: contentView.frame.width) / contentView.frame.width
 
             switch scrollView.contentOffset.x {
-            case let offset where offset > frame.width * CGFloat(currentIndex):
+            case let offset where offset >= frame.width * CGFloat(currentIndex):
                 tabView.moveUnderlineView(index: currentIndex, ratio: ratio, direction: .forward)
             case let offset where offset < frame.width * CGFloat(currentIndex):
                 tabView.moveUnderlineView(index: currentIndex, ratio: ratio, direction: .reverse)
