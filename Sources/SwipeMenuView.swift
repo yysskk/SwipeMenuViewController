@@ -51,6 +51,7 @@ public struct SwipeMenuViewOptions {
         // self
         public var backgroundColor: UIColor = .clear
         public var isScrollEnabled: Bool = true
+        public var pagingPanVelocity: CGFloat = 1000.0
     }
 
     // TabView
@@ -324,6 +325,15 @@ extension SwipeMenuView: UIScrollViewDelegate {
     }
 
     public func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
+
+        if scrollView.panGestureRecognizer.velocity(in: self).x < options.contentView.pagingPanVelocity * -1 && currentIndex < pageCount - 1 {
+            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex + 1), y: 0), animated: true)
+            return
+        } else if scrollView.panGestureRecognizer.velocity(in: self).x > options.contentView.pagingPanVelocity && currentIndex > 0 {
+            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex - 1), y: 0), animated: true)
+            return
+        }
+
         setContentOffset(of: scrollView)
      }
 
