@@ -14,9 +14,11 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
         view.addSubview(swipeMenuView)
         addSwipeMenuViewConstraints()
     }
-
-    open override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
-        swipeMenuView.reload(isOrientationChange: true)
+    
+    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        swipeMenuView.isOrientationChange = true
+        swipeMenuView.frame.size = size
     }
 
     private func addSwipeMenuViewConstraints() {

@@ -121,8 +121,8 @@ open class SwipeMenuView: UIView {
     }
 
     fileprivate var isJumping: Bool = false
-    fileprivate var isOrientationChange: Bool = false
     fileprivate var isPortrait: Bool = true
+    public var isOrientationChange: Bool = false
 
     open var options = SwipeMenuViewOptions()
 
@@ -142,6 +142,12 @@ open class SwipeMenuView: UIView {
 
     deinit { }
 
+    open override func layoutSubviews() {
+        super.layoutSubviews()
+
+        reload(isOrientationChange: true)
+    }
+    
     open override func didMoveToSuperview() {
         super.didMoveToSuperview()
 
@@ -166,7 +172,7 @@ open class SwipeMenuView: UIView {
 
     // MARK: - Setup
     private func setup() {
-        print(options.tabView.height)
+
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         addTabItemGestures()
 
@@ -308,6 +314,15 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
         if isJumping || isOrientationChange { return }
         updateTabViewAddition(by: scrollView)
+
+        // update currentIndex
+        if scrollView.contentOffset.x + 1.0 > frame.width * CGFloat(currentIndex + 1) {
+            update(from: currentIndex, to: currentIndex + 1)
+            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex), y: 0), animated: false)
+        } else if scrollView.contentOffset.x - 1.0 < frame.width * CGFloat(currentIndex - 1) {
+            update(from: currentIndex, to: currentIndex - 1)
+            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex), y: 0), animated: false)
+        }
     }
 
     public func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
@@ -333,13 +348,6 @@ extension SwipeMenuView: UIScrollViewDelegate {
             isJumping = false
             isOrientationChange = false
             return
-        }
-
-        // update currentIndex
-        if scrollView.contentOffset.x + 1.0 > frame.width * CGFloat(currentIndex + 1) {
-            update(from: currentIndex, to: currentIndex + 1)
-        } else if scrollView.contentOffset.x - 1.0 < frame.width * CGFloat(currentIndex - 1) {
-            update(from: currentIndex, to: currentIndex - 1)
         }
 
         updateTabViewAddition(by: scrollView)
