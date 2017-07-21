@@ -34,6 +34,7 @@ public struct SwipeMenuViewOptions {
 
         // self
         public var height: CGFloat = 44.0
+        public var margin: CGFloat = 9.0
         public var backgroundColor: UIColor = .black
         public var style: Style = .flexible
         public var addition: Addition = .underline

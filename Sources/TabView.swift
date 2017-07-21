@@ -92,7 +92,7 @@ open class TabView: UIScrollView {
         case .flexible:
             let containerWidth = options.itemView.width * CGFloat(itemCount)
             contentSize = CGSize(width: containerWidth, height: options.height)
-            containerView.frame = CGRect(x: 0, y: 0, width: containerWidth, height: containerHeight)
+            containerView.frame = CGRect(x: 0, y: 0, width: containerWidth + options.margin * 2, height: containerHeight)
         case .segmented:
             contentSize = CGSize(width: frame.width, height: options.height)
             containerView.frame = CGRect(x: 0, y: 0, width: frame.width, height: containerHeight)
@@ -109,7 +109,7 @@ open class TabView: UIScrollView {
 
         let itemCount = dataSource.numberOfItems(in: self)
 
-        var xPosition: CGFloat = 0
+        var xPosition: CGFloat = options.margin
 
         for index in 0..<itemCount {
             let tabItemView = TabItemView(frame: CGRect(x: xPosition, y: 0, width: options.itemView.width, height: containerView.frame.size.height))
@@ -146,7 +146,7 @@ open class TabView: UIScrollView {
                         ])
                 }
             case .segmented:
-                let adjustCellSize = CGSize(width: frame.width / CGFloat(itemCount), height: tabItemView.frame.size.height)
+                let adjustCellSize = CGSize(width: (frame.width - options.margin * 2) / CGFloat(itemCount), height: tabItemView.frame.size.height)
                 tabItemView.frame.size = adjustCellSize
                 cacheAdjustCellSizes.append(adjustCellSize)
 
@@ -166,6 +166,8 @@ open class TabView: UIScrollView {
 
             xPosition += tabItemView.frame.size.width
         }
+
+        xPosition += options.margin
 
         layout(containerView: containerView, containerWidth: xPosition)
     }
