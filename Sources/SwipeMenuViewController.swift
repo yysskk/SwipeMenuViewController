@@ -39,7 +39,7 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
 
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexfrom fromIndex: Int, to toIndex: Int) { }
 
-    // MARK - SwipeMenuViewDataSource
+    // MARK: - SwipeMenuViewDataSource
 
     open func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
         return 0

@@ -4,7 +4,6 @@ import UIKit
 // MARK: - SwipeMenuViewOptions
 public struct SwipeMenuViewOptions {
 
-
     public struct TabView {
 
         public enum Style {
@@ -53,6 +52,7 @@ public struct SwipeMenuViewOptions {
         public var backgroundColor: UIColor = .clear
         public var isScrollEnabled: Bool = true
         public var pagingPanVelocity: CGFloat = 1000.0
+        public var bounces: Bool = true
     }
 
     // TabView
@@ -138,7 +138,7 @@ open class SwipeMenuView: UIView {
     }
 
     public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
 
     deinit { }
@@ -148,7 +148,7 @@ open class SwipeMenuView: UIView {
 
         reload(isOrientationChange: true)
     }
-    
+
     open override func didMoveToSuperview() {
         super.didMoveToSuperview()
 
@@ -162,7 +162,7 @@ open class SwipeMenuView: UIView {
         }
 
         self.isOrientationChange = isOrientationChange
-        
+
         reset()
         setup()
 
@@ -314,33 +314,15 @@ extension SwipeMenuView: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
         if isJumping || isOrientationChange { return }
-        updateTabViewAddition(by: scrollView)
 
         // update currentIndex
         if scrollView.contentOffset.x + 1.0 > frame.width * CGFloat(currentIndex + 1) {
             update(from: currentIndex, to: currentIndex + 1)
-            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex), y: 0), animated: false)
         } else if scrollView.contentOffset.x - 1.0 < frame.width * CGFloat(currentIndex - 1) {
             update(from: currentIndex, to: currentIndex - 1)
-            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex), y: 0), animated: false)
-        }
-    }
-
-    public func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-
-        if scrollView.panGestureRecognizer.velocity(in: self).x < options.contentView.pagingPanVelocity * -1 && currentIndex < pageCount - 1 {
-            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex + 1), y: 0), animated: true)
-            return
-        } else if scrollView.panGestureRecognizer.velocity(in: self).x > options.contentView.pagingPanVelocity && currentIndex > 0 {
-            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex - 1), y: 0), animated: true)
-            return
         }
 
-        setContentOffset(of: scrollView)
-     }
-
-    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        setContentOffset(of: scrollView)
+        updateTabViewAddition(by: scrollView)
     }
 
     public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
@@ -352,17 +334,6 @@ extension SwipeMenuView: UIScrollViewDelegate {
         }
 
         updateTabViewAddition(by: scrollView)
-    }
-
-    private func setContentOffset(of scrollView: UIScrollView) {
-
-        if scrollView.contentOffset.x > frame.width * (CGFloat(currentIndex) + 0.5) {
-            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex + 1), y: 0), animated: true)
-        } else if scrollView.contentOffset.x < frame.width * (CGFloat(currentIndex) - 0.5) {
-            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex - 1), y: 0), animated: true)
-        } else {
-            scrollView.setContentOffset(CGPoint(x: frame.width * CGFloat(currentIndex), y: 0), animated: true)
-        }
     }
 
     /// update addition in tab view

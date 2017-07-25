@@ -67,10 +67,11 @@ open class ContentView: UIScrollView {
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
         isScrollEnabled = options.isScrollEnabled
+        isPagingEnabled = true
         isDirectionalLockEnabled = false
         alwaysBounceHorizontal = false
         scrollsToTop = false
-        bounces = true
+        bounces = options.bounces
         bouncesZoom = false
         setContentOffset(.zero, animated: false)
     }
