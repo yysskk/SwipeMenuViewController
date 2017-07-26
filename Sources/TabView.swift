@@ -1,4 +1,3 @@
-
 import UIKit
 
 public protocol TabViewDataSource {
@@ -155,14 +154,14 @@ open class TabView: UIScrollView {
 
                 NSLayoutConstraint.activate([
                     tabItemView.widthAnchor.constraint(equalToConstant: adjustCellSize.width)
-                ])
+                    ])
             }
 
             NSLayoutConstraint.activate([
                 tabItemView.topAnchor.constraint(equalTo: containerView.topAnchor),
                 tabItemView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: xPosition),
                 tabItemView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-            ])
+                ])
 
             xPosition += tabItemView.frame.size.width
         }
@@ -176,26 +175,23 @@ open class TabView: UIScrollView {
 
         containerView.frame.size.width = containerWidth
         self.contentSize.width = containerWidth
-        
+
         containerView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: self.topAnchor),
             containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             containerView.widthAnchor.constraint(equalToConstant: containerWidth),
             containerView.heightAnchor.constraint(equalToConstant: options.height - options.underlineView.height)
-        ])
+            ])
     }
 
     public func reset() {
-        
+
         itemViews = []
         currentIndex = 0
         cacheAdjustCellSizes = []
     }
 
-    /// focus target
-    /// - parameter target: target view
-    /// - parameter animated: it is false if not animate
     fileprivate func focus(on target: UIView, animated: Bool = true) {
         let offset = target.center.x - self.frame.width / 2
         if offset < 0 || self.frame.width > containerView.frame.width {
@@ -207,8 +203,6 @@ open class TabView: UIScrollView {
         }
     }
 
-    /// update index
-    /// - parameter index: newIndex
     public func update(_ index: Int) {
 
         if currentIndex == index { return }
@@ -217,8 +211,6 @@ open class TabView: UIScrollView {
         updateSelectedItem(by: currentIndex)
     }
 
-    /// update selected item by new index
-    /// - parameter index: newIndex
     private func updateSelectedItem(by newIndex: Int) {
         for (i, itemView) in itemViews.enumerated() {
             itemView.isSelected = i == newIndex
@@ -290,22 +282,22 @@ extension TabView {
         }
         return itemViews[currentIndex]
     }
-
+    
     var previousItem: UIView {
         if currentIndex > 0 {
             return itemViews[currentIndex - 1]
         }
         return itemViews[currentIndex]
     }
-
+    
     func jump(to index: Int) {
         update(index)
-
+        
         if options.addition == .underline {
             underlineView.frame.origin.x = currentItem.frame.origin.x
             underlineView.frame.size.width = currentItem.frame.size.width
         }
-
+        
         focus(on: currentItem, animated: false)
     }
 }

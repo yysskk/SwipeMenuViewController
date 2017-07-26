@@ -39,11 +39,11 @@ class ViewController: SwipeMenuViewController {
 
     // MARK: - SwipeMenuViewDelegate
 
-    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexfrom fromIndex: Int, to toIndex: Int) {
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) {
         print("will change from section\(fromIndex + 1)  to section\(toIndex + 1)")
     }
 
-    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexfrom fromIndex: Int, to toIndex: Int) {
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int) {
         print("did change from section\(fromIndex + 1)  to section\(toIndex + 1)")
     }
 

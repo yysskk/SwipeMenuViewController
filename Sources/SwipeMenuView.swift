@@ -1,4 +1,3 @@
-
 import UIKit
 
 // MARK: - SwipeMenuViewOptions
@@ -27,13 +26,13 @@ public struct SwipeMenuViewOptions {
         public struct UndelineView {
             public var height: CGFloat = 2.0
             public var margin: CGFloat = 0.0
-            public var backgroundColor: UIColor = UIColor(red: 111/255, green: 185/255, blue: 0, alpha: 1.0)
+            public var backgroundColor: UIColor = .green
             public var animationDuration: CGFloat = 0.3
         }
 
         // self
         public var height: CGFloat = 44.0
-        public var margin: CGFloat = 9.0
+        public var margin: CGFloat = 0.0
         public var backgroundColor: UIColor = .black
         public var style: Style = .flexible
         public var addition: Addition = .underline
@@ -46,21 +45,19 @@ public struct SwipeMenuViewOptions {
         public var underlineView = UndelineView()
     }
 
-    public struct ContentView {
+    public struct ContentScrollView {
 
         // self
         public var backgroundColor: UIColor = .clear
         public var isScrollEnabled: Bool = true
-        public var pagingPanVelocity: CGFloat = 1000.0
-        public var bounces: Bool = true
     }
 
     // TabView
     public var tabView = TabView()
 
-    // ContentView
-    public var contentView = ContentView()
-    
+    // ContentScrollView
+    public var contentScrollView = ContentScrollView()
+
     public init() { }
 }
 
@@ -68,14 +65,14 @@ public struct SwipeMenuViewOptions {
 
 public protocol SwipeMenuViewDelegate: class {
 
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexfrom fromIndex: Int, to toIndex: Int)
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexfrom fromIndex: Int, to toIndex: Int)
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int)
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int)
 }
 
 extension SwipeMenuViewDelegate {
 
-    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexfrom fromIndex: Int, to toIndex: Int) { }
-    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexfrom fromIndex: Int, to toIndex: Int) { }
+    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
+    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
 }
 
 // MARK: - SwipeMenuViewDataSource
@@ -105,13 +102,13 @@ open class SwipeMenuView: UIView {
         }
     }
 
-    open fileprivate(set) var contentView: ContentView? {
+    open fileprivate(set) var contentScrollView: ContentScrollView? {
         didSet {
-            guard let contentView = contentView else { return }
-            contentView.delegate = self
-            contentView.dataSource = self
-            addSubview(contentView)
-            layout(contentView: contentView)
+            guard let contentScrollView = contentScrollView else { return }
+            contentScrollView.delegate = self
+            contentScrollView.dataSource = self
+            addSubview(contentScrollView)
+            layout(contentScrollView: contentScrollView)
         }
     }
 
@@ -125,19 +122,25 @@ open class SwipeMenuView: UIView {
     fileprivate var isPortrait: Bool = true
     public var isOrientationChange: Bool = false
 
-    open var options = SwipeMenuViewOptions()
+    open var options: SwipeMenuViewOptions
 
     public init(frame: CGRect, options: SwipeMenuViewOptions? = nil) {
-        super.init(frame: frame)
 
         if let options = options {
             self.options = options
+        } else {
+            self.options = .init()
         }
+
+        super.init(frame: frame)
 
         NotificationCenter.default.addObserver(self, selector: #selector(onOrientationChange(_:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
     }
 
     public required init?(coder aDecoder: NSCoder) {
+
+        self.options = .init()
+
         super.init(coder: aDecoder)
     }
 
@@ -177,7 +180,7 @@ open class SwipeMenuView: UIView {
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         addTabItemGestures()
 
-        contentView = ContentView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height), options: options.contentView)
+        contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height), options: options.contentScrollView)
     }
 
     private func layout(tabView: TabView) {
@@ -189,19 +192,19 @@ open class SwipeMenuView: UIView {
             tabView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             tabView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             tabView.heightAnchor.constraint(equalToConstant: options.tabView.height)
-        ])
+            ])
     }
 
-    private func layout(contentView: ContentView) {
+    private func layout(contentScrollView: ContentScrollView) {
 
-        contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentScrollView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: self.topAnchor, constant: options.tabView.height),
-            contentView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
-        ])
+            contentScrollView.topAnchor.constraint(equalTo: self.topAnchor, constant: options.tabView.height),
+            contentScrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            contentScrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            contentScrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            ])
     }
 
     private func reset() {
@@ -210,19 +213,19 @@ open class SwipeMenuView: UIView {
             currentIndex = 0
         }
 
-        if let tabView = tabView, let contentView = contentView {
+        if let tabView = tabView, let contentScrollView = contentScrollView {
             tabView.removeFromSuperview()
-            contentView.removeFromSuperview()
+            contentScrollView.removeFromSuperview()
             tabView.reset()
-            contentView.reset()
+            contentScrollView.reset()
         }
     }
 
     public func jump(to index: Int) {
 
-        if let tabView = tabView, let contentView = contentView {
+        if let tabView = tabView, let contentScrollView = contentScrollView {
             tabView.jump(to: index)
-            contentView.jump(to: index)
+            contentScrollView.jump(to: index, animated: false)
         }
     }
 
@@ -232,15 +235,15 @@ open class SwipeMenuView: UIView {
     fileprivate func update(from fromIndex: Int, to toIndex: Int) {
 
         if !isOrientationChange {
-            delegate?.swipeMenuView(self, willChangeIndexfrom: fromIndex, to: toIndex)
+            delegate?.swipeMenuView(self, willChangeIndexFrom: fromIndex, to: toIndex)
         }
 
         tabView?.update(toIndex)
-        contentView?.update(toIndex)
+        contentScrollView?.update(toIndex)
         currentIndex = toIndex
 
         if !isOrientationChange {
-            delegate?.swipeMenuView(self, didChangeIndexfrom: fromIndex, to: toIndex)
+            delegate?.swipeMenuView(self, didChangeIndexFrom: fromIndex, to: toIndex)
         }
     }
 
@@ -285,12 +288,12 @@ extension SwipeMenuView {
 
     func tapItemView(_ recognizer: UITapGestureRecognizer) {
 
-        guard let itemView = recognizer.view as? TabItemView, let tabView = tabView, let index: Int = tabView.itemViews.index(of: itemView), let contentView = contentView else { return }
+        guard let itemView = recognizer.view as? TabItemView, let tabView = tabView, let index: Int = tabView.itemViews.index(of: itemView), let contentScrollView = contentScrollView else { return }
         if currentIndex == index { return }
 
         isJumping = true
 
-        contentView.animate(to: index)
+        contentScrollView.jump(to: index, animated: true)
         moveTabItem(tabView: tabView, index: index)
 
         update(from: currentIndex, to: index)
@@ -316,9 +319,9 @@ extension SwipeMenuView: UIScrollViewDelegate {
         if isJumping || isOrientationChange { return }
 
         // update currentIndex
-        if scrollView.contentOffset.x + 1.0 > frame.width * CGFloat(currentIndex + 1) {
+        if scrollView.contentOffset.x >= frame.width * CGFloat(currentIndex + 1) {
             update(from: currentIndex, to: currentIndex + 1)
-        } else if scrollView.contentOffset.x - 1.0 < frame.width * CGFloat(currentIndex - 1) {
+        } else if scrollView.contentOffset.x <= frame.width * CGFloat(currentIndex - 1) {
             update(from: currentIndex, to: currentIndex - 1)
         }
 
@@ -349,9 +352,9 @@ extension SwipeMenuView: UIScrollViewDelegate {
     /// update underbar position
     private func moveUnderlineView(scrollView: UIScrollView) {
 
-        if let tabView = tabView, let contentView = contentView {
+        if let tabView = tabView, let contentScrollView = contentScrollView {
 
-            let ratio = scrollView.contentOffset.x.truncatingRemainder(dividingBy: contentView.frame.width) / contentView.frame.width
+            let ratio = scrollView.contentOffset.x.truncatingRemainder(dividingBy: contentScrollView.frame.width) / contentScrollView.frame.width
 
             switch scrollView.contentOffset.x {
             case let offset where offset >= frame.width * CGFloat(currentIndex):
@@ -365,15 +368,15 @@ extension SwipeMenuView: UIScrollViewDelegate {
     }
 }
 
-// MARK: - ContentViewDataSource
+// MARK: - ContentScrollViewDataSource
 
-extension SwipeMenuView: ContentViewDataSource {
+extension SwipeMenuView: ContentScrollViewDataSource {
 
-    public func numberOfPages(in contentView: ContentView) -> Int {
+    public func numberOfPages(in contentScrollView: ContentScrollView) -> Int {
         return dataSource?.numberOfPages(in: self) ?? 0
     }
 
-    public func contentView(_ contentView: ContentView, viewForPageAt index: Int) -> UIView? {
+    public func contentScrollView(_ contentScrollView: ContentScrollView, viewForPageAt index: Int) -> UIView? {
         return dataSource?.swipeMenuView(self, viewControllerForPageAt: index).view
     }
 }

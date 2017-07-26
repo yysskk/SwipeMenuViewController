@@ -38,7 +38,7 @@ class PopupViewController: UIViewController {
             tabAdditionSegmentedControl.selectedSegmentIndex = 1
         }
 
-        if options.contentView.isScrollEnabled {
+        if options.contentScrollView.isScrollEnabled {
             contentScrolEnabledSegmentedControl.selectedSegmentIndex = 0
         } else {
             contentScrolEnabledSegmentedControl.selectedSegmentIndex = 1
@@ -115,9 +115,9 @@ class PopupViewController: UIViewController {
 
         switch sender.selectedSegmentIndex {
         case 0:
-            options.contentView.isScrollEnabled = true
+            options.contentScrollView.isScrollEnabled = true
         case 1:
-            options.contentView.isScrollEnabled = false
+            options.contentScrollView.isScrollEnabled = false
         default:
             break
         }
