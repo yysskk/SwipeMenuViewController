@@ -11,15 +11,9 @@ open class ContentScrollView: UIScrollView {
 
     open var dataSource: ContentScrollViewDataSource?
 
-    var pageViews: [UIView] = [] {
-        didSet {
-            pageCount = pageViews.count
-        }
-    }
+    fileprivate var pageViews: [UIView] = []
 
     fileprivate let containerView: UIView = UIView()
-
-    public private(set) var pageCount: Int = 0
 
     fileprivate var currentIndex: Int = 0
 
@@ -119,7 +113,7 @@ open class ContentScrollView: UIScrollView {
             pageViews[0].widthAnchor.constraint(equalTo: self.widthAnchor),
             pageViews[0].heightAnchor.constraint(equalTo: containerView.heightAnchor),
             pageViews[0].leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            pageViews[pageCount-1].trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+            pageViews[pageViews.count-1].trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
             ])
     }
 
@@ -144,7 +138,7 @@ extension ContentScrollView {
 
     var currentPage: UIView? {
 
-        if currentIndex < pageCount && currentIndex >= 0 {
+        if currentIndex < pageViews.count && currentIndex >= 0 {
             return pageViews[currentIndex]
         }
 
@@ -153,7 +147,7 @@ extension ContentScrollView {
 
     var nextPage: UIView? {
 
-        if currentIndex < pageCount - 1 {
+        if currentIndex < pageViews.count - 1 {
             return pageViews[currentIndex + 1]
         }
 
