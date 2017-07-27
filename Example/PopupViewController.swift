@@ -4,11 +4,39 @@ import SwipeMenuViewController
 
 class PopupViewController: UIViewController {
 
-    var options = SwipeMenuViewOptions()
+    var options = SwipeMenuViewOptions() {
+        didSet {
+            if tabMarginLabel != nil {
+                tabMarginLabel.text = "Tab Margin: \(String(format: "%.0f", Float(options.tabView.margin)))"
+            }
+
+            if tabItemViewWidthLabel != nil {
+                tabItemViewWidthLabel.text = "Tab Item Width: \(String(format: "%.0f", Float(options.tabView.itemView.width)))"
+            }
+        }
+    }
+    var dataCount: Int = 0 {
+        didSet {
+            if dataCountLabel != nil {
+                dataCountLabel.text = "Page Number: \(dataCount)"
+            }
+
+            if dataCountStepper != nil {
+                dataCountStepper.value = Double(dataCount)
+            }
+        }
+    }
+
     var reloadClosure: (() -> Swift.Void)!
 
+    @IBOutlet weak var dataCountLabel: UILabel!
+    @IBOutlet weak var dataCountStepper: UIStepper!
+    @IBOutlet weak var tabMarginLabel: UILabel!
+    @IBOutlet weak var tabMarginSlider: UISlider!
     @IBOutlet weak var styleSegmentedControl: UISegmentedControl!
+    @IBOutlet weak var adjustTabItemLabel: UILabel!
     @IBOutlet weak var adjustTabItemSegmentedControl: UISegmentedControl!
+    @IBOutlet weak var tabItemViewWidthLabel: UILabel!
     @IBOutlet weak var tabItemViewWidthSlider: UISlider!
     @IBOutlet weak var tabAdditionSegmentedControl: UISegmentedControl!
     @IBOutlet weak var contentScrolEnabledSegmentedControl: UISegmentedControl!
@@ -16,11 +44,20 @@ class PopupViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        dataCountLabel.text = "Page Number: \(dataCount)"
+
+        tabMarginLabel.text = "Tab Margin: \(String(format: "%.0f", Float(options.tabView.margin)))"
+        tabMarginSlider.setValue(Float(options.tabView.margin), animated: false)
+
+        dataCountStepper.value = Double(dataCount)
+
         switch options.tabView.style {
         case .flexible:
             styleSegmentedControl.selectedSegmentIndex = 0
+            dataCountStepper.maximumValue = 8
         case .segmented:
             styleSegmentedControl.selectedSegmentIndex = 1
+            dataCountStepper.maximumValue = 4
         }
 
         if options.tabView.isAdjustItemViewWidth {
@@ -29,8 +66,15 @@ class PopupViewController: UIViewController {
             adjustTabItemSegmentedControl.selectedSegmentIndex = 1
         }
 
+        adjustTabItemLabel.isHidden = options.tabView.style == .segmented
+        adjustTabItemSegmentedControl.isHidden = options.tabView.style == .segmented
+
+        tabItemViewWidthLabel.isHidden = options.tabView.isAdjustItemViewWidth || options.tabView.style == .segmented
+        tabItemViewWidthSlider.isHidden = options.tabView.isAdjustItemViewWidth || options.tabView.style == .segmented
+
         tabItemViewWidthSlider.value = Float(options.tabView.itemView.width)
-        
+        tabItemViewWidthLabel.text = "Tab Item Width: \(String(format: "%.0f", Float(options.tabView.itemView.width)))"
+
         switch options.tabView.addition {
         case .underline:
             tabAdditionSegmentedControl.selectedSegmentIndex = 0
@@ -58,6 +102,7 @@ class PopupViewController: UIViewController {
     @IBAction func changeOptions(_ sender: UIButton) {
         if let vc = self.presentingViewController as? ViewController {
             vc.options = options
+            vc.dataCount = dataCount
         }
 
         dismiss(animated: true, completion: reloadClosure)
@@ -66,9 +111,18 @@ class PopupViewController: UIViewController {
     @IBAction func resetOptions(_ sender: UIButton) {
         if let vc = self.presentingViewController as? ViewController {
             vc.options = SwipeMenuViewOptions()
+            vc.dataCount = 5
         }
 
         dismiss(animated: true, completion: reloadClosure)
+    }
+
+    @IBAction func changeDataCount(_ sender: UIStepper) {
+        dataCount = Int(sender.value)
+    }
+
+    @IBAction func changeTabMargin(_ sender: UISlider) {
+        options.tabView.margin = CGFloat(sender.value)
     }
 
     @IBAction func changeStyle(_ sender: UISegmentedControl) {
@@ -76,11 +130,22 @@ class PopupViewController: UIViewController {
         switch sender.selectedSegmentIndex {
         case 0:
             options.tabView.style = .flexible
+            dataCountStepper.maximumValue = 8
         case 1:
             options.tabView.style = .segmented
+            dataCountStepper.maximumValue = 4
+            if dataCount > 4 {
+                dataCount = 4
+            }
         default:
             break
         }
+
+        adjustTabItemLabel.isHidden = options.tabView.style == .segmented
+        adjustTabItemSegmentedControl.isHidden = options.tabView.style == .segmented
+
+        tabItemViewWidthLabel.isHidden = options.tabView.isAdjustItemViewWidth || options.tabView.style == .segmented
+        tabItemViewWidthSlider.isHidden = options.tabView.isAdjustItemViewWidth || options.tabView.style == .segmented
     }
 
     @IBAction func changeAdjustTabItemWidthEnabled(_ sender: UISegmentedControl) {
@@ -93,6 +158,9 @@ class PopupViewController: UIViewController {
         default:
             break
         }
+
+        tabItemViewWidthLabel.isHidden = options.tabView.isAdjustItemViewWidth || options.tabView.style == .segmented
+        tabItemViewWidthSlider.isHidden = options.tabView.isAdjustItemViewWidth || options.tabView.style == .segmented
     }
 
     @IBAction func changeTabItemWidthSlider(_ sender: UISlider) {

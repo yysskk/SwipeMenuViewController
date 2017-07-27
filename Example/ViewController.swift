@@ -7,33 +7,30 @@ class ViewController: SwipeMenuViewController {
     var datas: [String] = ["Bulbasaur","Caterpie", "Golem", "Jynx", "Marshtomp", "Salamence", "Riolu", "Araquanid"]
 
     var options = SwipeMenuViewOptions()
+    var dataCount: Int = 5
 
     @IBOutlet weak var settingButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .black
         view.bringSubview(toFront: settingButton)
+    }
+
+    override var prefersStatusBarHidden: Bool {
+        return true
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "popupSegue" {
             let vc = segue.destination as! PopupViewController
             vc.options = options
+            vc.dataCount = dataCount
             vc.reloadClosure = { self.reload() }
         }
     }
 
-    func reload() {
-
-        switch  options.tabView.style {
-        case .flexible:
-            datas =  ["Bulbasaur","Caterpie", "Golem", "Jynx", "Marshtomp", "Salamence", "Riolu", "Araquanid"]
-        case .segmented:
-            datas =  ["Bulbasaur","Caterpie", "Golem"]
-        }
-
+    private func reload() {
         swipeMenuView.reload(options: options)
     }
 
@@ -51,7 +48,7 @@ class ViewController: SwipeMenuViewController {
     // MARK - SwipeMenuViewDataSource
 
     open override func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
-        return datas.count
+        return dataCount
     }
 
     override func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {

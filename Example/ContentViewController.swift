@@ -5,9 +5,9 @@ class ContentViewController: UIViewController {
 
     var contentLabel: UILabel! {
         didSet {
-            contentLabel.textColor = .white
+            contentLabel.textColor = .black
             contentLabel.textAlignment = .center
-            contentLabel.font = UIFont.systemFont(ofSize: 25)
+            contentLabel.font = UIFont.boldSystemFont(ofSize: 25)
             contentLabel.text = content
             view.addSubview(contentLabel)
         }
@@ -18,7 +18,7 @@ class ContentViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .black
+        view.backgroundColor = .white
         contentLabel = UILabel(frame: CGRect(x: 0, y: view.center.y - 50, width: view.frame.width, height: 50))
     }
 }
