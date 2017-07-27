@@ -15,15 +15,11 @@ open class TabView: UIScrollView {
 
     fileprivate let containerView: UIView = UIView()
 
-    var currentItemView: TabItemView = TabItemView()
+    fileprivate var currentItemView: TabItemView = TabItemView()
 
-    var underlineView: UIView!
+    fileprivate var underlineView: UIView?
 
-    var cacheAdjustCellSizes: [CGSize] = []
-
-    var itemCount: Int {
-        return itemViews.count
-    }
+    fileprivate var cacheAdjustCellSizes: [CGSize] = []
 
     fileprivate var currentIndex: Int = 0
 
@@ -232,8 +228,10 @@ extension TabView {
 
         let itemView = itemViews[currentIndex]
         underlineView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.underlineView.margin, y: itemView.frame.height, width: itemView.frame.width - options.underlineView.margin * 2, height: options.underlineView.height))
-        underlineView.backgroundColor = options.underlineView.backgroundColor
-        addSubview(underlineView)
+        if let underlineView = underlineView {
+            underlineView.backgroundColor = options.underlineView.backgroundColor
+            addSubview(underlineView)
+        }
 
         jump(to: currentIndex)
     }
@@ -244,10 +242,13 @@ extension TabView {
 
         UIView.animate(withDuration: 0.3, animations: { _ in
             let target = self.currentItem
-            self.underlineView.frame.origin.x = target.frame.origin.x + self.options.underlineView.margin
 
-            if self.options.isAdjustItemViewWidth {
-                self.underlineView.frame.size.width = self.cacheAdjustCellSizes[index].width - self.options.underlineView.margin * 2
+            if let underlineView = self.underlineView {
+                underlineView.frame.origin.x = target.frame.origin.x + self.options.underlineView.margin
+
+                if self.options.isAdjustItemViewWidth {
+                    underlineView.frame.size.width = self.cacheAdjustCellSizes[index].width - self.options.underlineView.margin * 2
+                }
             }
 
             self.focus(on: target)
@@ -257,6 +258,8 @@ extension TabView {
     public func moveUnderlineView(index: Int, ratio: CGFloat, direction: Direction) {
 
         update(index)
+
+        guard let underlineView = underlineView else { return }
 
         switch direction {
         case .forward:
@@ -277,7 +280,7 @@ extension TabView {
     }
 
     var nextItem: UIView {
-        if currentIndex < itemCount - 1 {
+        if currentIndex < itemViews.count - 1 {
             return itemViews[currentIndex + 1]
         }
         return itemViews[currentIndex]
@@ -292,6 +295,8 @@ extension TabView {
     
     func jump(to index: Int) {
         update(index)
+
+        guard let underlineView = underlineView else { return }
         
         if options.addition == .underline {
             underlineView.frame.origin.x = currentItem.frame.origin.x

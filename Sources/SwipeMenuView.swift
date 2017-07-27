@@ -19,21 +19,21 @@ public struct SwipeMenuViewOptions {
         public struct ItemView {
             public var width: CGFloat = 100.0
             public var margin: CGFloat = 5.0
-            public var textColor: UIColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
-            public var selectedTextColor: UIColor = .white
+            public var textColor: UIColor = .lightGray
+            public var selectedTextColor: UIColor = .black
         }
 
         public struct UndelineView {
             public var height: CGFloat = 2.0
             public var margin: CGFloat = 0.0
-            public var backgroundColor: UIColor = .green
+            public var backgroundColor: UIColor = .black
             public var animationDuration: CGFloat = 0.3
         }
 
         // self
         public var height: CGFloat = 44.0
         public var margin: CGFloat = 0.0
-        public var backgroundColor: UIColor = .black
+        public var backgroundColor: UIColor = .white
         public var style: Style = .flexible
         public var addition: Addition = .underline
         public var isAdjustItemViewWidth: Bool = true
@@ -134,7 +134,7 @@ open class SwipeMenuView: UIView {
 
         super.init(frame: frame)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(onOrientationChange(_:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onOrientationChange(_:)), name: .UIDeviceOrientationDidChange, object: nil)
     }
 
     public required init?(coder aDecoder: NSCoder) {

@@ -79,7 +79,7 @@ open class ContentScrollView: UIScrollView {
             containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             containerView.widthAnchor.constraint(equalToConstant: containerWidth),
             containerView.heightAnchor.constraint(equalTo: self.heightAnchor)
-            ])
+        ])
     }
 
     private func setupPages() {
@@ -95,7 +95,15 @@ open class ContentScrollView: UIScrollView {
             pageViews.append(pageView)
 
             pageView.translatesAutoresizingMaskIntoConstraints = false
-            if index > 0 {
+            if index == 0 {
+                NSLayoutConstraint.activate([
+                    pageViews[index].topAnchor.constraint(equalTo: containerView.topAnchor),
+                    pageViews[index].widthAnchor.constraint(equalTo: self.widthAnchor),
+                    pageViews[index].heightAnchor.constraint(equalTo: containerView.heightAnchor),
+                    pageViews[index].leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+                    pageViews[pageViews.count-1].trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+                    ])
+            } else {
                 NSLayoutConstraint.activate([
                     pageView.topAnchor.constraint(equalTo: containerView.topAnchor),
                     pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
@@ -107,14 +115,6 @@ open class ContentScrollView: UIScrollView {
 
             xPosition += pageView.frame.size.width
         }
-
-        NSLayoutConstraint.activate([
-            pageViews[0].topAnchor.constraint(equalTo: containerView.topAnchor),
-            pageViews[0].widthAnchor.constraint(equalTo: self.widthAnchor),
-            pageViews[0].heightAnchor.constraint(equalTo: containerView.heightAnchor),
-            pageViews[0].leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            pageViews[pageViews.count-1].trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
-            ])
     }
 
     public func reset() {
@@ -127,8 +127,6 @@ open class ContentScrollView: UIScrollView {
         self.didMoveToSuperview()
     }
 
-    /// update currentIndex
-    /// parameter index : newIndex
     public func update(_ newIndex: Int) {
         currentIndex = newIndex
     }
