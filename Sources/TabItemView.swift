@@ -27,14 +27,12 @@ class TabItemView: UIView {
         super.init(coder: aDecoder)
     }
 
-    deinit { }
-
     override open func layoutSubviews() {
         super.layoutSubviews()
     }
 
     private func setupLabel() {
-        titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
+        titleLabel = UILabel(frame: bounds)
         titleLabel.textAlignment = .center
         titleLabel.font = UIFont.boldSystemFont(ofSize: 14)
         titleLabel.textColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)

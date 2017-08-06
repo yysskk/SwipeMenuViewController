@@ -41,7 +41,31 @@ open class TabView: UIScrollView {
         setup()
     }
 
-    deinit { }
+    public func reset() {
+
+        itemViews = []
+        currentIndex = 0
+        cacheAdjustCellSizes = []
+    }
+
+    public func update(_ index: Int) {
+
+        if currentIndex == index { return }
+
+        currentIndex = index
+        updateSelectedItem(by: currentIndex)
+    }
+
+    fileprivate func focus(on target: UIView, animated: Bool = true) {
+        let offset = target.center.x - self.frame.width / 2
+        if offset < 0 || self.frame.width > containerView.frame.width {
+            self.setContentOffset(CGPoint(x: 0, y: 0), animated: animated)
+        } else if containerView.frame.width - self.frame.width < offset {
+            self.setContentOffset(CGPoint(x: containerView.frame.width - self.frame.width, y: 0), animated: animated)
+        } else {
+            self.setContentOffset(CGPoint(x: offset, y: 0), animated: animated)
+        }
+    }
 
     // MARK: - Setup
 
@@ -181,32 +205,6 @@ open class TabView: UIScrollView {
             ])
     }
 
-    public func reset() {
-
-        itemViews = []
-        currentIndex = 0
-        cacheAdjustCellSizes = []
-    }
-
-    fileprivate func focus(on target: UIView, animated: Bool = true) {
-        let offset = target.center.x - self.frame.width / 2
-        if offset < 0 || self.frame.width > containerView.frame.width {
-            self.setContentOffset(CGPoint(x: 0, y: 0), animated: animated)
-        } else if containerView.frame.width - self.frame.width < offset {
-            self.setContentOffset(CGPoint(x: containerView.frame.width - self.frame.width, y: 0), animated: animated)
-        } else {
-            self.setContentOffset(CGPoint(x: offset, y: 0), animated: animated)
-        }
-    }
-
-    public func update(_ index: Int) {
-
-        if currentIndex == index { return }
-
-        currentIndex = index
-        updateSelectedItem(by: currentIndex)
-    }
-
     private func updateSelectedItem(by newIndex: Int) {
         for (i, itemView) in itemViews.enumerated() {
             itemView.isSelected = i == newIndex
@@ -275,18 +273,18 @@ extension TabView {
 }
 
 extension TabView {
-    var currentItem: UIView {
+    var currentItem: TabItemView {
         return itemViews[currentIndex]
     }
 
-    var nextItem: UIView {
+    var nextItem: TabItemView {
         if currentIndex < itemViews.count - 1 {
             return itemViews[currentIndex + 1]
         }
         return itemViews[currentIndex]
     }
-    
-    var previousItem: UIView {
+
+    var previousItem: TabItemView {
         if currentIndex > 0 {
             return itemViews[currentIndex - 1]
         }
@@ -295,9 +293,9 @@ extension TabView {
     
     func jump(to index: Int) {
         update(index)
-
-        guard let underlineView = underlineView else { return }
         
+        guard let underlineView = underlineView else { return }
+
         if options.addition == .underline {
             underlineView.frame.origin.x = currentItem.frame.origin.x
             underlineView.frame.size.width = currentItem.frame.size.width
