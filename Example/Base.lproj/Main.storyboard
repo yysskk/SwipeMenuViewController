@@ -46,6 +46,7 @@
                                 </connections>
                             </button>
                         </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="g7u-0R-yRV" secondAttribute="bottom" constant="-20" id="4ms-kt-bai"/>
                             <constraint firstAttribute="trailing" secondItem="g7u-0R-yRV" secondAttribute="trailing" constant="-20" id="fVn-35-H4z"/>

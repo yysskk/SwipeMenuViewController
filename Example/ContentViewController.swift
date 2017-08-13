@@ -10,6 +10,14 @@ class ContentViewController: UIViewController {
             contentLabel.font = UIFont.boldSystemFont(ofSize: 25)
             contentLabel.text = content
             view.addSubview(contentLabel)
+
+            contentLabel.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                contentLabel.topAnchor.constraint(equalTo: self.view.topAnchor),
+                contentLabel.widthAnchor.constraint(equalTo: self.view.widthAnchor),
+                contentLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                contentLabel.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+            ])
         }
     }
 

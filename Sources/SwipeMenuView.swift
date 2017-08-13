@@ -33,7 +33,7 @@ public struct SwipeMenuViewOptions {
         // self
         public var height: CGFloat = 44.0
         public var margin: CGFloat = 0.0
-        public var backgroundColor: UIColor = .white
+        public var backgroundColor: UIColor = .clear
         public var style: Style = .flexible
         public var addition: Addition = .underline
         public var isAdjustItemViewWidth: Bool = true
@@ -112,7 +112,11 @@ open class SwipeMenuView: UIView {
         }
     }
 
-    fileprivate var currentIndex: Int = 0
+    private(set) var currentIndex: Int = 0
+
+    public var isOrientationChange: Bool = false
+
+    public var options: SwipeMenuViewOptions
 
     fileprivate var pageCount: Int {
         return dataSource?.numberOfPages(in: self) ?? 0
@@ -120,9 +124,6 @@ open class SwipeMenuView: UIView {
 
     fileprivate var isJumping: Bool = false
     fileprivate var isPortrait: Bool = true
-    public var isOrientationChange: Bool = false
-
-    open var options: SwipeMenuViewOptions
 
     public init(frame: CGRect, options: SwipeMenuViewOptions? = nil) {
 
@@ -144,12 +145,10 @@ open class SwipeMenuView: UIView {
         super.init(coder: aDecoder)
     }
 
-    deinit { }
-
     open override func layoutSubviews() {
         super.layoutSubviews()
 
-        reload(isOrientationChange: true)
+        reloadData(isOrientationChange: true)
     }
 
     open override func didMoveToSuperview() {
@@ -158,7 +157,7 @@ open class SwipeMenuView: UIView {
         setup()
     }
 
-    public func reload(options: SwipeMenuViewOptions? = nil, isOrientationChange: Bool = false) {
+    public func reloadData(options: SwipeMenuViewOptions? = nil, isOrientationChange: Bool = false) {
 
         if let options = options {
             self.options = options
@@ -166,16 +165,55 @@ open class SwipeMenuView: UIView {
 
         self.isOrientationChange = isOrientationChange
 
-        reset()
-        setup()
+        if !isOrientationChange {
+            reset()
+            setup()
+        }
 
         jump(to: currentIndex)
 
         self.isOrientationChange = false
     }
 
+    public func jump(to index: Int) {
+
+        if let tabView = tabView, let contentScrollView = contentScrollView {
+            tabView.jump(to: index)
+            contentScrollView.jump(to: index, animated: false)
+        }
+    }
+
+    public func willChangeOrientation() {
+        isOrientationChange = true
+    }
+
+    internal func onOrientationChange(_ notification: Notification) {
+
+        let deviceOrientation: UIDeviceOrientation  = UIDevice.current.orientation
+        isPortrait = !UIDeviceOrientationIsLandscape(deviceOrientation)
+
+        reloadData(isOrientationChange: true)
+    }
+
+    fileprivate func update(from fromIndex: Int, to toIndex: Int) {
+
+        if !isOrientationChange {
+            delegate?.swipeMenuView(self, willChangeIndexFrom: fromIndex, to: toIndex)
+        }
+
+        tabView?.update(toIndex)
+        contentScrollView?.update(toIndex)
+        currentIndex = toIndex
+
+        if !isOrientationChange {
+            delegate?.swipeMenuView(self, didChangeIndexFrom: fromIndex, to: toIndex)
+        }
+    }
+
     // MARK: - Setup
-    private func setup() {
+    public func setup() {
+
+        backgroundColor = .clear
 
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         addTabItemGestures()
@@ -219,40 +257,6 @@ open class SwipeMenuView: UIView {
             tabView.reset()
             contentScrollView.reset()
         }
-    }
-
-    public func jump(to index: Int) {
-
-        if let tabView = tabView, let contentScrollView = contentScrollView {
-            tabView.jump(to: index)
-            contentScrollView.jump(to: index, animated: false)
-        }
-    }
-
-    /// update currentIndex
-    /// - parameter from    : fromIndex
-    /// - parameter to      : toIndex
-    fileprivate func update(from fromIndex: Int, to toIndex: Int) {
-
-        if !isOrientationChange {
-            delegate?.swipeMenuView(self, willChangeIndexFrom: fromIndex, to: toIndex)
-        }
-
-        tabView?.update(toIndex)
-        contentScrollView?.update(toIndex)
-        currentIndex = toIndex
-
-        if !isOrientationChange {
-            delegate?.swipeMenuView(self, didChangeIndexFrom: fromIndex, to: toIndex)
-        }
-    }
-
-    func onOrientationChange(_ notification: Notification) {
-
-        let deviceOrientation: UIDeviceOrientation  = UIDevice.current.orientation
-        isPortrait = !UIDeviceOrientationIsLandscape(deviceOrientation)
-
-        reload(isOrientationChange: true)
     }
 }
 

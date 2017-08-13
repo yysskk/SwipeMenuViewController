@@ -12,7 +12,7 @@ open class ContentScrollView: UIScrollView {
     open var dataSource: ContentScrollViewDataSource?
 
     fileprivate var pageViews: [UIView] = []
-    
+
     fileprivate var currentIndex: Int = 0
 
     fileprivate var options: SwipeMenuViewOptions.ContentScrollView = SwipeMenuViewOptions.ContentScrollView()
@@ -35,7 +35,7 @@ open class ContentScrollView: UIScrollView {
 
     override open func layoutSubviews() {
         super.layoutSubviews()
-        
+
         self.contentSize = CGSize(width: frame.width * CGFloat(pageViews.count), height: frame.height)
     }
 
@@ -85,10 +85,11 @@ open class ContentScrollView: UIScrollView {
     private func loadViewIfNeeded() {
 
         guard let dataSource = dataSource else { return }
+        if dataSource.numberOfPages(in: self) < 0 { return }
 
         self.contentSize = CGSize(width: frame.width * CGFloat(dataSource.numberOfPages(in: self)), height: frame.height)
 
-        if let pageView = dataSource.contentScrollView(self, viewForPageAt: currentIndex) {
+        if let pageView = dataSource.contentScrollView(self, viewForPageAt: 0) {
             pageViews.append(pageView)
             addSubview(pageView)
 
