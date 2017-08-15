@@ -17,8 +17,10 @@ open class ContentScrollView: UIScrollView {
 
     fileprivate var options: SwipeMenuViewOptions.ContentScrollView = SwipeMenuViewOptions.ContentScrollView()
 
-    public init(frame: CGRect, options: SwipeMenuViewOptions.ContentScrollView? = nil) {
+    public init(frame: CGRect, default defaultIndex: Int, options: SwipeMenuViewOptions.ContentScrollView? = nil) {
         super.init(frame: frame)
+
+        currentIndex = defaultIndex
 
         if let options = options {
             self.options = options
@@ -89,20 +91,34 @@ open class ContentScrollView: UIScrollView {
 
         self.contentSize = CGSize(width: frame.width * CGFloat(dataSource.numberOfPages(in: self)), height: frame.height)
 
-        if let pageView = dataSource.contentScrollView(self, viewForPageAt: 0) {
+        for i in 0...currentIndex {
+            guard let pageView = dataSource.contentScrollView(self, viewForPageAt: i) else { return }
             pageViews.append(pageView)
             addSubview(pageView)
 
-            pageView.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                pageView.topAnchor.constraint(equalTo: self.topAnchor),
-                pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
-                pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
-                pageView.leadingAnchor.constraint(equalTo: self.leadingAnchor)
-                ])
+            if i > 0 {
+                pageView.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    pageView.topAnchor.constraint(equalTo: self.topAnchor),
+                    pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
+                    pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
+                    pageView.leadingAnchor.constraint(equalTo: pageViews[i - 1].trailingAnchor)
+                    ])
+            } else {
+                pageView.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    pageView.topAnchor.constraint(equalTo: self.topAnchor),
+                    pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
+                    pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
+                    pageView.leadingAnchor.constraint(equalTo: self.trailingAnchor)
+                    ])
+            }
         }
 
-        for i in 1..<dataSource.numberOfPages(in: self) {
+        guard currentIndex < dataSource.numberOfPages(in: self) else {
+            return
+        }
+        for i in (currentIndex + 1)..<dataSource.numberOfPages(in: self) {
             guard let pageView = dataSource.contentScrollView(self, viewForPageAt: i) else { return }
             pageViews.append(pageView)
             addSubview(pageView)

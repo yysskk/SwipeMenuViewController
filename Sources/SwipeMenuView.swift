@@ -92,8 +92,6 @@ public protocol SwipeMenuViewDataSource: class {
 
 open class SwipeMenuView: UIView {
 
-    public typealias Index = Int
-
     open weak var delegate: SwipeMenuViewDelegate?
 
     open weak var dataSource: SwipeMenuViewDataSource?
@@ -117,11 +115,9 @@ open class SwipeMenuView: UIView {
         }
     }
 
-    private(set) var currentIndex: Int = 0
-
-    public var isOrientationChange: Bool = false
-
     public var options: SwipeMenuViewOptions
+
+    fileprivate var isOrientationChange: Bool = false
 
     fileprivate var pageCount: Int {
         return dataSource?.numberOfPages(in: self) ?? 0
@@ -129,6 +125,8 @@ open class SwipeMenuView: UIView {
 
     fileprivate var isJumping: Bool = false
     fileprivate var isPortrait: Bool = true
+
+    private(set) var currentIndex: Int = 0
 
     public init(frame: CGRect, options: SwipeMenuViewOptions? = nil) {
 
@@ -162,7 +160,7 @@ open class SwipeMenuView: UIView {
         setup()
     }
 
-    public func reloadData(options: SwipeMenuViewOptions? = nil, default defaultIndex: Index? = nil, isOrientationChange: Bool = false) {
+    public func reloadData(options: SwipeMenuViewOptions? = nil, default defaultIndex: Int? = nil, isOrientationChange: Bool = false) {
 
         if let options = options {
             self.options = options
@@ -216,7 +214,7 @@ open class SwipeMenuView: UIView {
     }
 
     // MARK: - Setup
-    public func setup(default defaultIndex: Int = 0) {
+    private func setup(default defaultIndex: Int = 0) {
 
         delegate?.swipeMenuView(self, viewWillSetupAt: defaultIndex)
 
@@ -225,7 +223,7 @@ open class SwipeMenuView: UIView {
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         addTabItemGestures()
 
-        contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height), options: options.contentScrollView)
+        contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height), default: defaultIndex, options: options.contentScrollView)
 
         delegate?.swipeMenuView(self, viewDidSetupAt: defaultIndex)
     }

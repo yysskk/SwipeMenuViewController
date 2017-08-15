@@ -14,7 +14,7 @@
 		98D59CA01F09E2150028EAEA /* SwipeMenuViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98EEED431EFA627000A149EB /* SwipeMenuViewController.framework */; };
 		98D59CA11F09E2150028EAEA /* SwipeMenuViewController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 98EEED431EFA627000A149EB /* SwipeMenuViewController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		98E73FB81F0B95DD0063DF18 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E73FB71F0B95DD0063DF18 /* ContentViewController.swift */; };
-		98E73FC11F0E1D230063DF18 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E73FC01F0E1D230063DF18 /* ContentView.swift */; };
+		98E73FC11F0E1D230063DF18 /* ContentScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E73FC01F0E1D230063DF18 /* ContentScrollView.swift */; };
 		98EEED481EFA627000A149EB /* SwipeMenuViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 98EEED461EFA627000A149EB /* SwipeMenuViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		98EEED561EFA62D900A149EB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EEED551EFA62D900A149EB /* AppDelegate.swift */; };
 		98EEED581EFA62D900A149EB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EEED571EFA62D900A149EB /* ViewController.swift */; };
@@ -55,7 +55,7 @@
 		98B984861F15C57800FCDD0B /* UIViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		98B984881F15CAEB00FCDD0B /* PopupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopupViewController.swift; sourceTree = "<group>"; };
 		98E73FB71F0B95DD0063DF18 /* ContentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
-		98E73FC01F0E1D230063DF18 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		98E73FC01F0E1D230063DF18 /* ContentScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentScrollView.swift; sourceTree = "<group>"; };
 		98EEED431EFA627000A149EB /* SwipeMenuViewController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwipeMenuViewController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		98EEED461EFA627000A149EB /* SwipeMenuViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwipeMenuViewController.h; sourceTree = "<group>"; };
 		98EEED471EFA627000A149EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -111,7 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				98EEED4E1EFA62AE00A149EB /* Supporting files */,
-				98E73FC01F0E1D230063DF18 /* ContentView.swift */,
+				98E73FC01F0E1D230063DF18 /* ContentScrollView.swift */,
 				98EEED671EFA638700A149EB /* SwipeMenuView.swift */,
 				98EEED651EFA637B00A149EB /* SwipeMenuViewController.swift */,
 				982CF1081EFBD70B0086649C /* TabItemView.swift */,
@@ -262,7 +262,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				982CF1091EFBD70B0086649C /* TabItemView.swift in Sources */,
-				98E73FC11F0E1D230063DF18 /* ContentView.swift in Sources */,
+				98E73FC11F0E1D230063DF18 /* ContentScrollView.swift in Sources */,
 				98EEED681EFA638700A149EB /* SwipeMenuView.swift in Sources */,
 				982CF1071EFBD7040086649C /* TabView.swift in Sources */,
 				98EEED661EFA637B00A149EB /* SwipeMenuViewController.swift in Sources */,
