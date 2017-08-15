@@ -65,12 +65,15 @@ public struct SwipeMenuViewOptions {
 
 public protocol SwipeMenuViewDelegate: class {
 
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int)
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int)
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int)
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int)
 }
 
 extension SwipeMenuViewDelegate {
-
+    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) { }
+    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) { }
     public func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
     public func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
 }
@@ -88,6 +91,8 @@ public protocol SwipeMenuViewDataSource: class {
 // MARK: - SwipeMenuView
 
 open class SwipeMenuView: UIView {
+
+    public typealias Index = Int
 
     open weak var delegate: SwipeMenuViewDelegate?
 
@@ -157,7 +162,7 @@ open class SwipeMenuView: UIView {
         setup()
     }
 
-    public func reloadData(options: SwipeMenuViewOptions? = nil, isOrientationChange: Bool = false) {
+    public func reloadData(options: SwipeMenuViewOptions? = nil, default defaultIndex: Index? = nil, isOrientationChange: Bool = false) {
 
         if let options = options {
             self.options = options
@@ -167,10 +172,10 @@ open class SwipeMenuView: UIView {
 
         if !isOrientationChange {
             reset()
-            setup()
+            setup(default: defaultIndex ?? currentIndex)
         }
 
-        jump(to: currentIndex)
+        jump(to: defaultIndex ?? currentIndex)
 
         self.isOrientationChange = false
     }
@@ -211,7 +216,9 @@ open class SwipeMenuView: UIView {
     }
 
     // MARK: - Setup
-    public func setup() {
+    public func setup(default defaultIndex: Int = 0) {
+
+        delegate?.swipeMenuView(self, viewWillSetupAt: defaultIndex)
 
         backgroundColor = .clear
 
@@ -219,6 +226,8 @@ open class SwipeMenuView: UIView {
         addTabItemGestures()
 
         contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height), options: options.contentScrollView)
+
+        delegate?.swipeMenuView(self, viewDidSetupAt: defaultIndex)
     }
 
     private func layout(tabView: TabView) {
