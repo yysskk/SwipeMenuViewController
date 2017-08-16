@@ -6,7 +6,7 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-Compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
 )](http://mit-license.org)
-![pod](https://img.shields.io/badge/pod-v1.0.0-red.svg)
+![pod](https://img.shields.io/badge/pod-v1.1.0-red.svg)
 
 ## Overview
 SwipeMenuViewController provides `SwipeMenuView` and `SwipeMenuViewController`.
@@ -136,6 +136,14 @@ class CustomViewController: UIViewController {
 extension CustomViewController: SwipeMenuViewControllerDelegate {
 
     // MARK - SwipeMenuViewControllerDelegate
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) {
+        // Codes
+    }
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) {
+        // Codes
+    }
+
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) {
         // Codes
     }
@@ -183,6 +191,14 @@ class CustomViewController: SwipeMenuViewController {
 extension CustomViewController {
 
     // MARK: - SwipeMenuViewDelegate
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) {
+        // Codes
+    }
+
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) {
+        // Codes
+    }
+
     override func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) {
         // Codes
     }
@@ -283,7 +299,10 @@ public var style: Style
 public var addition: Addition
 
 // TabView adjust width or not. Defaults to `true`.
-public var isAdjustItemViewWidth: Bool
+public var needsAdjustItemViewWidth: Bool
+
+// Convert the text color of ItemView to selected text color by scroll rate of ContentScrollView. Defaults to `true`.
+public var isConvertTextColorRatio: Bool
 ```
 
 ##### ItemView
