@@ -96,23 +96,14 @@ open class ContentScrollView: UIScrollView {
             pageViews.append(pageView)
             addSubview(pageView)
 
-            if i > 0 {
-                pageView.translatesAutoresizingMaskIntoConstraints = false
-                NSLayoutConstraint.activate([
-                    pageView.topAnchor.constraint(equalTo: self.topAnchor),
-                    pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
-                    pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
-                    pageView.leadingAnchor.constraint(equalTo: pageViews[i - 1].trailingAnchor)
-                    ])
-            } else {
-                pageView.translatesAutoresizingMaskIntoConstraints = false
-                NSLayoutConstraint.activate([
-                    pageView.topAnchor.constraint(equalTo: self.topAnchor),
-                    pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
-                    pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
-                    pageView.leadingAnchor.constraint(equalTo: self.leadingAnchor)
-                    ])
-            }
+            let leadingAnchor = i > 0 ? pageViews[i - 1].trailingAnchor : self.leadingAnchor
+            pageView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                pageView.topAnchor.constraint(equalTo: self.topAnchor),
+                pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
+                pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
+                pageView.leadingAnchor.constraint(equalTo: leadingAnchor)
+                ])
         }
 
         guard currentIndex < dataSource.numberOfPages(in: self) else {

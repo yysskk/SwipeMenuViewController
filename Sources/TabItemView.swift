@@ -2,12 +2,12 @@ import UIKit
 
 class TabItemView: UIView {
 
-    open var titleLabel: UILabel = UILabel()
+    private(set) var titleLabel: UILabel = UILabel()
 
-    open var textColor: UIColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
-    open var selectedTextColor: UIColor = .white
+    public var textColor: UIColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
+    public var selectedTextColor: UIColor = .white
 
-    open var isSelected: Bool = false {
+    public var isSelected: Bool = false {
         didSet {
             if isSelected {
                 titleLabel.textColor = selectedTextColor

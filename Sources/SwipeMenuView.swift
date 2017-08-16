@@ -20,7 +20,6 @@ public struct SwipeMenuViewOptions {
             public var width: CGFloat = 100.0
             public var margin: CGFloat = 5.0
             public var textColor: UIColor = UIColor(red: 170 / 255, green: 170 / 255, blue: 170 / 255, alpha: 1.0)
-
             public var selectedTextColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         }
 
@@ -37,7 +36,7 @@ public struct SwipeMenuViewOptions {
         public var backgroundColor: UIColor = .clear
         public var style: Style = .flexible
         public var addition: Addition = .underline
-        public var isAdjustItemViewWidth: Bool = true
+        public var needsAdjustItemViewWidth: Bool = true
         public var isConvertTextColorRatio: Bool = true
 
         // item
@@ -139,8 +138,6 @@ open class SwipeMenuView: UIView {
         }
 
         super.init(frame: frame)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(onOrientationChange(_:)), name: .UIDeviceOrientationDidChange, object: nil)
     }
 
     public required init?(coder aDecoder: NSCoder) {
@@ -190,14 +187,6 @@ open class SwipeMenuView: UIView {
 
     public func willChangeOrientation() {
         isOrientationChange = true
-    }
-
-    internal func onOrientationChange(_ notification: Notification) {
-
-        let deviceOrientation: UIDeviceOrientation  = UIDevice.current.orientation
-        isPortrait = !UIDeviceOrientationIsLandscape(deviceOrientation)
-
-        reloadData(isOrientationChange: true)
     }
 
     fileprivate func update(from fromIndex: Int, to toIndex: Int) {
