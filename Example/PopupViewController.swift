@@ -60,7 +60,7 @@ class PopupViewController: UIViewController {
             dataCountStepper.maximumValue = 4
         }
 
-        if options.tabView.isAdjustItemViewWidth {
+        if options.tabView.needsAdjustItemViewWidth {
             adjustTabItemSegmentedControl.selectedSegmentIndex = 0
         } else {
             adjustTabItemSegmentedControl.selectedSegmentIndex = 1
@@ -69,8 +69,8 @@ class PopupViewController: UIViewController {
         adjustTabItemLabel.isHidden = options.tabView.style == .segmented
         adjustTabItemSegmentedControl.isHidden = options.tabView.style == .segmented
 
-        tabItemViewWidthLabel.isHidden = options.tabView.isAdjustItemViewWidth || options.tabView.style == .segmented
-        tabItemViewWidthSlider.isHidden = options.tabView.isAdjustItemViewWidth || options.tabView.style == .segmented
+        tabItemViewWidthLabel.isHidden = options.tabView.needsAdjustItemViewWidth || options.tabView.style == .segmented
+        tabItemViewWidthSlider.isHidden = options.tabView.needsAdjustItemViewWidth || options.tabView.style == .segmented
 
         tabItemViewWidthSlider.value = Float(options.tabView.itemView.width)
         tabItemViewWidthLabel.text = "Tab Item Width: \(String(format: "%.0f", Float(options.tabView.itemView.width)))"
@@ -144,23 +144,23 @@ class PopupViewController: UIViewController {
         adjustTabItemLabel.isHidden = options.tabView.style == .segmented
         adjustTabItemSegmentedControl.isHidden = options.tabView.style == .segmented
 
-        tabItemViewWidthLabel.isHidden = options.tabView.isAdjustItemViewWidth || options.tabView.style == .segmented
-        tabItemViewWidthSlider.isHidden = options.tabView.isAdjustItemViewWidth || options.tabView.style == .segmented
+        tabItemViewWidthLabel.isHidden = options.tabView.needsAdjustItemViewWidth || options.tabView.style == .segmented
+        tabItemViewWidthSlider.isHidden = options.tabView.needsAdjustItemViewWidth || options.tabView.style == .segmented
     }
 
     @IBAction func changeAdjustTabItemWidthEnabled(_ sender: UISegmentedControl) {
 
         switch sender.selectedSegmentIndex {
         case 0:
-            options.tabView.isAdjustItemViewWidth = true
+            options.tabView.needsAdjustItemViewWidth = true
         case 1:
-            options.tabView.isAdjustItemViewWidth = false
+            options.tabView.needsAdjustItemViewWidth = false
         default:
             break
         }
 
-        tabItemViewWidthLabel.isHidden = options.tabView.isAdjustItemViewWidth || options.tabView.style == .segmented
-        tabItemViewWidthSlider.isHidden = options.tabView.isAdjustItemViewWidth || options.tabView.style == .segmented
+        tabItemViewWidthLabel.isHidden = options.tabView.needsAdjustItemViewWidth || options.tabView.style == .segmented
+        tabItemViewWidthSlider.isHidden = options.tabView.needsAdjustItemViewWidth || options.tabView.style == .segmented
     }
 
     @IBAction func changeTabItemWidthSlider(_ sender: UISlider) {
