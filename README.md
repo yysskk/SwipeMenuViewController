@@ -9,16 +9,18 @@
 ![pod](https://img.shields.io/badge/pod-v1.0.0-red.svg)
 
 ## Overview
-This is swipable menu framework including `SwipeMenuView` and `SwipeMenuViewController`. It is designed to resembling simple UIKit interface.
+SwipeMenuViewController provides `SwipeMenuView` and `SwipeMenuViewController`.
+This is very useful to build swipe-based paging UI.
+The interface is as simple as UIKit's.
 
 ## Demo
-Here are some style demos and codes using `SwipeMenuView`.
+Here are some style of demos with snippets using `SwipeMenuView`.
 
 <img src="https://github.com/yysskk/Assets/blob/master/SwipeMenuViewController/demo_segmented.gif" align="left" width="300">
 
 ### Segmented style
 
-```
+```swift
 @IBOutlet weak var swipeMenuView: SwipeMenuView! {
     didSet {
         swipeMenuView.delegate                        = self
@@ -48,7 +50,7 @@ Here are some style demos and codes using `SwipeMenuView`.
 
 ### Flexible style
 
-```
+```swift
 @IBOutlet weak var swipeMenuView: SwipeMenuView! {
     didSet {
         swipeMenuView.delegate                          = self
@@ -78,34 +80,39 @@ WIP...
 
 ## Installation
 #### CocoaPods
-SwipeMenuViewController is available through [CocoaPods](https://cocoapods.org). To install it, add the following line to your `Podfile` :
-
+You can integrate via [CocoaPods](https://cocoapods.org).
+Add the following line to your `Podfile` :
 
 ```
-pod ‘SwipeMenuViewController’
+pod 'SwipeMenuViewController'
 ```
+
+and run `pod install`
 
 #### Carthage
 
-SwipeMenuViewController is also available through [Carthage](https://github.com/carthage/carthage).  Add the following line to your `Cartfile` :
-
+You can integrate via [Carthage](https://github.com/carthage/carthage), too.
+Add the following line to your `Cartfile` :
 
 ```
-github “yysskk/SwipeMenuViewController”
+github "yysskk/SwipeMenuViewController"
 ```
+
+and run `carthage update`
+
 ## Usage
 ### SwipeMenuView
-**1)** Add the files listed in the installation section to your project
+**1)** Integrate SwipeMenuViewController to your project as above
 
-**2)** Import `SwipeMenuViewController ` module to your `CustomViewController` class
+**2)** Import `SwipeMenuViewController` module
 
-```
+```swift
 import SwipeMenuViewController
 ```
 
-**3)** Add SwipeMenuView to `CustomViewController` , then set dataSource and delegate, options if you need for it
+**3)** Add SwipeMenuView to `CustomViewController` , and set `dataSource`, `delegate`, and other options if you need
 
-```
+```swift
 class CustomViewController: UIViewController {
 
     @IBOutlet weak var swipeMenuView: SwipeMenuView!
@@ -123,9 +130,9 @@ class CustomViewController: UIViewController {
 }
 ```
 
-**4)** Conform your `CustomViewController` to `SwipeMenuViewControllerDelegate` optional protocol.
+**4)** Conform your `CustomViewController` to `SwipeMenuViewControllerDelegate` to receive change events
 
-```
+```swift
 extension CustomViewController: SwipeMenuViewControllerDelegate {
 
     // MARK - SwipeMenuViewControllerDelegate
@@ -139,9 +146,9 @@ extension CustomViewController: SwipeMenuViewControllerDelegate {
 }
 ```
 
-**5)** Conform your `CustomViewController` to `SwipeMenuViewControllerDataSource` protocol.
+**5)** Conform your `CustomViewController` to `SwipeMenuViewControllerDataSource` to build the view
 
-```
+```swift
 extension CustomViewController: SwipeMenuViewControllerDataSource {
 
      //MARK - SwipeMenuViewControllerDataSource
@@ -161,18 +168,18 @@ extension CustomViewController: SwipeMenuViewControllerDataSource {
 ```
 
 ### SwipeMenuViewController
-**1)** Check SwipeMenuView section 1) ~ 2)
+**1)** See SwipeMenuView process 1) ~ 2) to setup this SDK
 
 **2)** Use `SwipeMenuViewController` classes
 
-```
+```swift
 class CustomViewController: SwipeMenuViewController {
 }
 ```
 
-**3)** Conform your `CustomViewController` to override `SwipeMenuViewDelegate` methods and `SwipeMenuViewDataSource` methods if you need.
+**3)** Override `SwipeMenuViewDelegate` methods and `SwipeMenuViewDataSource` methods if you need.
 
-```
+```swift
 extension CustomViewController {
 
     // MARK: - SwipeMenuViewDelegate
@@ -204,158 +211,122 @@ extension CustomViewController {
 ### Methods
 `SwipeMenuView` has the following methods.
 
-```
+```swift
+// setup `SwipeMenuView` with the dataSource.
 func setup()
-```
-This method setup `SwipeMenuView` from the dataSource.
-```
+
+// reloads all `SwipeMenuView` item views with the dataSource and refreshes the display.
 func reloadData(options: SwipeMenuViewOptions? = nil, isOrientationChange: Bool = false)
-```
-This method reloads all `SwipeMenuView` item views from the dataSource and refreshes the display.
-```
+
+// jump to the selected page.
 func jump(to index: Int)
-```
-This method apply jumping action to the selected page.
-```
+
+// notify changing orientaion to `SwipeMenuView` before it.
 func willChangeOrientation()
 ```
-This method notice changing orientaion to `SwipeMenuView` before it.
+
 
 ### Protocols
-`SwipeMenuView` has the following protocols.
-```
+`SwipeMenuViewDataSource` and `SwipeMenuViewDelegate` has the following methods.
+
+```swift
+// Return the number of pages in `SwipeMenuView`.
 func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int
-```
-Return the number of pages in `SwipeMenuView`.
 
-```
+// Return strings to be displayed at the specified tag in `SwipeMenuView`.
 func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String
-```
-Return strings to be displayed at the specified tag in `SwipeMenuView`.
 
-```
+// Return a ViewController to be displayed at the specified page in `SwipeMenuView`.
 func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController
-```
-Return a ViewController to be displayed at the specified page in `SwipeMenuView`.
 
-```
+// Called before swiping the page.
 func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int)
-```
-This method is called before swiping the page.
 
-```
+// Called after swiping the page.
 func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int)
 ```
-This method is called after swiping the page.
 
 ### Properties
 `SwipeMenuView` has the following properties.
 
-```
+```swift
+// An object conforms `SwipeMenuViewDelegate`. Provide views to populate the `SwipeMenuView`.
 weak var delegate: SwipeMenuViewDelegate!
-```
-An object that supports the `SwipeMenuViewDelegate` protocol and can provide views to populate the `SwipeMenuView`.
 
-```
+// An object conforms `SwipeMenuViewDataSource`. Provide views and respond to `SwipeMenuView` events.
 weak var dataSource: SwipeMenuDataSource!
-```
-An object that supports the `SwipeMenuViewDataSource` protocol and can provide views to can respond to `SwipeMenuView` events.
 
-```
+// The index of the front page in `SwipeMenuView` (read only).
 public var currentIndex
 ```
-The index of the front page in `SwipeMenuView` (read only).
 
 ### Customization
 `SwipeMenuView` is customizable by designated options property when calling `reloadData()` method.
 Here are many properties of `SwipeMenuViewOptions` which you are able to customize it for your needs.
 
 #### TabView
-```
+
+```swift
+// TabView height. Defaults to `44.0`.
 public var height: CGFloat
-```
-TabView height. Default setting `44.0`.
 
-```
+// TabView side margin. Defaults to `0.0`.
 public var margin: CGFloat
-```
-TabView side margin. Default setting `0.0`.
 
-```
+// TabView background color. Defaults to `.white`.
 public var backgroundColor: UIColor
-```
-TabView background color. Default setting `.white`.
 
-```
+// TabView style. Defaults to `.flexible`. Style type has [`.flexible` , `.segmented`].
 public var style: Style
-```
-TabView style. Default setting `.flexible`. Style type has [`.flexible` , `.segmented`].
 
-```
+// TabView addition. Defaults to `.underline`. Addition type has [`.underline`, `.none`].
 public var addition: Addition
-```
-TabView addition. Default setting `.underline`. Addition type has [`.underline`, `.none`].
 
-```
+// TabView adjust width or not. Defaults to `true`.
 public var isAdjustItemViewWidth: Bool
 ```
-TabView adjust width or not. Default setting `true`.
 
 ##### ItemView
 
-```
+```swift
+// ItemView width. Defaults to `100.0`.
 public var width: CGFloat
-```
-ItemView width. Default setting `100.0`.
 
-```
+// ItemView side margin. Defaults to `5.0`.
 public var margin: CGFloat
-```
-ItemView side margin. Default setting `5.0`.
 
-```
+// ItemView textColor. Defaults to `.lightGray`.
 public var textColor: UIColor
-```
-ItemView textColor. Default setting `.lightGray`.
 
-```
+// ItemView selected textColor. Defaults to `.black`.
 public var selectedTextColor: UIColor
 ```
-ItemView selected textColor. Default setting `.black`.
 
 ##### UndelineView
 
-```
+```swift
+// UndelineView height. Defaults to `2.0`.
 public var height: CGFloat
-```
-UndelineView height. Default setting `2.0`.
 
-```
+// UndelineView side margin. Defaults to `0.0`.
 public var margin: CGFloat
-```
-UndelineView side margin. Default setting `0.0`.
 
-```
+// UndelineView backgroundColor. Defaults to `.black`.
 public var backgroundColor: UIColor
-```
-UndelineView backgroundColor. Default setting `.black`.
 
-```
+// UnderlineView animating duration. Defaults to `0.3`.
 public var animationDuration: CGFloat
 ```
-UnderlineView animating duration. Default setting `0.3`.
 
 #### ContentScrollView
 
-```
+```swift
+// ContentScrollView backgroundColor. Defaults to `.clear`.
 public var backgroundColor: UIColor
-```
-ContentScrollView backgroundColor. Default setting `.clear`.
 
-```
+// ContentScrollView scroll enabled. Defaults to `true`.
 public var isScrollEnabled: Bool
 ```
-ContentScrollView scroll enabled. Default setting `true`.
 
 ## Requirements
 - Xcode 8.0+
