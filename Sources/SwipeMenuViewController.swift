@@ -33,6 +33,8 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
     }
 
     // MARK: - SwipeMenuViewDelegate
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) { }
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) { }
 
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
 

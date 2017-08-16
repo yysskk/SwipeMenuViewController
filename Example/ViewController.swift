@@ -42,6 +42,14 @@ class ViewController: SwipeMenuViewController {
 
     // MARK: - SwipeMenuViewDelegate
 
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) {
+        print("will setup SwipeMenuView")
+    }
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) {
+        print("did setup SwipeMenuView")
+    }
+
     override func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) {
         print("will change from section\(fromIndex + 1)  to section\(toIndex + 1)")
     }
