@@ -110,7 +110,7 @@ open class ContentScrollView: UIScrollView {
                     pageView.topAnchor.constraint(equalTo: self.topAnchor),
                     pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
                     pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
-                    pageView.leadingAnchor.constraint(equalTo: self.trailingAnchor)
+                    pageView.leadingAnchor.constraint(equalTo: self.leadingAnchor)
                     ])
             }
         }
