@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		981655BE1F4340870011AEB6 /* UIColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981655BD1F4340870011AEB6 /* UIColorExtension.swift */; };
 		982CF1071EFBD7040086649C /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982CF1061EFBD7040086649C /* TabView.swift */; };
 		982CF1091EFBD70B0086649C /* TabItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982CF1081EFBD70B0086649C /* TabItemView.swift */; };
 		98B984871F15C57800FCDD0B /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B984861F15C57800FCDD0B /* UIViewExtension.swift */; };
@@ -50,6 +51,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		981655BD1F4340870011AEB6 /* UIColorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIColorExtension.swift; path = Extensions/UIColorExtension.swift; sourceTree = "<group>"; };
 		982CF1061EFBD7040086649C /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		982CF1081EFBD70B0086649C /* TabItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabItemView.swift; sourceTree = "<group>"; };
 		98B984861F15C57800FCDD0B /* UIViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
@@ -89,6 +91,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		981655BF1F4340950011AEB6 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				981655BD1F4340870011AEB6 /* UIColorExtension.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
 		98EEED391EFA627000A149EB = {
 			isa = PBXGroup;
 			children = (
@@ -116,6 +126,7 @@
 				98EEED651EFA637B00A149EB /* SwipeMenuViewController.swift */,
 				982CF1081EFBD70B0086649C /* TabItemView.swift */,
 				982CF1061EFBD7040086649C /* TabView.swift */,
+				981655BF1F4340950011AEB6 /* Extensions */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -266,6 +277,7 @@
 				98EEED681EFA638700A149EB /* SwipeMenuView.swift in Sources */,
 				982CF1071EFBD7040086649C /* TabView.swift in Sources */,
 				98EEED661EFA637B00A149EB /* SwipeMenuViewController.swift in Sources */,
+				981655BE1F4340870011AEB6 /* UIColorExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

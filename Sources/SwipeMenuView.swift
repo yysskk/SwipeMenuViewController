@@ -19,8 +19,9 @@ public struct SwipeMenuViewOptions {
         public struct ItemView {
             public var width: CGFloat = 100.0
             public var margin: CGFloat = 5.0
-            public var textColor: UIColor = .lightGray
-            public var selectedTextColor: UIColor = .black
+            public var textColor: UIColor = UIColor(red: 170 / 255, green: 170 / 255, blue: 170 / 255, alpha: 1.0)
+
+            public var selectedTextColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         }
 
         public struct UndelineView {
@@ -37,6 +38,7 @@ public struct SwipeMenuViewOptions {
         public var style: Style = .flexible
         public var addition: Addition = .underline
         public var isAdjustItemViewWidth: Bool = true
+        public var isConvertTextColorRatio: Bool = true
 
         // item
         public var itemView = ItemView()
