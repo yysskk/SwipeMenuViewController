@@ -42,11 +42,11 @@ class ViewController: SwipeMenuViewController {
 
     // MARK: - SwipeMenuViewDelegate
 
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) {
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) {
         print("will setup SwipeMenuView")
     }
 
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) {
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) {
         print("did setup SwipeMenuView")
     }
 
