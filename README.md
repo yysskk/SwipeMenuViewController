@@ -305,7 +305,7 @@ public var addition: Addition
 public var needsAdjustItemViewWidth: Bool
 
 // Convert the text color of ItemView to selected text color by scroll rate of ContentScrollView. Defaults to `true`.
-public var isConvertTextColorRatio: Bool
+public var needsConvertTextColorRatio: Bool
 ```
 
 ##### ItemView
