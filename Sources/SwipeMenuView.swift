@@ -37,7 +37,7 @@ public struct SwipeMenuViewOptions {
         public var style: Style = .flexible
         public var addition: Addition = .underline
         public var needsAdjustItemViewWidth: Bool = true
-        public var isConvertTextColorRatio: Bool = true
+        public var needsConvertTextColorRatio: Bool = true
 
         // item
         public var itemView = ItemView()
