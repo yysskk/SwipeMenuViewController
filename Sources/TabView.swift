@@ -61,10 +61,11 @@ open class TabView: UIScrollView {
 
     fileprivate func focus(on target: UIView, animated: Bool = true) {
         let offset = target.center.x + options.margin - self.frame.width / 2
-        if offset < 0 || self.frame.width > contentSize.width {
+        let contentWidth = containerView.frame.width + options.margin * 2
+        if offset < 0 || self.frame.width > contentWidth {
             self.setContentOffset(CGPoint(x: 0, y: 0), animated: animated)
-        } else if contentSize.width - self.frame.width < offset {
-            self.setContentOffset(CGPoint(x: contentSize.width - self.frame.width, y: 0), animated: animated)
+        } else if contentWidth - self.frame.width < offset {
+            self.setContentOffset(CGPoint(x: contentWidth - self.frame.width, y: 0), animated: animated)
         } else {
             self.setContentOffset(CGPoint(x: offset, y: 0), animated: animated)
         }
@@ -197,8 +198,6 @@ open class TabView: UIScrollView {
     private func layout(containerView: UIView, containerWidth: CGFloat) {
 
         containerView.frame.size.width = containerWidth
-        self.contentSize.width = containerWidth + options.margin * 2
-
         containerView.translatesAutoresizingMaskIntoConstraints = false
 
         switch options.style {
@@ -209,14 +208,17 @@ open class TabView: UIScrollView {
                 containerView.widthAnchor.constraint(equalToConstant: containerWidth),
                 containerView.heightAnchor.constraint(equalToConstant: options.height - options.underlineView.height)
                 ])
+
+            contentSize.width = containerWidth + options.margin * 2
         case .segmented:
             NSLayoutConstraint.activate([
                 containerView.topAnchor.constraint(equalTo: self.topAnchor),
-                containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin),
                 containerView.widthAnchor.constraint(equalTo: self.widthAnchor, constant: options.margin * -2),
                 containerView.heightAnchor.constraint(equalToConstant: options.height - options.underlineView.height),
-                containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: options.margin)
+                containerView.centerXAnchor.constraint(equalTo: self.centerXAnchor)
                 ])
+
+            contentSize = .zero
         }
     }
 
