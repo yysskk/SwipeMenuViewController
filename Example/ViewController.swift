@@ -17,12 +17,6 @@ class ViewController: SwipeMenuViewController {
         view.bringSubview(toFront: settingButton)
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        swipeMenuView.willChangeOrientation()
-    }
-
     override var prefersStatusBarHidden: Bool {
         return true
     }
