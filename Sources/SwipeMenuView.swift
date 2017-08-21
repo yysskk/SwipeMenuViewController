@@ -343,12 +343,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
     /// update addition in tab view
     private func updateTabViewAddition(by scrollView: UIScrollView) {
-        switch options.tabView.addition {
-        case .underline:
-            moveUnderlineView(scrollView: scrollView)
-        case .none:
-            tabView?.update(currentIndex)
-        }
+        moveUnderlineView(scrollView: scrollView)
     }
 
     /// update underbar position
