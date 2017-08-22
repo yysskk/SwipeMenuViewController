@@ -212,7 +212,7 @@ extension CustomViewController {
 
 
     // MARK - SwipeMenuViewDataSource
-    open override func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
+    override func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
         return array.count
     }
 
@@ -270,10 +270,10 @@ func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex:
 
 ```swift
 // An object conforms `SwipeMenuViewDelegate`. Provide views to populate the `SwipeMenuView`.
-weak var delegate: SwipeMenuViewDelegate!
+open weak var delegate: SwipeMenuViewDelegate!
 
 // An object conforms `SwipeMenuViewDataSource`. Provide views and respond to `SwipeMenuView` events.
-weak var dataSource: SwipeMenuDataSource!
+open weak var dataSource: SwipeMenuDataSource!
 
 // The index of the front page in `SwipeMenuView` (read only).
 public var currentIndex
