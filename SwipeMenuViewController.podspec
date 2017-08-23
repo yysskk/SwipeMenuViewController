@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SwipeMenuViewController"
-  s.version      = "1.1.1"
+  s.version      = "1.1.2"
   s.summary      = "Swipable tab and menu UI framework"
 
   # This description is used to generate tags and improve search results.
@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   s.description  = <<-DESC
-  This is swipable menu framework including SwipeMenuView and SwipeMenuViewController. It is designed to resembling simple UIKit interface.
+  SwipeMenuViewController provides SwipeMenuView and SwipeMenuViewController. This is very useful to build swipe-based paging UI. The interface is as simple as UIKit's.
                    DESC
 
   s.homepage     = "https://github.com/yysskk/SwipeMenuViewController"
