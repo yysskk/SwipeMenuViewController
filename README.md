@@ -133,12 +133,12 @@ class CustomViewController: UIViewController {
 }
 ```
 
-**4)** Conform your `CustomViewController` to `SwipeMenuViewControllerDelegate` to receive change events
+**4)** Conform your `CustomViewController` to `SwipeMenuViewDelegate` to receive change events
 
 ```swift
-extension CustomViewController: SwipeMenuViewControllerDelegate {
+extension CustomViewController: SwipeMenuViewDelegate {
 
-    // MARK - SwipeMenuViewControllerDelegate
+    // MARK - SwipeMenuViewDelegate
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) {
         // Codes
     }
@@ -157,12 +157,12 @@ extension CustomViewController: SwipeMenuViewControllerDelegate {
 }
 ```
 
-**5)** Conform your `CustomViewController` to `SwipeMenuViewControllerDataSource` to build the view
+**5)** Conform your `CustomViewController` to `SwipeMenuViewDataSource` to build the view
 
 ```swift
-extension CustomViewController: SwipeMenuViewControllerDataSource {
+extension CustomViewController: SwipeMenuViewDataSource {
 
-     //MARK - SwipeMenuViewControllerDataSource
+     //MARK - SwipeMenuViewDataSource
      func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
         return array.count
       }
