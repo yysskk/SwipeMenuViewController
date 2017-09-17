@@ -9,7 +9,7 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-Compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
 )](http://mit-license.org)
-![pod](https://img.shields.io/badge/pod-v1.1.2-red.svg)
+![pod](https://img.shields.io/badge/pod-v1.1.3-red.svg)
 
 ## Overview
 SwipeMenuViewController provides `SwipeMenuView` and `SwipeMenuViewController`.
@@ -316,6 +316,9 @@ public var width: CGFloat
 
 // ItemView side margin. Defaults to `5.0`.
 public var margin: CGFloat
+
+// ItemView font. Defaults to `14 pt as bold SystemFont`.
+public var font: UIFont
 
 // ItemView textColor. Defaults to `.lightGray`.
 public var textColor: UIColor
