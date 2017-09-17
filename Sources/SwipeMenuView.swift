@@ -19,6 +19,7 @@ public struct SwipeMenuViewOptions {
         public struct ItemView {
             public var width: CGFloat = 100.0
             public var margin: CGFloat = 5.0
+            public var font: UIFont = UIFont.boldSystemFont(ofSize: 14)
             public var textColor: UIColor = UIColor(red: 170 / 255, green: 170 / 255, blue: 170 / 255, alpha: 1.0)
             public var selectedTextColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         }

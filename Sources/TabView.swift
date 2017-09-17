@@ -145,6 +145,7 @@ open class TabView: UIScrollView {
             tabItemView.backgroundColor = options.backgroundColor
             if let title = dataSource.tabView(self, titleForItemAt: index) {
                 tabItemView.titleLabel.text = title
+                tabItemView.titleLabel.font = options.itemView.font
                 tabItemView.textColor = options.itemView.textColor
                 tabItemView.selectedTextColor = options.itemView.selectedTextColor
             }
