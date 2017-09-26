@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SwipeMenuViewController"
-  s.version      = "1.1.3"
+  s.version      = "1.1.4"
   s.summary      = "Swipable tab and menu UI framework"
 
   # This description is used to generate tags and improve search results.
