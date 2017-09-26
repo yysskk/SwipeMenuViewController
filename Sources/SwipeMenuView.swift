@@ -119,7 +119,7 @@ open class SwipeMenuView: UIView {
 
     public var options: SwipeMenuViewOptions
 
-    fileprivate var isOrientationChange: Bool = false
+    fileprivate var isLayoutingSubviews: Bool = false
 
     fileprivate var pageCount: Int {
         return dataSource?.numberOfPages(in: self) ?? 0
@@ -149,6 +149,8 @@ open class SwipeMenuView: UIView {
     }
 
     open override func layoutSubviews() {
+
+        isLayoutingSubviews = true
         super.layoutSubviews()
 
         reloadData(isOrientationChange: true)
@@ -166,7 +168,7 @@ open class SwipeMenuView: UIView {
             self.options = options
         }
 
-        self.isOrientationChange = isOrientationChange
+        self.isLayoutingSubviews = isOrientationChange
 
         if !isOrientationChange {
             reset()
@@ -175,7 +177,7 @@ open class SwipeMenuView: UIView {
 
         jump(to: defaultIndex ?? currentIndex)
 
-        self.isOrientationChange = false
+        self.isLayoutingSubviews = false
     }
 
     public func jump(to index: Int) {
@@ -187,12 +189,12 @@ open class SwipeMenuView: UIView {
     }
 
     public func willChangeOrientation() {
-        isOrientationChange = true
+        isLayoutingSubviews = true
     }
 
     fileprivate func update(from fromIndex: Int, to toIndex: Int) {
 
-        if !isOrientationChange {
+        if !isLayoutingSubviews {
             delegate?.swipeMenuView(self, willChangeIndexFrom: fromIndex, to: toIndex)
         }
 
@@ -200,7 +202,7 @@ open class SwipeMenuView: UIView {
         contentScrollView?.update(toIndex)
         currentIndex = toIndex
 
-        if !isOrientationChange {
+        if !isLayoutingSubviews {
             delegate?.swipeMenuView(self, didChangeIndexFrom: fromIndex, to: toIndex)
         }
     }
@@ -246,7 +248,7 @@ open class SwipeMenuView: UIView {
 
     private func reset() {
 
-        if !isOrientationChange {
+        if !isLayoutingSubviews {
             currentIndex = 0
         }
 
@@ -319,7 +321,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-        if isJumping || isOrientationChange { return }
+        if isJumping || isLayoutingSubviews { return }
 
         // update currentIndex
         if scrollView.contentOffset.x >= frame.width * CGFloat(currentIndex + 1) {
@@ -333,9 +335,9 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
     public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
 
-        if isJumping || isOrientationChange {
+        if isJumping || isLayoutingSubviews {
             isJumping = false
-            isOrientationChange = false
+            isLayoutingSubviews = false
             return
         }
 
