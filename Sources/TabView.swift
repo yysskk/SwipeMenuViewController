@@ -332,7 +332,7 @@ extension TabView {
 
         update(index)
 
-        UIView.animate(withDuration: 0.3, animations: { _ in
+        UIView.animate(withDuration: 0.3, animations: { 
             let target = self.currentItem
 
             self.underlineView.frame.origin.x = target.frame.origin.x + self.options.underlineView.margin
