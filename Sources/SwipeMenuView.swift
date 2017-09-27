@@ -184,7 +184,7 @@ open class SwipeMenuView: UIView {
 
         if let tabView = tabView, let contentScrollView = contentScrollView {
             tabView.jump(to: index)
-            contentScrollView.jump(to: index, animated: false)
+            contentScrollView.jump(to: index, animated: true)
         }
     }
 
