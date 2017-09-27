@@ -180,11 +180,11 @@ open class SwipeMenuView: UIView {
         self.isLayoutingSubviews = false
     }
 
-    public func jump(to index: Int) {
+   public func jump(to index: Int, animated: Bool) {
 
         if let tabView = tabView, let contentScrollView = contentScrollView {
             tabView.jump(to: index)
-            contentScrollView.jump(to: index, animated: true)
+            contentScrollView.jump(to: index, animated: animated)
         }
     }
 
