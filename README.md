@@ -238,7 +238,7 @@ func setup()
 func reloadData(options: SwipeMenuViewOptions? = nil, isOrientationChange: Bool = false)
 
 // jump to the selected page.
-func jump(to index: Int)
+func jump(to index: Int, animated: Bool)
 
 // notify changing orientaion to `SwipeMenuView` before it.
 func willChangeOrientation()
