@@ -276,7 +276,7 @@ open weak var delegate: SwipeMenuViewDelegate!
 open weak var dataSource: SwipeMenuDataSource!
 
 // The index of the front page in `SwipeMenuView` (read only).
-public var currentIndex
+private(set) var currentIndex
 ```
 
 ### Customization
