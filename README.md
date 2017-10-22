@@ -306,6 +306,9 @@ public var needsAdjustItemViewWidth: Bool
 
 // Convert the text color of ItemView to selected text color by scroll rate of ContentScrollView. Defaults to `true`.
 public var needsConvertTextColorRatio: Bool
+
+// TabView enable safeAreaLayout. Defaults to `true`.
+public var isSafeAreaEnabled: Bool
 ```
 
 ##### ItemView
@@ -351,6 +354,9 @@ public var backgroundColor: UIColor
 
 // ContentScrollView scroll enabled. Defaults to `true`.
 public var isScrollEnabled: Bool
+
+// ContentScrollView enable safeAreaLayout. Defaults to `true`.
+public var isSafeAreaEnabled: Bool
 ```
 
 ## Requirements
