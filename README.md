@@ -4,12 +4,12 @@
 
 [![Platform](http://img.shields.io/badge/platform-iOS-blue.svg?style=flat
 )](https://developer.apple.com/iphone/index.action)
-![Swift](https://img.shields.io/badge/Swift-3.2-orange.svg)
+![Swift](https://img.shields.io/badge/Swift-4.0-orange.svg)
 [![Cocoapods](https://img.shields.io/badge/Cocoapods-compatible-brightgreen.svg)](https://img.shields.io/badge/Cocoapods-compatible-brightgreen.svg)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-Compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
 )](http://mit-license.org)
-![pod](https://img.shields.io/badge/pod-v1.2.0-red.svg)
+![pod](https://img.shields.io/badge/pod-v2.0.0-red.svg)
 
 ## Overview
 SwipeMenuViewController provides `SwipeMenuView` and `SwipeMenuViewController`.
@@ -367,6 +367,10 @@ public var isSafeAreaEnabled: Bool
 ### 1.2.0
 - Xcode 9.x
 - Swift 3.2
+
+### 2.0.0 ~
+- Xcode 9.x
+- Swift 4.x
 
 ## Creator
 ### Yusuke Morishita
