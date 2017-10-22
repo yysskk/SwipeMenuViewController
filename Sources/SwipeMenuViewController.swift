@@ -11,7 +11,6 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
         swipeMenuView.delegate = self
         swipeMenuView.dataSource = self
         view.addSubview(swipeMenuView)
-        addSwipeMenuViewConstraints()
     }
 
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -20,16 +19,30 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
         swipeMenuView.willChangeOrientation()
     }
 
+    open override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        addSwipeMenuViewConstraints()
+    }
+
     private func addSwipeMenuViewConstraints() {
 
         swipeMenuView.translatesAutoresizingMaskIntoConstraints = false
 
-        NSLayoutConstraint.activate([
-            swipeMenuView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            swipeMenuView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            swipeMenuView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            swipeMenuView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+        if #available(iOS 11.0, *), view.hasSafeAreaInsets, swipeMenuView.options.tabView.isSafeAreaEnabled {
+            NSLayoutConstraint.activate([
+                swipeMenuView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+                swipeMenuView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+                swipeMenuView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+                swipeMenuView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
             ])
+        } else {
+            NSLayoutConstraint.activate([
+                swipeMenuView.topAnchor.constraint(equalTo: self.view.topAnchor),
+                swipeMenuView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+                swipeMenuView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+                swipeMenuView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+            ])
+        }
     }
 
     // MARK: - SwipeMenuViewDelegate

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,12 +22,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g7u-0R-yRV">
-                                <rect key="frame" x="295" y="587" width="100" height="100"/>
+                                <rect key="frame" x="279" y="577" width="80" height="80"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="100" id="OnO-dz-8IR"/>
-                                    <constraint firstAttribute="height" constant="100" id="Vbe-o1-8WM"/>
+                                    <constraint firstAttribute="width" constant="80" id="OnO-dz-8IR"/>
+                                    <constraint firstAttribute="height" constant="80" id="Vbe-o1-8WM"/>
                                 </constraints>
-                                <inset key="imageEdgeInsets" minX="20" minY="20" maxX="30" maxY="30"/>
                                 <state key="normal" image="settings">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -35,7 +35,7 @@
                                         <real key="value" value="1"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                        <real key="value" value="50"/>
+                                        <real key="value" value="40"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
                                         <color key="value" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -48,8 +48,8 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="g7u-0R-yRV" secondAttribute="bottom" constant="-20" id="4ms-kt-bai"/>
-                            <constraint firstAttribute="trailing" secondItem="g7u-0R-yRV" secondAttribute="trailing" constant="-20" id="fVn-35-H4z"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="g7u-0R-yRV" secondAttribute="bottom" constant="10" id="4ms-kt-bai"/>
+                            <constraint firstAttribute="trailing" secondItem="g7u-0R-yRV" secondAttribute="trailing" constant="16" id="fVn-35-H4z"/>
                         </constraints>
                     </view>
                     <connections>
@@ -101,7 +101,7 @@
                                                                 </connections>
                                                             </stepper>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tab Margin" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fsO-V6-A6a">
-                                                                <rect key="frame" x="118.5" y="66" width="67.5" height="30"/>
+                                                                <rect key="frame" x="118.5" y="66" width="67" height="30"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="30" id="Ooj-pU-xRe"/>
                                                                 </constraints>
@@ -166,7 +166,7 @@
                                                                 </connections>
                                                             </segmentedControl>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Adjust Tab Item Width" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="avh-1H-pWf">
-                                                                <rect key="frame" x="85" y="264" width="134" height="30"/>
+                                                                <rect key="frame" x="85.5" y="264" width="133.5" height="30"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="30" id="IRM-l3-5As"/>
                                                                 </constraints>
@@ -189,7 +189,7 @@
                                                                 </connections>
                                                             </segmentedControl>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tab Item Width: 100" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3HF-bf-90C">
-                                                                <rect key="frame" x="91.5" y="330" width="121.5" height="30"/>
+                                                                <rect key="frame" x="91.5" y="330" width="121" height="30"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="30" id="x5w-fL-zWC"/>
                                                                 </constraints>

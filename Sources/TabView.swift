@@ -11,15 +11,18 @@ open class TabView: UIScrollView {
 
     open var dataSource: TabViewDataSource!
 
-    private(set) var itemViews: [TabItemView] = []
+    var itemViews: [TabItemView] = []
 
-    fileprivate let containerView: UIStackView = .init()
+    fileprivate let containerView: UIStackView = UIStackView()
 
     fileprivate var underlineView: UIView = .init()
 
     fileprivate var currentIndex: Int = 0
 
-    fileprivate var options: SwipeMenuViewOptions.TabView = .init()
+    fileprivate var options: SwipeMenuViewOptions.TabView = SwipeMenuViewOptions.TabView()
+
+    private var leftMarginConstraint: NSLayoutConstraint = .init()
+    private var widthConstraint: NSLayoutConstraint = .init()
 
     public init(frame: CGRect, options: SwipeMenuViewOptions.TabView? = nil) {
         super.init(frame: frame)
@@ -42,13 +45,24 @@ open class TabView: UIScrollView {
         resetUnderlineViewPosition(index: currentIndex)
     }
 
+    @available(iOS 11.0, *)
+    open override func safeAreaInsetsDidChange() {
+        super.safeAreaInsetsDidChange()
+
+        leftMarginConstraint.constant = options.margin + safeAreaInsets.left
+        if options.style == .segmented {
+            widthConstraint.constant = options.margin * -2 - safeAreaInsets.left - safeAreaInsets.right
+        }
+
+        layoutIfNeeded()
+    }
+
     public func reset() {
 
         itemViews.forEach { $0.removeFromSuperview() }
         underlineView.removeFromSuperview()
         containerView.removeFromSuperview()
         itemViews = []
-        currentIndex = 0
     }
 
     public func update(_ index: Int) {
@@ -60,10 +74,20 @@ open class TabView: UIScrollView {
     }
 
     fileprivate func focus(on target: UIView, animated: Bool = true) {
-        guard options.style == .flexible else { return }
-        
-        let offset = target.center.x + options.margin - self.frame.width / 2
-        let contentWidth = containerView.frame.width + options.margin * 2
+
+        if options.style == .segmented { return }
+
+        let offset: CGFloat
+        let contentWidth: CGFloat
+
+        if #available(iOS 11.0, *), options.isSafeAreaEnabled {
+            offset = target.center.x + options.margin + safeAreaInsets.left - self.frame.width / 2
+            contentWidth = containerView.frame.width + options.margin * 2 + safeAreaInsets.left + safeAreaInsets.right
+        } else {
+            offset = target.center.x + options.margin - self.frame.width / 2
+            contentWidth = containerView.frame.width + options.margin * 2
+        }
+
         if offset < 0 || self.frame.width > contentWidth {
             self.setContentOffset(CGPoint(x: 0, y: 0), animated: animated)
         } else if contentWidth - self.frame.width < offset {
@@ -120,11 +144,21 @@ open class TabView: UIScrollView {
         switch options.style {
         case .flexible:
             let containerWidth = options.itemView.width * CGFloat(itemCount)
-            contentSize = CGSize(width: containerWidth + options.margin * 2, height: options.height)
-            containerView.frame = CGRect(x: 0, y: options.margin, width: containerWidth, height: containerHeight)
+            if #available(iOS 11.0, *), options.isSafeAreaEnabled {
+                contentSize = CGSize(width: containerWidth + options.margin * 2 + safeAreaInsets.left + safeAreaInsets.right, height: options.height)
+                containerView.frame = CGRect(x: 0, y: options.margin + safeAreaInsets.left, width: containerWidth, height: containerHeight)
+            } else {
+                contentSize = CGSize(width: containerWidth + options.margin * 2, height: options.height)
+                containerView.frame = CGRect(x: 0, y: options.margin, width: containerWidth, height: containerHeight)
+            }
         case .segmented:
-            contentSize = CGSize(width: frame.width, height: options.height)
-            containerView .frame = CGRect(x: 0, y: options.margin, width: frame.width - options.margin * 2, height: containerHeight)
+            if #available(iOS 11.0, *), options.isSafeAreaEnabled {
+                contentSize = CGSize(width: frame.width, height: options.height)
+                containerView .frame = CGRect(x: 0, y: options.margin + safeAreaInsets.left, width: frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right, height: containerHeight)
+            } else {
+                contentSize = CGSize(width: frame.width, height: options.height)
+                containerView .frame = CGRect(x: 0, y: options.margin, width: frame.width - options.margin * 2, height: containerHeight)
+            }
         }
 
         containerView.backgroundColor = .clear
@@ -172,7 +206,12 @@ open class TabView: UIScrollView {
                         ])
                 }
             case .segmented:
-                let adjustCellSize = CGSize(width: (frame.width - options.margin * 2) / CGFloat(itemCount), height: tabItemView.frame.size.height)
+                let adjustCellSize: CGSize
+                if #available(iOS 11.0, *), options.isSafeAreaEnabled {
+                    adjustCellSize = CGSize(width: (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(itemCount), height: tabItemView.frame.size.height)
+                } else {
+                    adjustCellSize = CGSize(width: (frame.width - options.margin * 2) / CGFloat(itemCount), height: tabItemView.frame.size.height)
+                }
                 tabItemView.frame.size = adjustCellSize
 
                 containerView.addArrangedSubview(tabItemView)
@@ -199,21 +238,46 @@ open class TabView: UIScrollView {
 
         switch options.style {
         case .flexible:
-            NSLayoutConstraint.activate([
-                containerView.topAnchor.constraint(equalTo: self.topAnchor),
-                containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin),
-                containerView.widthAnchor.constraint(equalToConstant: containerWidth),
-                containerView.heightAnchor.constraint(equalToConstant: options.height - options.underlineView.height)
-                ])
+            if #available(iOS 11.0, *), options.isSafeAreaEnabled {
+                leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin + safeAreaInsets.left)
 
-            contentSize.width = containerWidth + options.margin * 2
+                NSLayoutConstraint.activate([
+                    containerView.topAnchor.constraint(equalTo: self.topAnchor),
+                    leftMarginConstraint,
+                    containerView.widthAnchor.constraint(equalToConstant: containerWidth),
+                    containerView.heightAnchor.constraint(equalToConstant: options.height - options.underlineView.height)
+                    ])
+                contentSize.width = containerWidth + options.margin * 2 + safeAreaInsets.left - safeAreaInsets.right
+            } else {
+                leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin)
+                NSLayoutConstraint.activate([
+                    containerView.topAnchor.constraint(equalTo: self.topAnchor),
+                    leftMarginConstraint,
+                    containerView.widthAnchor.constraint(equalToConstant: containerWidth),
+                    containerView.heightAnchor.constraint(equalToConstant: options.height - options.underlineView.height)
+                    ])
+                contentSize.width = containerWidth + options.margin * 2
+            }
         case .segmented:
-            NSLayoutConstraint.activate([
-                containerView.topAnchor.constraint(equalTo: self.topAnchor),
-                containerView.widthAnchor.constraint(equalTo: self.widthAnchor, constant: options.margin * -2),
-                containerView.heightAnchor.constraint(equalToConstant: options.height - options.underlineView.height),
-                containerView.centerXAnchor.constraint(equalTo: self.centerXAnchor)
-                ])
+            if #available(iOS 11.0, *), options.isSafeAreaEnabled {
+                leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin + safeAreaInsets.left)
+                widthConstraint = containerView.widthAnchor.constraint(equalTo: self.widthAnchor, constant: options.margin * -2 - safeAreaInsets.left - safeAreaInsets.right)
+                NSLayoutConstraint.activate([
+                    containerView.topAnchor.constraint(equalTo: self.topAnchor),
+                    leftMarginConstraint,
+                    widthConstraint,
+                    containerView.heightAnchor.constraint(equalToConstant: options.height - options.underlineView.height)
+                    ])
+            } else {
+                leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin)
+                widthConstraint = containerView.widthAnchor.constraint(equalTo: self.widthAnchor, constant: options.margin * -2)
+                NSLayoutConstraint.activate([
+                    containerView.topAnchor.constraint(equalTo: self.topAnchor),
+                    leftMarginConstraint,
+                    widthConstraint,
+                    containerView.heightAnchor.constraint(equalToConstant: options.height - options.underlineView.height)
+                    ])
+            }
 
             contentSize = .zero
         }
@@ -236,7 +300,6 @@ extension TabView {
     }
 
     fileprivate func setupUnderlineView() {
-
         if itemViews.isEmpty { return }
 
         switch options.addition {
@@ -249,14 +312,18 @@ extension TabView {
             underlineView.backgroundColor = .clear
         }
 
-
-
         jump(to: currentIndex)
     }
 
     fileprivate func resetUnderlineViewPosition(index: Int) {
         guard options.style == .segmented else { return }
-        let adjustCellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self)) - options.underlineView.margin * 2
+        let adjustCellWidth: CGFloat
+        if #available(iOS 11.0, *), options.isSafeAreaEnabled && safeAreaInsets != .zero {
+            adjustCellWidth = (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(dataSource.numberOfItems(in: self)) - options.underlineView.margin * 2
+        } else {
+            adjustCellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self)) - options.underlineView.margin * 2
+        }
+
         underlineView.frame.origin.x = adjustCellWidth * CGFloat(index) - options.underlineView.margin
         underlineView.frame.size.width = adjustCellWidth
     }

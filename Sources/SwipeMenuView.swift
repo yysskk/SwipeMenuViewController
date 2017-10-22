@@ -39,6 +39,7 @@ public struct SwipeMenuViewOptions {
         public var addition: Addition = .underline
         public var needsAdjustItemViewWidth: Bool = true
         public var needsConvertTextColorRatio: Bool = true
+        public var isSafeAreaEnabled: Bool = true
 
         // item
         public var itemView = ItemView()
@@ -52,6 +53,15 @@ public struct SwipeMenuViewOptions {
         // self
         public var backgroundColor: UIColor = .clear
         public var isScrollEnabled: Bool = true
+        public var isSafeAreaEnabled: Bool = true
+    }
+
+    // self
+    public var isSafeAreaEnabled: Bool = true {
+        didSet {
+            tabView.isSafeAreaEnabled = isSafeAreaEnabled
+            contentScrollView.isSafeAreaEnabled = isSafeAreaEnabled
+        }
     }
 
     // TabView
@@ -152,7 +162,6 @@ open class SwipeMenuView: UIView {
 
         isLayoutingSubviews = true
         super.layoutSubviews()
-
         reloadData(isOrientationChange: true)
     }
 
@@ -168,19 +177,19 @@ open class SwipeMenuView: UIView {
             self.options = options
         }
 
-        self.isLayoutingSubviews = isOrientationChange
+        isLayoutingSubviews = isOrientationChange
 
-        if !isOrientationChange {
+        if !isLayoutingSubviews {
             reset()
             setup(default: defaultIndex ?? currentIndex)
         }
 
         jump(to: defaultIndex ?? currentIndex, animated: false)
 
-        self.isLayoutingSubviews = false
+        isLayoutingSubviews = false
     }
 
-   public func jump(to index: Int, animated: Bool) {
+    public func jump(to index: Int, animated: Bool) {
 
         if let tabView = tabView, let contentScrollView = contentScrollView {
             tabView.jump(to: index)
@@ -218,6 +227,10 @@ open class SwipeMenuView: UIView {
         addTabItemGestures()
 
         contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height), default: defaultIndex, options: options.contentScrollView)
+
+        tabView?.update(defaultIndex)
+        contentScrollView?.update(defaultIndex)
+        currentIndex = defaultIndex
 
         delegate?.swipeMenuView(self, viewDidSetupAt: defaultIndex)
     }

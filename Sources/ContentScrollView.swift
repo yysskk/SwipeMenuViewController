@@ -22,6 +22,10 @@ open class ContentScrollView: UIScrollView {
 
         currentIndex = defaultIndex
 
+        if #available(iOS 11.0, *) {
+            self.contentInsetAdjustmentBehavior = .never
+        }
+
         if let options = options {
             self.options = options
         }
@@ -106,9 +110,7 @@ open class ContentScrollView: UIScrollView {
                 ])
         }
 
-        guard currentIndex < dataSource.numberOfPages(in: self) else {
-            return
-        }
+        guard currentIndex < dataSource.numberOfPages(in: self) else { return }
         for i in (currentIndex + 1)..<dataSource.numberOfPages(in: self) {
             guard let pageView = dataSource.contentScrollView(self, viewForPageAt: i) else { return }
             pageViews.append(pageView)

@@ -10,6 +10,7 @@
 		981655BE1F4340870011AEB6 /* UIColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981655BD1F4340870011AEB6 /* UIColorExtension.swift */; };
 		982CF1071EFBD7040086649C /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982CF1061EFBD7040086649C /* TabView.swift */; };
 		982CF1091EFBD70B0086649C /* TabItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982CF1081EFBD70B0086649C /* TabItemView.swift */; };
+		989A0B9F1F9C2F780062AB1B /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989A0B9E1F9C2F780062AB1B /* UIViewExtension.swift */; };
 		98B984871F15C57800FCDD0B /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B984861F15C57800FCDD0B /* UIViewExtension.swift */; };
 		98B984891F15CAEB00FCDD0B /* PopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B984881F15CAEB00FCDD0B /* PopupViewController.swift */; };
 		98D59CA01F09E2150028EAEA /* SwipeMenuViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98EEED431EFA627000A149EB /* SwipeMenuViewController.framework */; };
@@ -54,6 +55,7 @@
 		981655BD1F4340870011AEB6 /* UIColorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIColorExtension.swift; path = Extensions/UIColorExtension.swift; sourceTree = "<group>"; };
 		982CF1061EFBD7040086649C /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		982CF1081EFBD70B0086649C /* TabItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabItemView.swift; sourceTree = "<group>"; };
+		989A0B9E1F9C2F780062AB1B /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UIViewExtension.swift; path = Extensions/UIViewExtension.swift; sourceTree = "<group>"; };
 		98B984861F15C57800FCDD0B /* UIViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		98B984881F15CAEB00FCDD0B /* PopupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopupViewController.swift; sourceTree = "<group>"; };
 		98E73FB71F0B95DD0063DF18 /* ContentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				981655BD1F4340870011AEB6 /* UIColorExtension.swift */,
+				989A0B9E1F9C2F780062AB1B /* UIViewExtension.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -224,8 +227,7 @@
 					};
 					98EEED521EFA62D900A149EB = {
 						CreatedOnToolsVersion = 8.3;
-						DevelopmentTeam = DK82AA6KPS;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -277,6 +279,7 @@
 				98E73FC11F0E1D230063DF18 /* ContentScrollView.swift in Sources */,
 				98EEED681EFA638700A149EB /* SwipeMenuView.swift in Sources */,
 				982CF1071EFBD7040086649C /* TabView.swift in Sources */,
+				989A0B9F1F9C2F780062AB1B /* UIViewExtension.swift in Sources */,
 				98EEED661EFA637B00A149EB /* SwipeMenuViewController.swift in Sources */,
 				981655BE1F4340870011AEB6 /* UIColorExtension.swift in Sources */,
 			);
@@ -479,7 +482,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = DK82AA6KPS;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Example/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -496,7 +500,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = DK82AA6KPS;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Example/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
