@@ -175,7 +175,7 @@ open class SwipeMenuView: UIView {
             setup(default: defaultIndex ?? currentIndex)
         }
 
-        jump(to: defaultIndex ?? currentIndex)
+        jump(to: defaultIndex ?? currentIndex, animated: false)
 
         self.isLayoutingSubviews = false
     }
