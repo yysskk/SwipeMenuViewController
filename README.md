@@ -359,9 +359,14 @@ public var isScrollEnabled: Bool
 public var isSafeAreaEnabled: Bool
 ```
 
-## Requirements
-- Xcode 8.0+
-- Swift 3.0+
+## Versioning
+### ~ 1.1.5
+- Xcode 8.x
+- Swift 3.x
+
+### 1.2.0
+- Xcode 9.x
+- Swift 3.2
 
 ## Creator
 ### Yusuke Morishita
