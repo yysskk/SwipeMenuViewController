@@ -20,7 +20,13 @@ extension UIColor {
             return nil
         }
 
-        let results = (0...3).map { (toComponents[$0] - components[$0]) * abs(multiplier) + components[$0] }
+        var results: [CGFloat] = []
+
+        for index in 0...3 {
+            let result = (toComponents[index] - components[index]) * abs(multiplier) + components[index]
+            results.append(result)
+        }
+
         return UIColor(red: results[0], green: results[1], blue: results[2], alpha: results[3])
     }
 }

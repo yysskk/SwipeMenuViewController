@@ -304,7 +304,7 @@ extension SwipeMenuView {
         }
     }
 
-    func tapItemView(_ recognizer: UITapGestureRecognizer) {
+    @objc func tapItemView(_ recognizer: UITapGestureRecognizer) {
 
         guard let itemView = recognizer.view as? TabItemView, let tabView = tabView, let index: Int = tabView.itemViews.index(of: itemView), let contentScrollView = contentScrollView else { return }
         if currentIndex == index { return }
