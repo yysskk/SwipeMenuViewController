@@ -333,7 +333,7 @@ extension TabView {
         update(index)
 
         UIView.animate(withDuration: 0.3, animations: { 
-            let target = self.currentItem
+            guard let target = self.currentItem else { return }
 
             self.underlineView.frame.origin.x = target.frame.origin.x + self.options.underlineView.margin
 
@@ -349,6 +349,8 @@ extension TabView {
     public func moveUnderlineView(index: Int, ratio: CGFloat, direction: Direction) {
 
         update(index)
+
+        guard let currentItem = currentItem else { return }
 
         switch direction {
         case .forward:
@@ -372,8 +374,8 @@ extension TabView {
 }
 
 extension TabView {
-    var currentItem: TabItemView {
-        return itemViews[currentIndex]
+    var currentItem: TabItemView? {
+        return currentIndex < itemViews.count ? itemViews[currentIndex] : nil
     }
 
     var nextItem: TabItemView {
@@ -392,6 +394,8 @@ extension TabView {
 
     func jump(to index: Int) {
         update(index)
+
+        guard let currentItem = currentItem else { return }
 
         if options.addition == .underline {
             underlineView.frame.origin.x = currentItem.frame.origin.x
