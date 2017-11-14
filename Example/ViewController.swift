@@ -2,14 +2,14 @@
 import UIKit
 import SwipeMenuViewController
 
-class ViewController: SwipeMenuViewController {
+final class ViewController: SwipeMenuViewController {
 
-    var datas: [String] = ["Bulbasaur","Caterpie", "Golem", "Jynx", "Marshtomp", "Salamence", "Riolu", "Araquanid"]
+    private var datas: [String] = ["Bulbasaur","Caterpie", "Golem", "Jynx", "Marshtomp", "Salamence", "Riolu", "Araquanid"]
 
     var options = SwipeMenuViewOptions()
     var dataCount: Int = 5
 
-    @IBOutlet weak var settingButton: UIButton!
+    @IBOutlet private weak var settingButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,7 +55,7 @@ class ViewController: SwipeMenuViewController {
 
     // MARK - SwipeMenuViewDataSource
 
-    open override func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
+    override func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
         return dataCount
     }
 
