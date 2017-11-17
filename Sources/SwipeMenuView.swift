@@ -192,8 +192,14 @@ open class SwipeMenuView: UIView {
     public func jump(to index: Int, animated: Bool) {
 
         if let tabView = tabView, let contentScrollView = contentScrollView {
+            let fromIndex = currentIndex
+            delegate?.swipeMenuView(self, willChangeIndexFrom: fromIndex, to: index)
+
+            currentIndex = index
             tabView.jump(to: index)
             contentScrollView.jump(to: index, animated: animated)
+
+            delegate?.swipeMenuView(self, didChangeIndexFrom: fromIndex, to: index)
         }
     }
 
