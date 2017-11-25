@@ -103,6 +103,19 @@ github "yysskk/SwipeMenuViewController"
 
 and run `carthage update`
 
+## Versioning
+### ~ 1.1.5
+- Xcode 8.x
+- Swift 3.x
+
+### 1.2.0
+- Xcode 9.x
+- Swift 3.2
+
+### 2.0.0 ~
+- Xcode 9.x
+- Swift 4.x
+
 ## Usage
 ### SwipeMenuView
 **1)** Integrate SwipeMenuViewController to your project as above
@@ -358,19 +371,6 @@ public var isScrollEnabled: Bool
 // ContentScrollView enable safeAreaLayout. Defaults to `true`.
 public var isSafeAreaEnabled: Bool
 ```
-
-## Versioning
-### ~ 1.1.5
-- Xcode 8.x
-- Swift 3.x
-
-### 1.2.0
-- Xcode 9.x
-- Swift 3.2
-
-### 2.0.0 ~
-- Xcode 9.x
-- Swift 4.x
 
 ## Creator
 ### Yusuke Morishita
