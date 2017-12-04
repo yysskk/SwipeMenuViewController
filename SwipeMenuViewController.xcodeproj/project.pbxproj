@@ -10,6 +10,7 @@
 		981655BE1F4340870011AEB6 /* UIColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981655BD1F4340870011AEB6 /* UIColorExtension.swift */; };
 		982CF1071EFBD7040086649C /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982CF1061EFBD7040086649C /* TabView.swift */; };
 		982CF1091EFBD70B0086649C /* TabItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982CF1081EFBD70B0086649C /* TabItemView.swift */; };
+		98616BB61FD555B3001A5A21 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 98616BB51FD555B2001A5A21 /* README.md */; };
 		989A0B9F1F9C2F780062AB1B /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989A0B9E1F9C2F780062AB1B /* UIViewExtension.swift */; };
 		98B984871F15C57800FCDD0B /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B984861F15C57800FCDD0B /* UIViewExtension.swift */; };
 		98B984891F15CAEB00FCDD0B /* PopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B984881F15CAEB00FCDD0B /* PopupViewController.swift */; };
@@ -55,6 +56,7 @@
 		981655BD1F4340870011AEB6 /* UIColorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIColorExtension.swift; path = Extensions/UIColorExtension.swift; sourceTree = "<group>"; };
 		982CF1061EFBD7040086649C /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		982CF1081EFBD70B0086649C /* TabItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabItemView.swift; sourceTree = "<group>"; };
+		98616BB51FD555B2001A5A21 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		989A0B9E1F9C2F780062AB1B /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UIViewExtension.swift; path = Extensions/UIViewExtension.swift; sourceTree = "<group>"; };
 		98B984861F15C57800FCDD0B /* UIViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		98B984881F15CAEB00FCDD0B /* PopupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopupViewController.swift; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 		98EEED391EFA627000A149EB = {
 			isa = PBXGroup;
 			children = (
+				98616BB51FD555B2001A5A21 /* README.md */,
 				98EEED541EFA62D900A149EB /* Example */,
 				98EEED441EFA627000A149EB /* Products */,
 				98EEED451EFA627000A149EB /* Sources */,
@@ -255,6 +258,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				98616BB61FD555B3001A5A21 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

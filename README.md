@@ -9,7 +9,7 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-Compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
 )](http://mit-license.org)
-![pod](https://img.shields.io/badge/pod-v2.0.2-red.svg)
+![pod](https://img.shields.io/badge/pod-v2.0.3-red.svg)
 
 ## Overview
 SwipeMenuViewController provides `SwipeMenuView` and `SwipeMenuViewController`.
@@ -231,16 +231,13 @@ extension CustomViewController {
 `SwipeMenuView` has the following methods.
 
 ```swift
-// setup `SwipeMenuView` with the dataSource.
-func setup()
-
-// reloads all `SwipeMenuView` item views with the dataSource and refreshes the display.
+// Reloads all `SwipeMenuView` item views with the dataSource and refreshes the display.
 func reloadData(options: SwipeMenuViewOptions? = nil, isOrientationChange: Bool = false)
 
-// jump to the selected page.
+// Jump to the selected page.
 func jump(to index: Int, animated: Bool)
 
-// notify changing orientaion to `SwipeMenuView` before it.
+// Notify changing orientaion to `SwipeMenuView` before it.
 func willChangeOrientation()
 ```
 
@@ -257,6 +254,12 @@ func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) ->
 
 // Return a ViewController to be displayed at the specified page in `SwipeMenuView`.
 func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController
+
+/// Called before setup self.
+func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int)
+
+/// Called after setup self.
+func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int)
 
 // Called before swiping the page.
 func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int)
@@ -292,7 +295,7 @@ public var height: CGFloat
 // TabView side margin. Defaults to `0.0`.
 public var margin: CGFloat
 
-// TabView background color. Defaults to `.white`.
+// TabView background color. Defaults to `.clear`.
 public var backgroundColor: UIColor
 
 // TabView style. Defaults to `.flexible`. Style type has [`.flexible` , `.segmented`].
