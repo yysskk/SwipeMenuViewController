@@ -369,6 +369,10 @@ extension TabView {
             }
         }
 
+        if options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio) == nil {
+            updateSelectedItem(by: currentIndex)
+        }
+
         focus(on: underlineView, animated: false)
     }
 }
