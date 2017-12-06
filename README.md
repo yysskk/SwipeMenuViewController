@@ -9,7 +9,7 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-Compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
 )](http://mit-license.org)
-![pod](https://img.shields.io/badge/pod-v2.0.4-red.svg)
+![pod](https://img.shields.io/badge/pod-v2.0.5-red.svg)
 
 ## Overview
 SwipeMenuViewController provides `SwipeMenuView` and `SwipeMenuViewController`.
@@ -311,6 +311,9 @@ public var margin: CGFloat
 // TabView background color. Defaults to `.clear`.
 public var backgroundColor: UIColor
 
+// TabView clipsToBounds. Defaults to `true`.
+public var clipsToBounds: Bool = true
+
 // TabView style. Defaults to `.flexible`. Style type has [`.flexible` , `.segmented`].
 public var style: Style
 
@@ -338,6 +341,9 @@ public var margin: CGFloat
 
 // ItemView font. Defaults to `14 pt as bold SystemFont`.
 public var font: UIFont
+
+// ItemView clipsToBounds. Defaults to `true`.
+public var clipsToBounds: Bool = true
 
 // ItemView textColor. Defaults to `.lightGray`.
 public var textColor: UIColor
@@ -367,6 +373,9 @@ public var animationDuration: CGFloat
 ```swift
 // ContentScrollView backgroundColor. Defaults to `.clear`.
 public var backgroundColor: UIColor
+
+// ContentScrollView clipsToBounds. Defaults to `true`.
+public var clipsToBounds: Bool = true
 
 // ContentScrollView scroll enabled. Defaults to `true`.
 public var isScrollEnabled: Bool
