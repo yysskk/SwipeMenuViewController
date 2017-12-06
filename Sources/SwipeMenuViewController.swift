@@ -19,28 +19,27 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
         swipeMenuView.willChangeOrientation()
     }
 
-    open override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         addSwipeMenuViewConstraints()
     }
 
     private func addSwipeMenuViewConstraints() {
 
         swipeMenuView.translatesAutoresizingMaskIntoConstraints = false
-
         if #available(iOS 11.0, *), view.hasSafeAreaInsets, swipeMenuView.options.tabView.isSafeAreaEnabled {
             NSLayoutConstraint.activate([
-                swipeMenuView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
-                swipeMenuView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-                swipeMenuView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-                swipeMenuView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+                swipeMenuView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                swipeMenuView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                swipeMenuView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                swipeMenuView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         } else {
             NSLayoutConstraint.activate([
-                swipeMenuView.topAnchor.constraint(equalTo: self.view.topAnchor),
-                swipeMenuView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-                swipeMenuView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-                swipeMenuView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+                swipeMenuView.topAnchor.constraint(equalTo: topLayoutGuide.topAnchor),
+                swipeMenuView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                swipeMenuView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                swipeMenuView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         }
     }

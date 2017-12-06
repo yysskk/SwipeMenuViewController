@@ -16,10 +16,6 @@ final class ViewController: SwipeMenuViewController {
         view.bringSubview(toFront: settingButton)
     }
 
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "popupSegue" {
             let vc = segue.destination as! PopupViewController
