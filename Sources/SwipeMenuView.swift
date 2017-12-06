@@ -26,6 +26,9 @@ public struct SwipeMenuViewOptions {
             /// ItemView font. Defaults to `14 pt as bold SystemFont`.
             public var font: UIFont = UIFont.boldSystemFont(ofSize: 14)
 
+            /// ItemView clipsToBounds. Defaults to `true`.
+            public var clipsToBounds: Bool = true
+
             /// ItemView textColor. Defaults to `.lightGray`.
             public var textColor: UIColor = UIColor(red: 170 / 255, green: 170 / 255, blue: 170 / 255, alpha: 1.0)
 
@@ -57,6 +60,9 @@ public struct SwipeMenuViewOptions {
         /// TabView background color. Defaults to `.clear`.
         public var backgroundColor: UIColor = .clear
 
+        /// TabView clipsToBounds. Defaults to `true`.
+        public var clipsToBounds: Bool = true
+
         /// TabView style. Defaults to `.flexible`. Style type has [`.flexible` , `.segmented`].
         public var style: Style = .flexible
 
@@ -83,6 +89,9 @@ public struct SwipeMenuViewOptions {
 
         /// ContentScrollView backgroundColor. Defaults to `.clear`.
         public var backgroundColor: UIColor = .clear
+
+        /// ContentScrollView clipsToBounds. Defaults to `true`.
+        public var clipsToBounds: Bool = true
 
         /// ContentScrollView scroll enabled. Defaults to `true`.
         public var isScrollEnabled: Bool = true
@@ -282,9 +291,11 @@ open class SwipeMenuView: UIView {
         backgroundColor = .clear
 
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
+        tabView?.clipsToBounds = options.tabView.clipsToBounds
         addTabItemGestures()
 
         contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height), default: defaultIndex, options: options.contentScrollView)
+        contentScrollView?.clipsToBounds = options.contentScrollView.clipsToBounds
 
         tabView?.update(defaultIndex)
         contentScrollView?.update(defaultIndex)
