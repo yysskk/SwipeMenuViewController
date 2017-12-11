@@ -197,6 +197,7 @@ open class SwipeMenuView: UIView {
 
     /// The index of the front page in `SwipeMenuView` (read only).
     open private(set) var currentIndex: Int = 0
+    private var jumpingToIndex: Int?
 
     public init(frame: CGRect, options: SwipeMenuViewOptions? = nil) {
 
@@ -252,14 +253,11 @@ open class SwipeMenuView: UIView {
     public func jump(to index: Int, animated: Bool) {
 
         if let tabView = tabView, let contentScrollView = contentScrollView {
-            let fromIndex = currentIndex
-            delegate?.swipeMenuView(self, willChangeIndexFrom: fromIndex, to: index)
+            delegate?.swipeMenuView(self, willChangeIndexFrom: currentIndex, to: index)
+            jumpingToIndex = index
 
-            currentIndex = index
             tabView.jump(to: index)
             contentScrollView.jump(to: index, animated: animated)
-
-            delegate?.swipeMenuView(self, didChangeIndexFrom: fromIndex, to: index)
         }
     }
 
@@ -276,9 +274,12 @@ open class SwipeMenuView: UIView {
 
         tabView?.update(toIndex)
         contentScrollView?.update(toIndex)
-        currentIndex = toIndex
+        if !isJumping {
+            // delay setting currentIndex until end scroll when jumping
+            currentIndex = toIndex
+        }
 
-        if !isLayoutingSubviews {
+        if !isJumping && !isLayoutingSubviews {
             delegate?.swipeMenuView(self, didChangeIndexFrom: fromIndex, to: toIndex)
         }
     }
@@ -379,6 +380,7 @@ extension SwipeMenuView {
         if currentIndex == index { return }
 
         isJumping = true
+        jumpingToIndex = index
 
         contentScrollView.jump(to: index, animated: true)
         moveTabItem(tabView: tabView, index: index)
@@ -418,6 +420,11 @@ extension SwipeMenuView: UIScrollViewDelegate {
     public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
 
         if isJumping || isLayoutingSubviews {
+            if let toIndex = jumpingToIndex {
+                delegate?.swipeMenuView(self, didChangeIndexFrom: currentIndex, to: toIndex)
+                currentIndex = toIndex
+                jumpingToIndex = nil
+            }
             isJumping = false
             isLayoutingSubviews = false
             return
