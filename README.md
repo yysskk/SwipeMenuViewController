@@ -10,6 +10,8 @@
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
 )](http://mit-license.org)
 ![pod](https://img.shields.io/badge/pod-v2.0.6-red.svg)
+[![CocoaPodsDL](https://img.shields.io/cocoapods/dt/SwipeMenuViewController.svg)](https://cocoapods.org/pods/SwipeMenuViewController)
+
 
 ## Overview
 SwipeMenuViewController provides `SwipeMenuView` and `SwipeMenuViewController`.
