@@ -7,10 +7,9 @@
 ![Swift](https://img.shields.io/badge/Swift-4.0-orange.svg)
 [![Cocoapods](https://img.shields.io/badge/Cocoapods-compatible-brightgreen.svg)](https://img.shields.io/badge/Cocoapods-compatible-brightgreen.svg)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-Compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![CocoaPodsDL](https://img.shields.io/cocoapods/dt/SwipeMenuViewController.svg)](https://cocoapods.org/pods/SwipeMenuViewController)
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
 )](http://mit-license.org)
-![pod](https://img.shields.io/badge/pod-v2.0.6-red.svg)
-[![CocoaPodsDL](https://img.shields.io/cocoapods/dt/SwipeMenuViewController.svg)](https://cocoapods.org/pods/SwipeMenuViewController)
 
 
 ## Overview
