@@ -102,6 +102,9 @@ open class TabView: UIScrollView {
     fileprivate func setup() {
 
         reset()
+
+        guard dataSource.numberOfItems(in: self) > 0 else { return }
+
         setupScrollView()
         setupContainerView()
         setupTabItemViews()
@@ -317,7 +320,7 @@ extension TabView {
     }
 
     fileprivate func resetUnderlineViewPosition(index: Int) {
-        guard options.style == .segmented else { return }
+        guard options.style == .segmented, dataSource.numberOfItems(in: self) > 0 else { return }
         let adjustCellWidth: CGFloat
         if #available(iOS 11.0, *), options.isSafeAreaEnabled && safeAreaInsets != .zero {
             adjustCellWidth = (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(dataSource.numberOfItems(in: self)) - options.underlineView.margin * 2
