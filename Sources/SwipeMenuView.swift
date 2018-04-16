@@ -264,6 +264,7 @@ open class SwipeMenuView: UIView {
     /// Notify changing orientaion to `SwipeMenuView` before it.
     public func willChangeOrientation() {
         isLayoutingSubviews = true
+        setNeedsLayout()
     }
 
     fileprivate func update(from fromIndex: Int, to toIndex: Int) {
