@@ -406,8 +406,8 @@ extension TabView {
         guard let currentItem = currentItem else { return }
 
         if options.addition == .underline {
-            underlineView.frame.origin.x = currentItem.frame.origin.x
-            underlineView.frame.size.width = currentItem.frame.size.width
+            underlineView.frame.origin.x = currentItem.frame.origin.x + options.underlineView.margin
+            underlineView.frame.size.width = currentItem.frame.size.width - options.underlineView.margin * 2
         }
 
         focus(on: currentItem, animated: false)
