@@ -148,10 +148,10 @@ public protocol SwipeMenuViewDataSource: class {
     /// Return the number of pages in `SwipeMenuView`.
     func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int
 
-    /// Return strings to be displayed at the specified tag in `SwipeMenuView`.
+    /// Return strings to be displayed at the tab in `SwipeMenuView`.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String
 
-    /// Return a ViewController to be displayed at the specified page in `SwipeMenuView`.
+    /// Return a ViewController to be displayed at the page in `SwipeMenuView`.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController
 }
 
@@ -169,6 +169,7 @@ open class SwipeMenuView: UIView {
         didSet {
             guard let tabView = tabView else { return }
             tabView.dataSource = self
+            tabView.tabViewDelegate = self
             addSubview(tabView)
             layout(tabView: tabView)
         }
@@ -294,7 +295,6 @@ open class SwipeMenuView: UIView {
 
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         tabView?.clipsToBounds = options.tabView.clipsToBounds
-        addTabItemGestures()
 
         contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height), default: defaultIndex, options: options.contentScrollView)
         contentScrollView?.clipsToBounds = options.contentScrollView.clipsToBounds
@@ -345,9 +345,22 @@ open class SwipeMenuView: UIView {
     }
 }
 
-// MARK: - TabViewDataSource
+// MARK: - TabViewDelegate, TabViewDataSource
 
-extension SwipeMenuView: TabViewDataSource {
+extension SwipeMenuView: TabViewDelegate, TabViewDataSource {
+
+    public func tabView(_ tabView: TabView, didSelectTabAt index: Int) {
+
+        guard let contentScrollView = contentScrollView,
+            currentIndex != index else { return }
+
+        isJumping = true
+        jumpingToIndex = index
+
+        contentScrollView.jump(to: index, animated: true)
+
+        update(from: currentIndex, to: index)
+    }
 
     public func numberOfItems(in menuView: TabView) -> Int {
         return dataSource?.numberOfPages(in: self) ?? 0
@@ -355,48 +368,6 @@ extension SwipeMenuView: TabViewDataSource {
 
     public func tabView(_ tabView: TabView, titleForItemAt index: Int) -> String? {
         return dataSource?.swipeMenuView(self, titleForPageAt: index)
-    }
-}
-
-// MARK: - GestureRecognizer
-
-extension SwipeMenuView {
-
-    fileprivate var tapGestureRecognizer: UITapGestureRecognizer {
-        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapItemView(_:)))
-        gestureRecognizer.numberOfTapsRequired = 1
-        gestureRecognizer.cancelsTouchesInView = false
-        return gestureRecognizer
-    }
-
-    fileprivate func addTabItemGestures() {
-        tabView?.itemViews.forEach {
-            $0.addGestureRecognizer(tapGestureRecognizer)
-        }
-    }
-
-    @objc func tapItemView(_ recognizer: UITapGestureRecognizer) {
-
-        guard let itemView = recognizer.view as? TabItemView, let tabView = tabView, let index: Int = tabView.itemViews.index(of: itemView), let contentScrollView = contentScrollView else { return }
-        if currentIndex == index { return }
-
-        isJumping = true
-        jumpingToIndex = index
-
-        contentScrollView.jump(to: index, animated: true)
-        moveTabItem(tabView: tabView, index: index)
-
-        update(from: currentIndex, to: index)
-    }
-
-    private func moveTabItem(tabView: TabView, index: Int) {
-
-        switch options.tabView.addition {
-        case .underline:
-            tabView.animateUnderlineView(index: index, completion: nil)
-        case .none:
-            tabView.update(index)
-        }
     }
 }
 

@@ -1,15 +1,37 @@
 import UIKit
 
-public protocol TabViewDataSource {
+// MARK: - TabViewDelegate
 
+public protocol TabViewDelegate: class {
+
+    /// Called before selecting the tab.
+    func tabView(_ tabView: TabView, willSelectTabAt index: Int)
+
+    /// Called after selecting the tab.
+    func tabView(_ tabView: TabView, didSelectTabAt index: Int)
+}
+
+extension TabViewDelegate {
+    public func tabView(_ tabView: TabView, willSelectTabAt index: Int) {}
+
+    public func tabView(_ tabView: TabView, didSelectTabAt index: Int) {}
+}
+
+// MARK: - TabViewDataSource
+
+public protocol TabViewDataSource: class {
+
+    /// Return the number of Items in `TabView`.
     func numberOfItems(in tabView: TabView) -> Int
 
+    /// Return strings to be displayed at the tab in `TabView`.
     func tabView(_ tabView: TabView, titleForItemAt index: Int) -> String?
 }
 
 open class TabView: UIScrollView {
 
-    open var dataSource: TabViewDataSource!
+    open weak var tabViewDelegate: TabViewDelegate?
+    open weak var dataSource: TabViewDataSource?
 
     var itemViews: [TabItemView] = []
 
@@ -19,7 +41,7 @@ open class TabView: UIScrollView {
 
     fileprivate var currentIndex: Int = 0
 
-    fileprivate var options: SwipeMenuViewOptions.TabView = SwipeMenuViewOptions.TabView()
+    fileprivate(set) var options: SwipeMenuViewOptions.TabView = SwipeMenuViewOptions.TabView()
 
     private var leftMarginConstraint: NSLayoutConstraint = .init()
     private var widthConstraint: NSLayoutConstraint = .init()
@@ -73,6 +95,10 @@ open class TabView: UIScrollView {
         updateSelectedItem(by: currentIndex)
     }
 
+    public func set(_ options: SwipeMenuViewOptions.TabView) {
+        self.options = options
+    }
+
     fileprivate func focus(on target: UIView, animated: Bool = true) {
 
         if options.style == .segmented { return }
@@ -103,11 +129,12 @@ open class TabView: UIScrollView {
 
         reset()
 
-        guard dataSource.numberOfItems(in: self) > 0 else { return }
+        guard let dataSource = dataSource,
+            dataSource.numberOfItems(in: self) > 0 else { return }
 
         setupScrollView()
-        setupContainerView()
-        setupTabItemViews()
+        setupContainerView(dataSource: dataSource)
+        setupTabItemViews(dataSource: dataSource)
         setupUnderlineView()
     }
 
@@ -123,7 +150,7 @@ open class TabView: UIScrollView {
         translatesAutoresizingMaskIntoConstraints = false
     }
 
-    fileprivate func setupContainerView() {
+    fileprivate func setupContainerView(dataSource: TabViewDataSource) {
 
         containerView.alignment = .leading
 
@@ -168,7 +195,7 @@ open class TabView: UIScrollView {
         addSubview(containerView)
     }
 
-    fileprivate func setupTabItemViews() {
+    fileprivate func setupTabItemViews(dataSource: TabViewDataSource) {
 
         itemViews = []
 
@@ -232,6 +259,7 @@ open class TabView: UIScrollView {
         }
 
         layout(containerView: containerView, containerWidth: xPosition)
+        addTabItemGestures()
         animateUnderlineView(index: currentIndex)
     }
 
@@ -320,7 +348,9 @@ extension TabView {
     }
 
     fileprivate func resetUnderlineViewPosition(index: Int) {
-        guard options.style == .segmented, dataSource.numberOfItems(in: self) > 0 else { return }
+        guard options.style == .segmented,
+            let dataSource = dataSource,
+            dataSource.numberOfItems(in: self) > 0 else { return }
         let adjustCellWidth: CGFloat
         if #available(iOS 11.0, *), options.isSafeAreaEnabled && safeAreaInsets != .zero {
             adjustCellWidth = (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(dataSource.numberOfItems(in: self)) - options.underlineView.margin * 2
@@ -413,3 +443,42 @@ extension TabView {
         focus(on: currentItem, animated: false)
     }
 }
+
+// MARK: - GestureRecognizer
+
+extension TabView {
+
+    fileprivate var tapGestureRecognizer: UITapGestureRecognizer {
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapItemView(_:)))
+        gestureRecognizer.numberOfTapsRequired = 1
+        gestureRecognizer.cancelsTouchesInView = false
+        return gestureRecognizer
+    }
+
+    fileprivate func addTabItemGestures() {
+        itemViews.forEach {
+            $0.addGestureRecognizer(tapGestureRecognizer)
+        }
+    }
+
+    @objc func tapItemView(_ recognizer: UITapGestureRecognizer) {
+        guard let itemView = recognizer.view as? TabItemView,
+            let index: Int = itemViews.index(of: itemView),
+            currentIndex != index else { return }
+        tabViewDelegate?.tabView(self, willSelectTabAt: index)
+        moveTabItem(index: index)
+        update(index)
+        tabViewDelegate?.tabView(self, didSelectTabAt: index)
+    }
+
+    private func moveTabItem(index: Int) {
+
+        switch options.addition {
+        case .underline:
+            animateUnderlineView(index: index, completion: nil)
+        case .none:
+            update(index)
+        }
+    }
+}
+
