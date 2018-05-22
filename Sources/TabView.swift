@@ -59,7 +59,7 @@ open class TabView: UIScrollView {
     }
 
     open override func didMoveToSuperview() {
-        setup()
+        reload()
     }
 
     open override func layoutSubviews() {
@@ -79,7 +79,7 @@ open class TabView: UIScrollView {
         layoutIfNeeded()
     }
 
-    public func reset() {
+    func reset() {
 
         itemViews.forEach { $0.removeFromSuperview() }
         underlineView.removeFromSuperview()
@@ -87,7 +87,7 @@ open class TabView: UIScrollView {
         itemViews = []
     }
 
-    public func update(_ index: Int) {
+    func update(_ index: Int) {
 
         if currentIndex == index { return }
 
@@ -95,6 +95,7 @@ open class TabView: UIScrollView {
         updateSelectedItem(by: currentIndex)
     }
 
+    /// Set TabView options
     public func set(_ options: SwipeMenuViewOptions.TabView) {
         self.options = options
     }
@@ -125,7 +126,8 @@ open class TabView: UIScrollView {
 
     // MARK: - Setup
 
-    fileprivate func setup() {
+    /// Reloads all `TabView` item views with the dataSource and refreshes the display.
+    public func reload() {
 
         reset()
 

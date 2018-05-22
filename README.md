@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="https://github.com/yysskk/Assets/blob/master/SwipeMenuViewController/Banner.png" width="800">
-</p>
+# SwipeMenuViewController
 
 [![Platform](http://img.shields.io/badge/platform-iOS-blue.svg?style=flat
 )](https://developer.apple.com/iphone/index.action)
@@ -10,7 +8,6 @@
 [![CocoaPodsDL](https://img.shields.io/cocoapods/dt/SwipeMenuViewController.svg)](https://cocoapods.org/pods/SwipeMenuViewController)
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
 )](http://mit-license.org)
-
 
 ## Overview
 SwipeMenuViewController provides `SwipeMenuView` and `SwipeMenuViewController`.
@@ -255,6 +252,15 @@ func jump(to index: Int, animated: Bool)
 func willChangeOrientation()
 ```
 
+`TabView` has the following methods.
+```swift
+
+/// Reloads all `TabView` item views with the dataSource and refreshes the display.
+public func reload()
+
+/// Set `TabView` options
+public func set(_ options: SwipeMenuViewOptions.TabView) {}
+```
 
 ### Protocols
 `SwipeMenuViewDataSource` and `SwipeMenuViewDelegate` has the following methods.
@@ -294,6 +300,16 @@ open weak var dataSource: SwipeMenuDataSource!
 
 // The index of the front page in `SwipeMenuView` (read only).
 private(set) var currentIndex
+```
+
+`TabView` has the following properties.
+```swift
+
+// An object conforms `TabViewDelegate`. Provide views to populate the `TabView`.
+open weak var tabViewDelegate: TabViewDelegate?
+
+// An object conforms `TabViewDataSource`. Provide views and respond to `TabView` events.
+open weak var dataSource: TabViewDataSource?
 ```
 
 ### Customization
