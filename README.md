@@ -256,10 +256,7 @@ func willChangeOrientation()
 ```swift
 
 /// Reloads all `TabView` item views with the dataSource and refreshes the display.
-public func reload()
-
-/// Set `TabView` options
-public func set(_ options: SwipeMenuViewOptions.TabView) {}
+public func reloadData(options: SwipeMenuViewOptions.TabView? = nil, default defaultIndex: Int? = nil)
 ```
 
 ### Protocols
