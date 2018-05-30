@@ -1,13 +1,11 @@
 # SwipeMenuViewController
 
-[![Platform](http://img.shields.io/badge/platform-iOS-blue.svg?style=flat
-)](https://developer.apple.com/iphone/index.action)
-![Swift](https://img.shields.io/badge/Swift-4.0-orange.svg)
-[![Cocoapods](https://img.shields.io/badge/Cocoapods-compatible-brightgreen.svg)](https://img.shields.io/badge/Cocoapods-compatible-brightgreen.svg)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-Compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![CocoaPodsDL](https://img.shields.io/cocoapods/dt/SwipeMenuViewController.svg)](https://cocoapods.org/pods/SwipeMenuViewController)
-[![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
-)](http://mit-license.org)
+[![Platform](http://img.shields.io/badge/platform-iOS-blue.svg?style=for-the-badge)](https://developer.apple.com/iphone/index.action)
+![Swift](https://img.shields.io/badge/Swift-4.0-orange.svg?style=for-the-badge)
+[![Cocoapods](https://img.shields.io/badge/Cocoapods-compatible-brightgreen.svg?style=for-the-badge)](https://img.shields.io/badge/Cocoapods-compatible-brightgreen.svg)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-Compatible-brightgreen.svg?style=for-the-badge)](https://github.com/Carthage/Carthage)
+[![CocoaPodsDL](https://img.shields.io/cocoapods/dt/SwipeMenuViewController.svg?style=for-the-badge)](https://cocoapods.org/pods/SwipeMenuViewController)
+[![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=for-the-badge)](http://mit-license.org)
 
 ## Overview
 SwipeMenuViewController provides `SwipeMenuView` and `SwipeMenuViewController`.
