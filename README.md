@@ -1,7 +1,6 @@
 # SwipeMenuViewController
 
 [![Platform](http://img.shields.io/badge/platform-iOS-blue.svg?style=for-the-badge)](https://developer.apple.com/iphone/index.action)
-![Swift](https://img.shields.io/badge/Swift-4.0-orange.svg?style=for-the-badge)
 [![Cocoapods](https://img.shields.io/badge/Cocoapods-compatible-brightgreen.svg?style=for-the-badge)](https://img.shields.io/badge/Cocoapods-compatible-brightgreen.svg)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-Compatible-brightgreen.svg?style=for-the-badge)](https://github.com/Carthage/Carthage)
 [![CocoaPodsDL](https://img.shields.io/cocoapods/dt/SwipeMenuViewController.svg?style=for-the-badge)](https://cocoapods.org/pods/SwipeMenuViewController)
