@@ -83,6 +83,8 @@ public struct SwipeMenuViewOptions {
 
         /// UnderlineView options
         public var underlineView = UndelineView()
+
+        public init() { }
     }
 
     public struct ContentScrollView {

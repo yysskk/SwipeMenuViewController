@@ -79,27 +79,6 @@ open class TabView: UIScrollView {
         layoutIfNeeded()
     }
 
-    func reset() {
-
-        itemViews.forEach { $0.removeFromSuperview() }
-        underlineView.removeFromSuperview()
-        containerView.removeFromSuperview()
-        itemViews = []
-    }
-
-    func update(_ index: Int) {
-
-        if currentIndex == index { return }
-
-        currentIndex = index
-        updateSelectedItem(by: currentIndex)
-    }
-
-    /// Set TabView options
-    public func set(_ options: SwipeMenuViewOptions.TabView) {
-        self.options = options
-    }
-
     fileprivate func focus(on target: UIView, animated: Bool = true) {
 
         if options.style == .segmented { return }
@@ -147,6 +126,22 @@ open class TabView: UIScrollView {
         if let defaultIndex = defaultIndex {
             updateSelectedItem(by: defaultIndex)
         }
+    }
+
+    func reset() {
+
+        itemViews.forEach { $0.removeFromSuperview() }
+        underlineView.removeFromSuperview()
+        containerView.removeFromSuperview()
+        itemViews = []
+    }
+
+    func update(_ index: Int) {
+
+        if currentIndex == index { return }
+
+        currentIndex = index
+        updateSelectedItem(by: currentIndex)
     }
 
     fileprivate func setupScrollView() {
