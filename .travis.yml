@@ -1,5 +1,6 @@
+language: swift
 osx_image: xcode9.3
-language: objective-c
-xcode_project: SwipeMenuViewController.xcworkspace
-xcode_scheme: SwipeMenuViewController
-xcode_sdk: iphonesimulator11.3
+
+script:
+    - xcodebuild clean build -sdk iphonesimulator -workspace SwipeMenuViewController.xcworkspace -scheme SwipeMenuViewController CODE_SIGNING_REQUIRED=NO
+
