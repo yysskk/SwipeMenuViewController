@@ -124,7 +124,7 @@ open class TabView: UIScrollView {
         setupUnderlineView()
 
         if let defaultIndex = defaultIndex {
-            updateSelectedItem(by: defaultIndex)
+            moveTabItem(index: defaultIndex)
         }
     }
 
