@@ -43,6 +43,9 @@ public struct SwipeMenuViewOptions {
 
             /// UndelineView side margin. Defaults to `0.0`.
             public var margin: CGFloat = 0.0
+            
+            /// UnderlineView top and bottom padding. Defaults to `5.0`.
+            public var padding: CGFloat = 5.0
 
             /// UndelineView backgroundColor. Defaults to `.black`.
             public var backgroundColor: UIColor = .black

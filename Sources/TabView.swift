@@ -348,7 +348,9 @@ extension TabView {
             containerView.addSubview(underlineView)
         case .circle:
             let itemView = itemViews[currentIndex]
-            underlineView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.underlineView.margin, y: 0, width: itemView.frame.width - options.underlineView.margin * 2, height: itemView.frame.height))
+            let height = min(itemView.titleLabel.font.pointSize + options.underlineView.padding * 2, itemView.frame.height)
+            underlineView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.underlineView.margin, y: 0, width: itemView.frame.width - options.underlineView.margin * 2, height: height))
+            underlineView.layer.position.y = itemView.layer.position.y
             underlineView.layer.cornerRadius = underlineView.frame.height / 2
             underlineView.backgroundColor = options.underlineView.backgroundColor
             containerView.addSubview(underlineView)
