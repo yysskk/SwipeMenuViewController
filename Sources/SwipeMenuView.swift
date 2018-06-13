@@ -13,6 +13,7 @@ public struct SwipeMenuViewOptions {
 
         public enum Addition {
             case underline
+            case circle
             case none
         }
 

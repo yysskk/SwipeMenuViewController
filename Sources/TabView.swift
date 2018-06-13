@@ -173,7 +173,7 @@ open class TabView: UIScrollView {
         switch options.addition {
         case .underline:
             containerHeight = frame.height - options.underlineView.height
-        case .none:
+        case .none, .circle:
             containerHeight = frame.height
         }
 
@@ -346,6 +346,13 @@ extension TabView {
             underlineView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.underlineView.margin, y: itemView.frame.height, width: itemView.frame.width - options.underlineView.margin * 2, height: options.underlineView.height))
             underlineView.backgroundColor = options.underlineView.backgroundColor
             containerView.addSubview(underlineView)
+        case .circle:
+            let itemView = itemViews[currentIndex]
+            underlineView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.underlineView.margin, y: 0, width: itemView.frame.width - options.underlineView.margin * 2, height: itemView.frame.height))
+            underlineView.layer.cornerRadius = underlineView.frame.height / 2
+            underlineView.backgroundColor = options.underlineView.backgroundColor
+            containerView.addSubview(underlineView)
+            containerView.sendSubview(toBack: underlineView)
         case .none:
             underlineView.backgroundColor = .clear
         }
@@ -480,7 +487,7 @@ extension TabView {
     private func moveTabItem(index: Int) {
 
         switch options.addition {
-        case .underline:
+        case .underline, .circle:
             animateUnderlineView(index: index, completion: nil)
         case .none:
             update(index)

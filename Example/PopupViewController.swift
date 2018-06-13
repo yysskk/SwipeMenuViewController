@@ -75,7 +75,7 @@ class PopupViewController: UIViewController {
         tabItemViewWidthLabel.text = "Tab Item Width: \(String(format: "%.0f", Float(options.tabView.itemView.width)))"
 
         switch options.tabView.addition {
-        case .underline:
+        case .underline, .circle:
             tabAdditionSegmentedControl.selectedSegmentIndex = 0
         case .none:
             tabAdditionSegmentedControl.selectedSegmentIndex = 1
