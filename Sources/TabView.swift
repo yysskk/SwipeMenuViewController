@@ -107,7 +107,8 @@ open class TabView: UIScrollView {
 
     /// Reloads all `TabView` item views with the dataSource and refreshes the display.
     public func reloadData(options: SwipeMenuViewOptions.TabView? = nil,
-                       default defaultIndex: Int? = nil) {
+                           default defaultIndex: Int? = nil,
+                           animated: Bool = true) {
 
         if let options = options {
             self.options = options
@@ -124,7 +125,7 @@ open class TabView: UIScrollView {
         setupUnderlineView()
 
         if let defaultIndex = defaultIndex {
-            moveTabItem(index: defaultIndex)
+            moveTabItem(index: defaultIndex, animated: animated)
         }
     }
 
@@ -266,7 +267,7 @@ open class TabView: UIScrollView {
 
         layout(containerView: containerView, containerWidth: xPosition)
         addTabItemGestures()
-        animateUnderlineView(index: currentIndex)
+        animateUnderlineView(index: currentIndex, animated: false)
     }
 
     private func layout(containerView: UIView, containerWidth: CGFloat) {
@@ -362,6 +363,19 @@ extension TabView {
         jump(to: currentIndex)
     }
 
+    private func updateUnderlineViewPosition(index: Int) {
+        guard let target = currentItem else { return }
+
+        underlineView.frame.origin.x = target.frame.origin.x + options.underlineView.margin
+
+        if options.needsAdjustItemViewWidth {
+            let cellWidth = itemViews[index].frame.width
+            underlineView.frame.size.width = cellWidth - options.underlineView.margin * 2
+        }
+
+        focus(on: target)
+    }
+
     fileprivate func resetUnderlineViewPosition(index: Int) {
         guard options.style == .segmented,
             let dataSource = dataSource,
@@ -377,25 +391,20 @@ extension TabView {
         underlineView.frame.size.width = adjustCellWidth
     }
 
-    public func animateUnderlineView(index: Int, completion: ((Bool) -> Swift.Void)? = nil) {
+    fileprivate func animateUnderlineView(index: Int, animated: Bool, completion: ((Bool) -> Swift.Void)? = nil) {
 
         update(index)
 
-        UIView.animate(withDuration: 0.3, animations: { 
-            guard let target = self.currentItem else { return }
-
-            self.underlineView.frame.origin.x = target.frame.origin.x + self.options.underlineView.margin
-
-            if self.options.needsAdjustItemViewWidth {
-                let cellWidth = self.itemViews[index].frame.width
-                self.underlineView.frame.size.width = cellWidth - self.options.underlineView.margin * 2
-            }
-
-            self.focus(on: target)
-        }, completion: completion)
+        if animated {
+            UIView.animate(withDuration: 0.3, animations: {
+                self.updateUnderlineViewPosition(index: index)
+            }, completion: completion)
+        } else {
+            updateUnderlineViewPosition(index: index)
+        }
     }
 
-    public func moveUnderlineView(index: Int, ratio: CGFloat, direction: Direction) {
+    func moveUnderlineView(index: Int, ratio: CGFloat, direction: Direction) {
 
         update(index)
 
@@ -481,16 +490,16 @@ extension TabView {
             let index: Int = itemViews.index(of: itemView),
             currentIndex != index else { return }
         tabViewDelegate?.tabView(self, willSelectTabAt: index)
-        moveTabItem(index: index)
+        moveTabItem(index: index, animated: true)
         update(index)
         tabViewDelegate?.tabView(self, didSelectTabAt: index)
     }
 
-    private func moveTabItem(index: Int) {
+    private func moveTabItem(index: Int, animated: Bool) {
 
         switch options.addition {
         case .underline, .circle:
-            animateUnderlineView(index: index, completion: nil)
+            animateUnderlineView(index: index, animated: animated, completion: nil)
         case .none:
             update(index)
         }
