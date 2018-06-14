@@ -327,7 +327,7 @@ public var clipsToBounds: Bool = true
 // TabView style. Defaults to `.flexible`. Style type has [`.flexible` , `.segmented`].
 public var style: Style
 
-// TabView addition. Defaults to `.underline`. Addition type has [`.underline`, `.none`].
+// TabView addition. Defaults to `.underline`. Addition type has [`.underline`, `.circle`, `.none`].
 public var addition: Addition
 
 // TabView adjust width or not. Defaults to `true`.

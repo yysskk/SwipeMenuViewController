@@ -70,7 +70,7 @@ public struct SwipeMenuViewOptions {
         /// TabView style. Defaults to `.flexible`. Style type has [`.flexible` , `.segmented`].
         public var style: Style = .flexible
 
-        /// TabView addition. Defaults to `.underline`. Addition type has [`.underline`, `.none`].
+        /// TabView addition. Defaults to `.underline`. Addition type has [`.underline`, `.circle`, `.none`].
         public var addition: Addition = .underline
 
         /// TabView adjust width or not. Defaults to `true`.
