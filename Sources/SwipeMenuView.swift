@@ -38,27 +38,36 @@ public struct SwipeMenuViewOptions {
         }
 
         public struct AdditionView {
-            /// AdditionView height. Defaults to `2.0`.
-            public var height: CGFloat = 2.0
-
-            /// AdditionView side margin. Defaults to `0.0`.
-            public var margin: CGFloat = 0.0
-
+            
+            public struct Underline {
+                /// Underline height if addition style select `.underline`. Defaults to `2.0`.
+                public var height: CGFloat = 2.0
+            }
+            
+            public struct Circle {
+                /// Circle cornerRadius if addition style select `.circle`. Defaults to `nil`.
+                /// `AdditinView.height / 2` in the case of nil.
+                public var cornerRadius: CGFloat? = nil
+            }
+            
+            /// AdditionView paddings. Defaults to `.zero`.
+            public var padding: UIEdgeInsets = .zero
+            
             /// AdditionView backgroundColor. Defaults to `.black`.
             public var backgroundColor: UIColor = .black
-
+            
             /// AdditionView animating duration. Defaults to `0.3`.
             public var animationDuration: CGFloat = 0.3
-        }
-        
-        public struct Circle {
-            /// AdditionView top and bottom padding. Defaults to `5.0`.
-            public var padding: CGFloat = 5.0
             
-            /// AdditionView cornerRadius. Defaults to `AdditinView.height / 2`
-            public var cornerRadius: CGFloat = -1.0
+            /// AdditionView side margin. Defaults to `0.0`.
+            public var margin: CGFloat = 0.0
+            
+            /// Underline options
+            public var underline = Underline()
+            
+            /// Circle options
+            public var circle = Circle()
         }
-
 
         /// TabView height. Defaults to `44.0`.
         public var height: CGFloat = 44.0
@@ -92,9 +101,6 @@ public struct SwipeMenuViewOptions {
 
         /// AdditionView options
         public var additionView = AdditionView()
-        
-        /// AdditionView options for .circle
-        public var circle = Circle()
 
         public init() { }
     }

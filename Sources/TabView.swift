@@ -173,7 +173,7 @@ open class TabView: UIScrollView {
 
         switch options.addition {
         case .underline:
-            containerHeight = frame.height - options.additionView.height
+            containerHeight = frame.height - options.additionView.underline.height
         case .none, .circle:
             containerHeight = frame.height
         }
@@ -284,7 +284,7 @@ open class TabView: UIScrollView {
                     containerView.topAnchor.constraint(equalTo: self.topAnchor),
                     leftMarginConstraint,
                     containerView.widthAnchor.constraint(equalToConstant: containerWidth),
-                    containerView.heightAnchor.constraint(equalToConstant: options.height - options.additionView.height)
+                    containerView.heightAnchor.constraint(equalToConstant: options.height)
                     ])
                 contentSize.width = containerWidth + options.margin * 2 + safeAreaInsets.left - safeAreaInsets.right
             } else {
@@ -293,7 +293,7 @@ open class TabView: UIScrollView {
                     containerView.topAnchor.constraint(equalTo: self.topAnchor),
                     leftMarginConstraint,
                     containerView.widthAnchor.constraint(equalToConstant: containerWidth),
-                    containerView.heightAnchor.constraint(equalToConstant: options.height - options.additionView.height)
+                    containerView.heightAnchor.constraint(equalToConstant: options.height)
                     ])
                 contentSize.width = containerWidth + options.margin * 2
             }
@@ -305,7 +305,7 @@ open class TabView: UIScrollView {
                     containerView.topAnchor.constraint(equalTo: self.topAnchor),
                     leftMarginConstraint,
                     widthConstraint,
-                    containerView.heightAnchor.constraint(equalToConstant: options.height - options.additionView.height)
+                    containerView.heightAnchor.constraint(equalToConstant: options.height)
                     ])
             } else {
                 leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin)
@@ -314,7 +314,7 @@ open class TabView: UIScrollView {
                     containerView.topAnchor.constraint(equalTo: self.topAnchor),
                     leftMarginConstraint,
                     widthConstraint,
-                    containerView.heightAnchor.constraint(equalToConstant: options.height - options.additionView.height)
+                    containerView.heightAnchor.constraint(equalToConstant: options.height)
                     ])
             }
 
@@ -344,15 +344,15 @@ extension TabView {
         switch options.addition {
         case .underline:
             let itemView = itemViews[currentIndex]
-            additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.margin, y: itemView.frame.height, width: itemView.frame.width - options.additionView.margin * 2, height: options.additionView.height))
+            additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.margin, y: itemView.frame.height, width: itemView.frame.width - options.additionView.margin * 2, height: options.additionView.underline.height))
             additionView.backgroundColor = options.additionView.backgroundColor
             containerView.addSubview(additionView)
         case .circle:
             let itemView = itemViews[currentIndex]
-            let height = min(itemView.titleLabel.font.pointSize + options.circle.padding * 2, itemView.frame.height)
+            let height = min(itemView.titleLabel.font.pointSize + options.additionView.padding.bottom + options.additionView.padding.top, itemView.frame.height)
             additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.margin, y: 0, width: itemView.frame.width - options.additionView.margin * 2, height: height))
             additionView.layer.position.y = itemView.layer.position.y
-            additionView.layer.cornerRadius = options.circle.cornerRadius > 0 ? options.circle.cornerRadius : additionView.frame.height / 2
+            additionView.layer.cornerRadius = options.additionView.circle.cornerRadius != nil ? options.additionView.circle.cornerRadius! : additionView.frame.height / 2
             additionView.backgroundColor = options.additionView.backgroundColor
             containerView.addSubview(additionView)
             containerView.sendSubview(toBack: additionView)
