@@ -274,6 +274,14 @@ open class TabView: UIScrollView {
 
         containerView.frame.size.width = containerWidth
         containerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let heightConstraint: NSLayoutConstraint
+        switch options.addition {
+        case .underline:
+            heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height - options.additionView.underline.height)
+        case .circle, .none:
+            heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height)
+        }
 
         switch options.style {
         case .flexible:
@@ -284,7 +292,7 @@ open class TabView: UIScrollView {
                     containerView.topAnchor.constraint(equalTo: self.topAnchor),
                     leftMarginConstraint,
                     containerView.widthAnchor.constraint(equalToConstant: containerWidth),
-                    containerView.heightAnchor.constraint(equalToConstant: options.height)
+                    heightConstraint
                     ])
                 contentSize.width = containerWidth + options.margin * 2 + safeAreaInsets.left - safeAreaInsets.right
             } else {
@@ -293,7 +301,7 @@ open class TabView: UIScrollView {
                     containerView.topAnchor.constraint(equalTo: self.topAnchor),
                     leftMarginConstraint,
                     containerView.widthAnchor.constraint(equalToConstant: containerWidth),
-                    containerView.heightAnchor.constraint(equalToConstant: options.height)
+                    heightConstraint
                     ])
                 contentSize.width = containerWidth + options.margin * 2
             }
@@ -305,7 +313,7 @@ open class TabView: UIScrollView {
                     containerView.topAnchor.constraint(equalTo: self.topAnchor),
                     leftMarginConstraint,
                     widthConstraint,
-                    containerView.heightAnchor.constraint(equalToConstant: options.height)
+                    heightConstraint
                     ])
             } else {
                 leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin)
@@ -314,7 +322,7 @@ open class TabView: UIScrollView {
                     containerView.topAnchor.constraint(equalTo: self.topAnchor),
                     leftMarginConstraint,
                     widthConstraint,
-                    containerView.heightAnchor.constraint(equalToConstant: options.height)
+                    heightConstraint
                     ])
             }
 
