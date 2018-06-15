@@ -37,21 +37,26 @@ public struct SwipeMenuViewOptions {
             public var selectedTextColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         }
 
-        public struct UndelineView {
-            /// UndelineView height. Defaults to `2.0`.
+        public struct AdditionView {
+            /// AdditionView height. Defaults to `2.0`.
             public var height: CGFloat = 2.0
 
-            /// UndelineView side margin. Defaults to `0.0`.
+            /// AdditionView side margin. Defaults to `0.0`.
             public var margin: CGFloat = 0.0
-            
-            /// UnderlineView top and bottom padding. Defaults to `5.0`.
-            public var padding: CGFloat = 5.0
 
-            /// UndelineView backgroundColor. Defaults to `.black`.
+            /// AdditionView backgroundColor. Defaults to `.black`.
             public var backgroundColor: UIColor = .black
 
-            /// UnderlineView animating duration. Defaults to `0.3`.
+            /// AdditionView animating duration. Defaults to `0.3`.
             public var animationDuration: CGFloat = 0.3
+        }
+        
+        public struct Circle {
+            /// AdditionView top and bottom padding. Defaults to `5.0`.
+            public var padding: CGFloat = 5.0
+            
+            /// AdditionView cornerRadius. Defaults to `AdditinView.height / 2`
+            public var cornerRadius: CGFloat = -1.0
         }
 
 
@@ -85,8 +90,11 @@ public struct SwipeMenuViewOptions {
         /// ItemView options
         public var itemView = ItemView()
 
-        /// UnderlineView options
-        public var underlineView = UndelineView()
+        /// AdditionView options
+        public var additionView = AdditionView()
+        
+        /// AdditionView options for .circle
+        public var circle = Circle()
 
         public init() { }
     }
@@ -413,11 +421,11 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
     /// update addition in tab view
     private func updateTabViewAddition(by scrollView: UIScrollView) {
-        moveUnderlineView(scrollView: scrollView)
+        moveAdditionView(scrollView: scrollView)
     }
 
     /// update underbar position
-    private func moveUnderlineView(scrollView: UIScrollView) {
+    private func moveAdditionView(scrollView: UIScrollView) {
 
         if let tabView = tabView, let contentScrollView = contentScrollView {
 
@@ -425,9 +433,9 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
             switch scrollView.contentOffset.x {
             case let offset where offset >= frame.width * CGFloat(currentIndex):
-                tabView.moveUnderlineView(index: currentIndex, ratio: ratio, direction: .forward)
+                tabView.moveAdditionView(index: currentIndex, ratio: ratio, direction: .forward)
             case let offset where offset < frame.width * CGFloat(currentIndex):
-                tabView.moveUnderlineView(index: currentIndex, ratio: ratio, direction: .reverse)
+                tabView.moveAdditionView(index: currentIndex, ratio: ratio, direction: .reverse)
             default:
                 break
             }

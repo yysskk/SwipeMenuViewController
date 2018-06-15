@@ -24,7 +24,7 @@ Here are some style of demos with snippets using `SwipeMenuView`.
         swipeMenuView.dataSource                      = self
         var options: SwipeMenuViewOptions             = .init()
         options.tabView.style                         = .segmented
-        options.tabView.underlineView.backgroundColor = UIColor.customUnderlineColor
+        options.tabView.additionView.backgroundColor  = UIColor.customUnderlineColor
         options.tabView.itemView.textColor            = UIColor.customTextColor
         options.tabView.itemView.selectedTextColor    = UIColor.customSelectedTextColor
         swipeMenuView.reload(options: options)
@@ -55,9 +55,9 @@ Here are some style of demos with snippets using `SwipeMenuView`.
         var options: SwipeMenuViewOptions               = .init()
         options.tabView.style                           = .flexible
         options.tabView.margin                          = 8.0
-        options.tabView.underlineView.backgroundColor   = UIColor.customUnderlineColor
+        options.tabView.additionView.backgroundColor    = UIColor.customUnderlineColor
         options.tabView.backgroundColor                 = UIColor.customBackgroundColor
-        options.tabView.underlineView.height            = 3.0
+        options.tabView.additionView.height             = 3.0
         options.tabView.itemView.textColor              = UIColor.customTextColor
         options.tabView.itemView.selectedTextColor      = .white
         options.tabView.itemView.margin                 = 10.0
@@ -362,19 +362,19 @@ public var textColor: UIColor
 public var selectedTextColor: UIColor
 ```
 
-##### UndelineView
+##### AdditionView
 
 ```swift
-// UndelineView height. Defaults to `2.0`.
+// AdditionView height. Defaults to `2.0`.
 public var height: CGFloat
 
-// UndelineView side margin. Defaults to `0.0`.
+// AdditionView side margin. Defaults to `0.0`.
 public var margin: CGFloat
 
-// UndelineView backgroundColor. Defaults to `.black`.
+// AdditionView backgroundColor. Defaults to `.black`.
 public var backgroundColor: UIColor
 
-// UnderlineView animating duration. Defaults to `0.3`.
+// AdditionView animating duration. Defaults to `0.3`.
 public var animationDuration: CGFloat
 ```
 
