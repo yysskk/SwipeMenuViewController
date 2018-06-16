@@ -46,7 +46,7 @@ public struct SwipeMenuViewOptions {
             
             public struct Circle {
                 /// Circle cornerRadius if addition style select `.circle`. Defaults to `nil`.
-                /// `AdditinView.height / 2` in the case of nil.
+                /// `AdditionView.height / 2` in the case of nil.
                 public var cornerRadius: CGFloat? = nil
             }
             
