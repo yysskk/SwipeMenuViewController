@@ -13,6 +13,7 @@ public struct SwipeMenuViewOptions {
 
         public enum Addition {
             case underline
+            case circle
             case none
         }
 
@@ -36,20 +37,37 @@ public struct SwipeMenuViewOptions {
             public var selectedTextColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         }
 
-        public struct UndelineView {
-            /// UndelineView height. Defaults to `2.0`.
-            public var height: CGFloat = 2.0
-
-            /// UndelineView side margin. Defaults to `0.0`.
-            public var margin: CGFloat = 0.0
-
-            /// UndelineView backgroundColor. Defaults to `.black`.
+        public struct AdditionView {
+            
+            public struct Underline {
+                /// Underline height if addition style select `.underline`. Defaults to `2.0`.
+                public var height: CGFloat = 2.0
+            }
+            
+            public struct Circle {
+                /// Circle cornerRadius if addition style select `.circle`. Defaults to `nil`.
+                /// `AdditionView.height / 2` in the case of nil.
+                public var cornerRadius: CGFloat? = nil
+            }
+            
+            /// AdditionView paddings. Defaults to `.zero`.
+            public var padding: UIEdgeInsets = .zero
+            
+            /// AdditionView backgroundColor. Defaults to `.black`.
             public var backgroundColor: UIColor = .black
-
-            /// UnderlineView animating duration. Defaults to `0.3`.
+            
+            /// AdditionView animating duration. Defaults to `0.3`.
             public var animationDuration: CGFloat = 0.3
+            
+            /// AdditionView side margin. Defaults to `0.0`.
+            public var margin: CGFloat = 0.0
+            
+            /// Underline options
+            public var underline = Underline()
+            
+            /// Circle options
+            public var circle = Circle()
         }
-
 
         /// TabView height. Defaults to `44.0`.
         public var height: CGFloat = 44.0
@@ -66,7 +84,7 @@ public struct SwipeMenuViewOptions {
         /// TabView style. Defaults to `.flexible`. Style type has [`.flexible` , `.segmented`].
         public var style: Style = .flexible
 
-        /// TabView addition. Defaults to `.underline`. Addition type has [`.underline`, `.none`].
+        /// TabView addition. Defaults to `.underline`. Addition type has [`.underline`, `.circle`, `.none`].
         public var addition: Addition = .underline
 
         /// TabView adjust width or not. Defaults to `true`.
@@ -81,8 +99,8 @@ public struct SwipeMenuViewOptions {
         /// ItemView options
         public var itemView = ItemView()
 
-        /// UnderlineView options
-        public var underlineView = UndelineView()
+        /// AdditionView options
+        public var additionView = AdditionView()
 
         public init() { }
     }
@@ -409,11 +427,11 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
     /// update addition in tab view
     private func updateTabViewAddition(by scrollView: UIScrollView) {
-        moveUnderlineView(scrollView: scrollView)
+        moveAdditionView(scrollView: scrollView)
     }
 
     /// update underbar position
-    private func moveUnderlineView(scrollView: UIScrollView) {
+    private func moveAdditionView(scrollView: UIScrollView) {
 
         if let tabView = tabView, let contentScrollView = contentScrollView {
 
@@ -421,9 +439,9 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
             switch scrollView.contentOffset.x {
             case let offset where offset >= frame.width * CGFloat(currentIndex):
-                tabView.moveUnderlineView(index: currentIndex, ratio: ratio, direction: .forward)
+                tabView.moveAdditionView(index: currentIndex, ratio: ratio, direction: .forward)
             case let offset where offset < frame.width * CGFloat(currentIndex):
-                tabView.moveUnderlineView(index: currentIndex, ratio: ratio, direction: .reverse)
+                tabView.moveAdditionView(index: currentIndex, ratio: ratio, direction: .reverse)
             default:
                 break
             }
