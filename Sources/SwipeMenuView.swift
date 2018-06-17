@@ -49,7 +49,11 @@ public struct SwipeMenuViewOptions {
                 /// `AdditionView.height / 2` in the case of nil.
                 public var cornerRadius: CGFloat? = nil
             }
-            
+
+            /// AdditionView side margin. Defaults to `0.0`.
+            @available(*, deprecated, message: "Use `SwipeMenuViewOptions.TabView.AdditionView.padding` instead.")
+            public var margin: CGFloat = 0.0
+
             /// AdditionView paddings. Defaults to `.zero`.
             public var padding: UIEdgeInsets = .zero
             
