@@ -75,10 +75,12 @@ class PopupViewController: UIViewController {
         tabItemViewWidthLabel.text = "Tab Item Width: \(String(format: "%.0f", Float(options.tabView.itemView.width)))"
 
         switch options.tabView.addition {
-        case .underline, .circle:
+        case .underline:
             tabAdditionSegmentedControl.selectedSegmentIndex = 0
-        case .none:
+        case .circle:
             tabAdditionSegmentedControl.selectedSegmentIndex = 1
+        case .none:
+            tabAdditionSegmentedControl.selectedSegmentIndex = 2
         }
 
         if options.contentScrollView.isScrollEnabled {
@@ -171,8 +173,13 @@ class PopupViewController: UIViewController {
         switch sender.selectedSegmentIndex {
         case 0:
             options.tabView.addition = .underline
+            options.tabView.itemView.selectedTextColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)
         case 1:
+            options.tabView.addition = .circle
+            options.tabView.itemView.selectedTextColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1.0)
+        case 2:
             options.tabView.addition = .none
+            options.tabView.itemView.selectedTextColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)
         default:
             break
         }
