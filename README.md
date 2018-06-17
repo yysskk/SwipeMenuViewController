@@ -60,7 +60,7 @@ Here are some style of demos with snippets using `SwipeMenuView`.
         options.tabView.additionView.height             = 3.0
         options.tabView.itemView.textColor              = UIColor.customTextColor
         options.tabView.itemView.selectedTextColor      = .white
-        options.tabView.itemView.margin                 = 10.0
+        options.tabView.itemView.padding                = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         options.contentScrollView.backgroundColor       = UIColor.customBackgroundColor
         swipeMenuView.reload(options: options)
     }
@@ -368,14 +368,20 @@ public var selectedTextColor: UIColor
 // AdditionView height. Defaults to `2.0`.
 public var height: CGFloat
 
-// AdditionView side margin. Defaults to `0.0`.
-public var margin: CGFloat
+// AdditionView padding. Defaults to `.zero`.
+public var padding: UIEdgeInsets
 
 // AdditionView backgroundColor. Defaults to `.black`.
 public var backgroundColor: UIColor
 
 // AdditionView animating duration. Defaults to `0.3`.
-public var animationDuration: CGFloat
+public var animationDuration: Double
+
+// Underline style options.
+public var underline = Underline()
+
+// Circle style options.
+public var circle = Circle()
 ```
 
 #### ContentScrollView
