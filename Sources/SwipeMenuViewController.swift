@@ -47,22 +47,22 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
     // MARK: - SwipeMenuViewDelegate
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) { }
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) { }
-
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
-
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
 
     // MARK: - SwipeMenuViewDataSource
 
     open func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
-        return 0
+        return childViewControllers.count
     }
 
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {
-        return ""
+        return childViewControllers[index].title ?? ""
     }
 
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
-        return UIViewController()
+        let vc = childViewControllers[index]
+        vc.didMove(toParentViewController: self)
+        return vc
     }
 }

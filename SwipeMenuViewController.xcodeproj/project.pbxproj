@@ -25,6 +25,7 @@
 		98EEED601EFA62D900A149EB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98EEED5E1EFA62D900A149EB /* LaunchScreen.storyboard */; };
 		98EEED661EFA637B00A149EB /* SwipeMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EEED651EFA637B00A149EB /* SwipeMenuViewController.swift */; };
 		98EEED681EFA638700A149EB /* SwipeMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EEED671EFA638700A149EB /* SwipeMenuView.swift */; };
+		EE3DF8C220D6117E0060C91D /* UIEdgeInsetsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DF8C120D6117E0060C91D /* UIEdgeInsetsExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +74,7 @@
 		98EEED611EFA62D900A149EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		98EEED651EFA637B00A149EB /* SwipeMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeMenuViewController.swift; sourceTree = "<group>"; };
 		98EEED671EFA638700A149EB /* SwipeMenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeMenuView.swift; sourceTree = "<group>"; };
+		EE3DF8C120D6117E0060C91D /* UIEdgeInsetsExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIEdgeInsetsExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 			children = (
 				981655BD1F4340870011AEB6 /* UIColorExtension.swift */,
 				989A0B9E1F9C2F780062AB1B /* UIViewExtension.swift */,
+				EE3DF8C120D6117E0060C91D /* UIEdgeInsetsExtension.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -281,6 +284,7 @@
 				98E73FC11F0E1D230063DF18 /* ContentScrollView.swift in Sources */,
 				98EEED681EFA638700A149EB /* SwipeMenuView.swift in Sources */,
 				982CF1071EFBD7040086649C /* TabView.swift in Sources */,
+				EE3DF8C220D6117E0060C91D /* UIEdgeInsetsExtension.swift in Sources */,
 				989A0B9F1F9C2F780062AB1B /* UIViewExtension.swift in Sources */,
 				98EEED661EFA637B00A149EB /* SwipeMenuViewController.swift in Sources */,
 				981655BE1F4340870011AEB6 /* UIColorExtension.swift in Sources */,

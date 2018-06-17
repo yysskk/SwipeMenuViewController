@@ -57,15 +57,12 @@ public struct SwipeMenuViewOptions {
             public var backgroundColor: UIColor = .black
             
             /// AdditionView animating duration. Defaults to `0.3`.
-            public var animationDuration: CGFloat = 0.3
-            
-            /// AdditionView side margin. Defaults to `0.0`.
-            public var margin: CGFloat = 0.0
-            
-            /// Underline options
+            public var animationDuration: Double = 0.3
+
+            /// Underline style options.
             public var underline = Underline()
             
-            /// Circle options
+            /// Circle style options.
             public var circle = Circle()
         }
 

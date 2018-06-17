@@ -130,7 +130,7 @@ open class TabView: UIScrollView {
     }
 
     func reset() {
-
+        currentIndex = 0
         itemViews.forEach { $0.removeFromSuperview() }
         additionView.removeFromSuperview()
         containerView.removeFromSuperview()
@@ -173,7 +173,7 @@ open class TabView: UIScrollView {
 
         switch options.addition {
         case .underline:
-            containerHeight = frame.height - options.additionView.underline.height
+            containerHeight = frame.height - options.additionView.underline.height - options.additionView.padding.bottom
         case .none, .circle:
             containerHeight = frame.height
         }
@@ -278,7 +278,7 @@ open class TabView: UIScrollView {
         let heightConstraint: NSLayoutConstraint
         switch options.addition {
         case .underline:
-            heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height - options.additionView.underline.height)
+            heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height - options.additionView.underline.height - options.additionView.padding.bottom)
         case .circle, .none:
             heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height)
         }
@@ -352,15 +352,15 @@ extension TabView {
         switch options.addition {
         case .underline:
             let itemView = itemViews[currentIndex]
-            additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.margin, y: itemView.frame.height, width: itemView.frame.width - options.additionView.margin * 2, height: options.additionView.underline.height))
+            additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.padding.left, y: itemView.frame.height - options.additionView.padding.vertical, width: itemView.frame.width - options.additionView.padding.horizontal, height: options.additionView.underline.height))
             additionView.backgroundColor = options.additionView.backgroundColor
             containerView.addSubview(additionView)
         case .circle:
             let itemView = itemViews[currentIndex]
-            let height = min(itemView.titleLabel.font.pointSize + options.additionView.padding.bottom + options.additionView.padding.top, itemView.frame.height)
-            additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.margin, y: 0, width: itemView.frame.width - options.additionView.margin * 2, height: height))
+            let height = itemView.bounds.height - options.additionView.padding.vertical
+            additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.padding.left, y: 0, width: itemView.frame.width - options.additionView.padding.horizontal, height: height))
             additionView.layer.position.y = itemView.layer.position.y
-            additionView.layer.cornerRadius = options.additionView.circle.cornerRadius != nil ? options.additionView.circle.cornerRadius! : additionView.frame.height / 2
+            additionView.layer.cornerRadius = options.additionView.circle.cornerRadius ?? additionView.frame.height / 2
             additionView.backgroundColor = options.additionView.backgroundColor
             containerView.addSubview(additionView)
             containerView.sendSubview(toBack: additionView)
@@ -374,11 +374,11 @@ extension TabView {
     private func updateAdditionViewPosition(index: Int) {
         guard let target = currentItem else { return }
 
-        additionView.frame.origin.x = target.frame.origin.x + options.additionView.margin
+        additionView.frame.origin.x = target.frame.origin.x + options.additionView.padding.left
 
         if options.needsAdjustItemViewWidth {
             let cellWidth = itemViews[index].frame.width
-            additionView.frame.size.width = cellWidth - options.additionView.margin * 2
+            additionView.frame.size.width = cellWidth - options.additionView.padding.horizontal
         }
 
         focus(on: target)
@@ -390,12 +390,12 @@ extension TabView {
             dataSource.numberOfItems(in: self) > 0 else { return }
         let adjustCellWidth: CGFloat
         if #available(iOS 11.0, *), options.isSafeAreaEnabled && safeAreaInsets != .zero {
-            adjustCellWidth = (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.margin * 2
+            adjustCellWidth = (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal
         } else {
-            adjustCellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.margin * 2
+            adjustCellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal
         }
 
-        additionView.frame.origin.x = adjustCellWidth * CGFloat(index) - options.additionView.margin
+        additionView.frame.origin.x = adjustCellWidth * CGFloat(index) - options.additionView.padding.left
         additionView.frame.size.width = adjustCellWidth
     }
 
@@ -404,7 +404,7 @@ extension TabView {
         update(index)
 
         if animated {
-            UIView.animate(withDuration: 0.3, animations: {
+            UIView.animate(withDuration: options.additionView.animationDuration, animations: {
                 self.updateAdditionViewPosition(index: index)
             }, completion: completion)
         } else {
@@ -420,15 +420,15 @@ extension TabView {
 
         switch direction {
         case .forward:
-            additionView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.additionView.margin
-            additionView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.additionView.margin * 2
+            additionView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.additionView.padding.left
+            additionView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.additionView.padding.horizontal
             if options.needsConvertTextColorRatio {
                 nextItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
                 currentItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
             }
         case .reverse:
-            additionView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.additionView.margin
-            additionView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.additionView.margin * 2
+            additionView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.additionView.padding.left
+            additionView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.additionView.padding.horizontal
             if options.needsConvertTextColorRatio {
                 previousItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
                 currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
@@ -468,8 +468,8 @@ extension TabView {
         guard let currentItem = currentItem else { return }
 
         if options.addition == .underline {
-            additionView.frame.origin.x = currentItem.frame.origin.x + options.additionView.margin
-            additionView.frame.size.width = currentItem.frame.size.width - options.additionView.margin * 2
+            additionView.frame.origin.x = currentItem.frame.origin.x + options.additionView.padding.left
+            additionView.frame.size.width = currentItem.frame.size.width - options.additionView.padding.horizontal
         }
 
         focus(on: currentItem, animated: false)
