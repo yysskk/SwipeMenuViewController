@@ -95,6 +95,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		94C14AE421574AFA00F52EE3 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				98E73FC01F0E1D230063DF18 /* ContentScrollView.swift */,
+				98EEED671EFA638700A149EB /* SwipeMenuView.swift */,
+				98EEED651EFA637B00A149EB /* SwipeMenuViewController.swift */,
+				982CF1081EFBD70B0086649C /* TabItemView.swift */,
+				982CF1061EFBD7040086649C /* TabView.swift */,
+				981655BF1F4340950011AEB6 /* Extensions */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
 		981655BF1F4340950011AEB6 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -103,6 +116,7 @@
 				EE3DF8C120D6117E0060C91D /* UIEdgeInsetsExtension.swift */,
 			);
 			name = Extensions;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		98EEED391EFA627000A149EB = {
@@ -127,13 +141,8 @@
 		98EEED451EFA627000A149EB /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				94C14AE421574AFA00F52EE3 /* Classes */,
 				98EEED4E1EFA62AE00A149EB /* Supporting files */,
-				98E73FC01F0E1D230063DF18 /* ContentScrollView.swift */,
-				98EEED671EFA638700A149EB /* SwipeMenuView.swift */,
-				98EEED651EFA637B00A149EB /* SwipeMenuViewController.swift */,
-				982CF1081EFBD70B0086649C /* TabItemView.swift */,
-				982CF1061EFBD7040086649C /* TabView.swift */,
-				981655BF1F4340950011AEB6 /* Extensions */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
