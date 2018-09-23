@@ -153,7 +153,6 @@
 				98EEED551EFA62D900A149EB /* AppDelegate.swift */,
 				98EEED5C1EFA62D900A149EB /* Assets.xcassets */,
 				98E73FB71F0B95DD0063DF18 /* ContentViewController.swift */,
-				98EEED611EFA62D900A149EB /* Info.plist */,
 				98EEED5E1EFA62D900A149EB /* LaunchScreen.storyboard */,
 				98EEED591EFA62D900A149EB /* Main.storyboard */,
 				98B984881F15CAEB00FCDD0B /* PopupViewController.swift */,
