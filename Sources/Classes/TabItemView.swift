@@ -27,7 +27,7 @@ final class TabItemView: UIView {
         super.init(coder: aDecoder)
     }
 
-    override open func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
     }
 
