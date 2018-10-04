@@ -108,7 +108,11 @@ and run `carthage update`
 
 ### 2.0.0 ~
 - Xcode 9.x
-- Swift 4.x
+- Swift 4.0, 4.1
+
+### 3.0.0 ~
+- Xcode 10.x
+- Swift 4.2 ~
 
 ## Usage
 ### SwipeMenuView
@@ -403,9 +407,7 @@ public var isSafeAreaEnabled: Bool
 ## Creator
 ### Yusuke Morishita
 - [Github](https://github.com/yysskk)
-- [Facebook](https://www.facebook.com/yysskk.mrst)
 - [Twitter](https://twitter.com/_yysskk)
-
 
 ## License
 `SwipeMenuViewController` is available under the MIT license. See the [LICENSE](./LICENSE) file for more info.
