@@ -16,12 +16,12 @@ final class ViewController: SwipeMenuViewController {
             let vc = ContentViewController()
             vc.title = data
             vc.content = data
-            self.addChildViewController(vc)
+            self.addChild(vc)
         }
 
         super.viewDidLoad()
 
-        view.bringSubview(toFront: settingButton)
+        view.bringSubviewToFront(settingButton)
 
     }
 
@@ -68,12 +68,12 @@ final class ViewController: SwipeMenuViewController {
     }
 
     override func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {
-        return childViewControllers[index].title ?? ""
+        return children[index].title ?? ""
     }
 
     override func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
-        let vc = childViewControllers[index]
-        vc.didMove(toParentViewController: self)
+        let vc = children[index]
+        vc.didMove(toParent: self)
         return vc
     }
 }

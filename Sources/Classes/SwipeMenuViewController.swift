@@ -53,16 +53,16 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
     // MARK: - SwipeMenuViewDataSource
 
     open func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
-        return childViewControllers.count
+        return children.count
     }
 
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {
-        return childViewControllers[index].title ?? ""
+        return children[index].title ?? ""
     }
 
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
-        let vc = childViewControllers[index]
-        vc.didMove(toParentViewController: self)
+        let vc = children[index]
+        vc.didMove(toParent: self)
         return vc
     }
 }
