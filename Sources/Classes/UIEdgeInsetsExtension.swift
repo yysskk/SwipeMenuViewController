@@ -1,11 +1,3 @@
-//
-//  UIEdgeInsetsExtension.swift
-//  SwipeMenuViewController
-//
-//  Created by Yusuke Morishia on 2018/06/17.
-//  Copyright © 2018年 yysskk. All rights reserved.
-//
-
 import UIKit
 
 extension UIEdgeInsets {

@@ -362,7 +362,7 @@ extension TabView {
             additionView.layer.cornerRadius = options.additionView.circle.cornerRadius ?? additionView.frame.height / 2
             additionView.backgroundColor = options.additionView.backgroundColor
             containerView.addSubview(additionView)
-            containerView.sendSubview(toBack: additionView)
+            containerView.sendSubviewToBack(additionView)
         case .none:
             additionView.backgroundColor = .clear
         }
