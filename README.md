@@ -11,108 +11,11 @@ This is very useful to build swipe-based paging UI.
 The interface is as simple as UIKit's.
 
 ## Demo
-Here are some style of demos with snippets using `SwipeMenuView`.
+Here are some style of demos using `SwipeMenuView`.
 
-<img src="https://github.com/yysskk/Assets/blob/master/SwipeMenuViewController/demo_segmented.gif" align="left" width="300">
-
-### Segmented style
-
-```swift
-@IBOutlet weak var swipeMenuView: SwipeMenuView! {
-    didSet {
-        swipeMenuView.delegate                        = self
-        swipeMenuView.dataSource                      = self
-        var options: SwipeMenuViewOptions             = .init()
-        options.tabView.style                         = .segmented
-        options.tabView.additionView.backgroundColor  = UIColor.customUnderlineColor
-        options.tabView.itemView.textColor            = UIColor.customTextColor
-        options.tabView.itemView.selectedTextColor    = UIColor.customSelectedTextColor
-        swipeMenuView.reload(options: options)
-    }
-}
-```
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-
-<img src="https://github.com/yysskk/Assets/blob/master/SwipeMenuViewController/demo_flexible.gif" align="right" width="300">
-
-### Flexible style
-
-```swift
-@IBOutlet weak var swipeMenuView: SwipeMenuView! {
-    didSet {
-        swipeMenuView.delegate                          = self
-        swipeMenuView.dataSource                        = self
-        var options: SwipeMenuViewOptions               = .init()
-        options.tabView.style                           = .flexible
-        options.tabView.margin                          = 8.0
-        options.tabView.additionView.backgroundColor    = UIColor.customUnderlineColor
-        options.tabView.backgroundColor                 = UIColor.customBackgroundColor
-        options.tabView.additionView.height             = 3.0
-        options.tabView.itemView.textColor              = UIColor.customTextColor
-        options.tabView.itemView.selectedTextColor      = .white
-        options.tabView.itemView.padding                = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-        options.contentScrollView.backgroundColor       = UIColor.customBackgroundColor
-        swipeMenuView.reload(options: options)
-    }
-}
-```
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-
-### Infinity style
-WIP...
-
-## Installation
-#### CocoaPods
-You can integrate via [CocoaPods](https://cocoapods.org).
-Add the following line to your `Podfile` :
-
-```
-pod 'SwipeMenuViewController'
-```
-
-and run `pod install`
-
-#### Carthage
-
-You can integrate via [Carthage](https://github.com/carthage/carthage), too.
-Add the following line to your `Cartfile` :
-
-```
-github "yysskk/SwipeMenuViewController"
-```
-
-and run `carthage update`
-
-## Versioning
-### ~ 1.1.5
-- Xcode 8.x
-- Swift 3.x
-
-### 1.2.0
-- Xcode 9.x
-- Swift 3.2
-
-### 2.0.0 ~
-- Xcode 9.x
-- Swift 4.0, 4.1
-
-### 3.0.0 ~
-- Xcode 10.x
-- Swift 4.2 ~
+| Segmented Tab &  Underline | Flexible Tab &  Underline | Flexible Tab & Circle |
+|:---:|:---:|:---:|
+| <img src="https://github.com/yysskk/Assets/blob/master/SwipeMenuViewController/demo_segmented_underline.gif"> | <img src="https://github.com/yysskk/Assets/blob/master/SwipeMenuViewController/demo_flexible_underline.gif"> | <img src="https://github.com/yysskk/Assets/blob/master/SwipeMenuViewController/demo_flexible_circle.gif"> | 
 
 ## Usage
 ### SwipeMenuView
@@ -173,19 +76,19 @@ extension CustomViewController: SwipeMenuViewDelegate {
 ```swift
 extension CustomViewController: SwipeMenuViewDataSource {
 
-     //MARK - SwipeMenuViewDataSource
-     func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
+    //MARK - SwipeMenuViewDataSource
+    func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
         return array.count
-      }
+    }
 
-     func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {
         return array[index]
-     }
+    }
 
-     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
         let vc = ContentViewController()
         return vc
-     }
+    }
 }
 ```
 
@@ -195,8 +98,7 @@ extension CustomViewController: SwipeMenuViewDataSource {
 **2)** Use `SwipeMenuViewController` classes
 
 ```swift
-class CustomViewController: SwipeMenuViewController {
-}
+class CustomViewController: SwipeMenuViewController {}
 ```
 
 **3)** Override `SwipeMenuViewDelegate` methods and `SwipeMenuViewDataSource` methods if you need.
@@ -220,7 +122,6 @@ extension CustomViewController {
     override func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int) {
         // Codes
     }
-
 
     // MARK - SwipeMenuViewDataSource
     override func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
@@ -404,10 +305,51 @@ public var isScrollEnabled: Bool
 public var isSafeAreaEnabled: Bool
 ```
 
-## Creator
+## Installation
+#### CocoaPods
+You can integrate via [CocoaPods](https://cocoapods.org).
+Add the following line to your `Podfile` :
+
+```
+pod 'SwipeMenuViewController'
+```
+
+and run `pod install`
+
+#### Carthage
+
+You can integrate via [Carthage](https://github.com/carthage/carthage), too.
+Add the following line to your `Cartfile` :
+
+```
+github "yysskk/SwipeMenuViewController"
+```
+
+and run `carthage update`
+
+## Versioning
+### ~ 1.1.5
+- Xcode 8.x
+- Swift 3.x
+
+### 1.2.0
+- Xcode 9.x
+- Swift 3.2
+
+### 2.0.0 ~
+- Xcode 9.x
+- Swift 4.0, 4.1
+
+### 3.0.0 ~
+- Xcode 10.x
+- Swift 4.2 ~
+
+## Author
 ### Yusuke Morishita
 - [Github](https://github.com/yysskk)
 - [Twitter](https://twitter.com/_yysskk)
+
+[![Support via PayPal](https://cdn.rawgit.com/twolfson/paypal-github-button/1.0.0/dist/button.svg)](https://www.paypal.me/yysskk/980jpy)
 
 ## License
 `SwipeMenuViewController` is available under the MIT license. See the [LICENSE](./LICENSE) file for more info.
