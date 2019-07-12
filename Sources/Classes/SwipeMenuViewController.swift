@@ -3,6 +3,11 @@ import UIKit
 open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, SwipeMenuViewDataSource {
 
     open var swipeMenuView: SwipeMenuView!
+    
+    private lazy var isLayouted: Bool = {
+        self.addSwipeMenuViewConstraints()
+        return true
+    }()
 
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,7 +26,7 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
 
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        addSwipeMenuViewConstraints()
+        _ = isLayouted
     }
 
     private func addSwipeMenuViewConstraints() {
