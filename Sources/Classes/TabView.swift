@@ -28,6 +28,7 @@ public protocol TabViewDataSource: class {
     func tabView(_ tabView: TabView, titleForItemAt index: Int) -> String?
 }
 
+
 open class TabView: UIScrollView {
 
     open weak var tabViewDelegate: TabViewDelegate?
@@ -35,7 +36,13 @@ open class TabView: UIScrollView {
 
     var itemViews: [TabItemView] = []
 
-    fileprivate let containerView: UIStackView = UIStackView()
+    fileprivate lazy var containerView: UIView = {
+        if #available(iOS 9.0, *) {
+            return UIStackView()
+        } else {
+            return UIView()
+        }
+    }()
 
     fileprivate var additionView: UIView = .init()
 
@@ -159,13 +166,16 @@ open class TabView: UIScrollView {
 
     fileprivate func setupContainerView(dataSource: TabViewDataSource) {
 
-        containerView.alignment = .leading
-
-        switch options.style {
-        case .flexible:
-            containerView.distribution = .fill
-        case .segmented:
-            containerView.distribution = .fillEqually
+        if #available(iOS 9.0, *) {
+            let containerView = self.containerView as! UIStackView
+            containerView.alignment = .leading
+            
+            switch options.style {
+            case .flexible:
+                containerView.distribution = .fill
+            case .segmented:
+                containerView.distribution = .fillEqually
+            }
         }
 
         let itemCount = dataSource.numberOfItems(in: self)
@@ -230,17 +240,50 @@ open class TabView: UIScrollView {
                     adjustCellSize.width = tabItemView.titleLabel.sizeThatFits(containerView.frame.size).width + options.itemView.margin * 2
                     tabItemView.frame.size = adjustCellSize
 
-                    containerView.addArrangedSubview(tabItemView)
-
-                    NSLayoutConstraint.activate([
-                        tabItemView.widthAnchor.constraint(equalToConstant: adjustCellSize.width)
-                        ])
+                    
+                    if #available(iOS 9.0, *) {
+                        let containerView = self.containerView as! UIStackView
+                        containerView.addArrangedSubview(tabItemView)
+                        
+                        NSLayoutConstraint.activate([
+                            tabItemView.widthAnchor.constraint(equalToConstant: adjustCellSize.width)
+                            ])
+                    } else {
+                        containerView.addSubview(tabItemView)
+                        
+                        let leadingView = index > 0 ? containerView.subviews[index - 1] : containerView
+                        let leading = index > 0 ?  "[leadingView]" : "|"
+                        let trailling = index == itemCount - 1 ? "|" : ""
+                        let views = ["tabItemView": tabItemView, "leadingView": leadingView]
+                        let metrics = ["width": adjustCellSize.width]
+                        let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:\(leading)[tabItemView(==width)]\(trailling)", options: [], metrics: metrics, views: views)
+                        containerView.addConstraints(hConstraint)
+                        let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|[tabItemView]|", options: [], metrics: metrics, views: views)
+                        containerView.addConstraints(vConstraint)
+                    }
+                   
                 } else {
-                    containerView.addArrangedSubview(tabItemView)
-
-                    NSLayoutConstraint.activate([
-                        tabItemView.widthAnchor.constraint(equalToConstant: options.itemView.width)
-                        ])
+                    if #available(iOS 9.0, *) {
+                        let containerView = self.containerView as! UIStackView
+                        containerView.addArrangedSubview(tabItemView)
+                        
+                        NSLayoutConstraint.activate([
+                            tabItemView.widthAnchor.constraint(equalToConstant: options.itemView.width)
+                            ])
+                    } else {
+                        containerView.addSubview(tabItemView)
+                        
+                        let leadingView = index > 0 ? containerView.subviews[index - 1] : containerView
+                        let leading = index > 0 ?  "[leadingView]" : "|"
+                        let trailling = index == itemCount - 1 ? "|" : ""
+                        let views = ["tabItemView": tabItemView, "leadingView": leadingView]
+                        let metrics = ["width": options.itemView.width]
+                        let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:\(leading)[tabItemView(==width)]\(trailling)", options: [], metrics: metrics, views: views)
+                        containerView.addConstraints(hConstraint)
+                        let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|[tabItemView]|", options: [], metrics: metrics, views: views)
+                        containerView.addConstraints(vConstraint)
+                    }
+                    
                 }
             case .segmented:
                 let adjustCellSize: CGSize
@@ -249,17 +292,44 @@ open class TabView: UIScrollView {
                 } else {
                     adjustCellSize = CGSize(width: (frame.width - options.margin * 2) / CGFloat(itemCount), height: tabItemView.frame.size.height)
                 }
-                tabItemView.frame.size = adjustCellSize
-
-                containerView.addArrangedSubview(tabItemView)
+                
+                if #available(iOS 9.0, *) {
+                    tabItemView.frame.size = adjustCellSize
+                    
+                    let containerView = self.containerView as! UIStackView
+                    containerView.addArrangedSubview(tabItemView)
+                } else {
+                    containerView.addSubview(tabItemView)
+                    
+                    let leadingView = index > 0 ? containerView.subviews[index - 1] : containerView
+                    
+                    let widthConstraint: NSLayoutConstraint
+                    if index == 0 {
+                        widthConstraint = NSLayoutConstraint(item: tabItemView, attribute: .width, relatedBy: .equal, toItem: containerView, attribute: .width, multiplier: 1 / CGFloat(itemCount), constant: 0)
+                    } else {
+                        widthConstraint = NSLayoutConstraint(item: tabItemView, attribute: .width, relatedBy: .equal, toItem: leadingView, attribute: .width, multiplier: 1, constant: 0)
+                    }
+                    containerView.addConstraint(widthConstraint)
+                    
+                    let leading = index > 0 ?  "[leadingView]" : "|"
+                    let trailling = index == itemCount - 1 ? "|" : ""
+                    let views = ["tabItemView": tabItemView, "leadingView": leadingView]
+                    let metrics = ["width": adjustCellSize.width, "height": adjustCellSize.height]
+                    let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:\(leading)[tabItemView]\(trailling)", options: [], metrics: metrics, views: views)
+                    containerView.addConstraints(hConstraint)
+                    let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|[tabItemView(==height)]|", options: [], metrics: metrics, views: views)
+                    containerView.addConstraints(vConstraint)
+                }
             }
 
             itemViews.append(tabItemView)
 
-            NSLayoutConstraint.activate([
-                tabItemView.topAnchor.constraint(equalTo: containerView.topAnchor),
-                tabItemView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-                ])
+            if #available(iOS 9.0, *) {
+                NSLayoutConstraint.activate([
+                    tabItemView.topAnchor.constraint(equalTo: containerView.topAnchor),
+                    tabItemView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+                    ])
+            } 
 
             xPosition += tabItemView.frame.size.width
         }
@@ -275,12 +345,22 @@ open class TabView: UIScrollView {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         
         let heightConstraint: NSLayoutConstraint
-        switch options.addition {
-        case .underline:
-            heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height - options.additionView.underline.height - options.additionView.padding.bottom)
-        case .circle, .none:
-            heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height)
+        if #available(iOS 9.0, *) {
+            switch options.addition {
+            case .underline:
+                heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height - options.additionView.underline.height - options.additionView.padding.bottom)
+            case .circle, .none:
+                heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height)
+            }
+        } else {
+            switch options.addition {
+            case .underline:
+                heightConstraint = NSLayoutConstraint(item: containerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: options.height - options.additionView.underline.height - options.additionView.padding.bottom)
+            case .circle, .none:
+                heightConstraint = NSLayoutConstraint(item: containerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: options.height)
+            }
         }
+       
 
         switch options.style {
         case .flexible:
@@ -295,13 +375,20 @@ open class TabView: UIScrollView {
                     ])
                 contentSize.width = containerWidth + options.margin * 2 + safeAreaInsets.left - safeAreaInsets.right
             } else {
-                leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin)
-                NSLayoutConstraint.activate([
-                    containerView.topAnchor.constraint(equalTo: self.topAnchor),
-                    leftMarginConstraint,
-                    containerView.widthAnchor.constraint(equalToConstant: containerWidth),
-                    heightConstraint
-                    ])
+                if #available(iOS 9.0, *) {
+                    leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin)
+                    NSLayoutConstraint.activate([
+                        containerView.topAnchor.constraint(equalTo: self.topAnchor),
+                        leftMarginConstraint,
+                        containerView.widthAnchor.constraint(equalToConstant: containerWidth),
+                        heightConstraint
+                        ])
+                } else {
+                    leftMarginConstraint = NSLayoutConstraint(item: containerView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: options.margin)
+                    let topConstraint = NSLayoutConstraint(item: containerView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0)
+                    let widthConstraint = NSLayoutConstraint(item: containerView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: containerWidth)
+                    addConstraints([topConstraint, leftMarginConstraint, widthConstraint, heightConstraint])
+                }
                 contentSize.width = containerWidth + options.margin * 2
             }
         case .segmented:
@@ -315,14 +402,22 @@ open class TabView: UIScrollView {
                     heightConstraint
                     ])
             } else {
-                leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin)
-                widthConstraint = containerView.widthAnchor.constraint(equalTo: self.widthAnchor, constant: options.margin * -2)
-                NSLayoutConstraint.activate([
-                    containerView.topAnchor.constraint(equalTo: self.topAnchor),
-                    leftMarginConstraint,
-                    widthConstraint,
-                    heightConstraint
-                    ])
+                if #available(iOS 9.0, *) {
+                    leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin)
+                    widthConstraint = containerView.widthAnchor.constraint(equalTo: self.widthAnchor, constant: options.margin * -2)
+                    NSLayoutConstraint.activate([
+                        containerView.topAnchor.constraint(equalTo: self.topAnchor),
+                        leftMarginConstraint,
+                        widthConstraint,
+                        heightConstraint
+                        ])
+                } else {
+                    leftMarginConstraint = NSLayoutConstraint(item: containerView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: options.margin)
+                    let topConstraint = NSLayoutConstraint(item: containerView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0)
+                    widthConstraint = NSLayoutConstraint(item: containerView, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 1, constant: options.margin * -2)
+                    addConstraints([topConstraint, leftMarginConstraint, widthConstraint, heightConstraint])
+                }
+                
             }
 
             contentSize = .zero
@@ -393,7 +488,6 @@ extension TabView {
         } else {
             adjustCellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal
         }
-
         additionView.frame.origin.x = adjustCellWidth * CGFloat(index) - options.additionView.padding.left
         additionView.frame.size.width = adjustCellWidth
     }

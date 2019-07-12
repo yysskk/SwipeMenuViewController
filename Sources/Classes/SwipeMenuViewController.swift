@@ -35,12 +35,20 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
                 swipeMenuView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         } else {
-            NSLayoutConstraint.activate([
-                swipeMenuView.topAnchor.constraint(equalTo: topLayoutGuide.topAnchor),
-                swipeMenuView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                swipeMenuView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                swipeMenuView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            ])
+            if #available(iOS 9.0, *) {
+                NSLayoutConstraint.activate([
+                    swipeMenuView.topAnchor.constraint(equalTo: topLayoutGuide.topAnchor),
+                    swipeMenuView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                    swipeMenuView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                    swipeMenuView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+                    ])
+            } else {
+                let views = ["swipeMenuView": swipeMenuView, "topLayoutGuide": topLayoutGuide] as [String : Any]
+                let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|[swipeMenuView]|", options: [], metrics: nil, views: views)
+                view.addConstraints(hConstraint)
+                let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:[topLayoutGuide][swipeMenuView]|", options: [], metrics: nil, views: views)
+                view.addConstraints(vConstraint)
+            }
         }
     }
 

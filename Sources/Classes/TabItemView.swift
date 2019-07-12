@@ -44,11 +44,19 @@ final class TabItemView: UIView {
     private func layoutLabel() {
 
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: self.topAnchor),
-            titleLabel.widthAnchor.constraint(equalTo: self.widthAnchor),
-            titleLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor)
-        ])
+        if #available(iOS 9.0, *) {
+            NSLayoutConstraint.activate([
+                titleLabel.topAnchor.constraint(equalTo: self.topAnchor),
+                titleLabel.widthAnchor.constraint(equalTo: self.widthAnchor),
+                titleLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+                titleLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+                ])
+        } else {
+            let views = ["label": titleLabel]
+            let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|[label]|", options: [], metrics: nil, views: views)
+            addConstraints(hConstraint)
+            let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|[label]|", options: [], metrics: nil, views: views)
+            addConstraints(vConstraint)
+        }
     }
 }

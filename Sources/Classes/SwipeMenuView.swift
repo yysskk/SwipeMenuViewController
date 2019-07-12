@@ -331,24 +331,42 @@ open class SwipeMenuView: UIView {
 
         tabView.translatesAutoresizingMaskIntoConstraints = false
 
-        NSLayoutConstraint.activate([
-            tabView.topAnchor.constraint(equalTo: self.topAnchor),
-            tabView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            tabView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            tabView.heightAnchor.constraint(equalToConstant: options.tabView.height)
-            ])
+        if #available(iOS 9.0, *) {
+            NSLayoutConstraint.activate([
+                tabView.topAnchor.constraint(equalTo: self.topAnchor),
+                tabView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+                tabView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+                tabView.heightAnchor.constraint(equalToConstant: options.tabView.height)
+                ])
+        } else {
+            let views = ["tabView": tabView]
+            let metrics = ["height": options.tabView.height]
+            let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|[tabView]|", options: [], metrics: nil, views: views)
+            addConstraints(hConstraint)
+            let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|[tabView(==height)]", options: [], metrics: metrics, views: views)
+            addConstraints(vConstraint)
+        }
     }
 
     private func layout(contentScrollView: ContentScrollView) {
 
         contentScrollView.translatesAutoresizingMaskIntoConstraints = false
 
-        NSLayoutConstraint.activate([
-            contentScrollView.topAnchor.constraint(equalTo: self.topAnchor, constant: options.tabView.height),
-            contentScrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            contentScrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            contentScrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
-            ])
+        if #available(iOS 9.0, *) {
+            NSLayoutConstraint.activate([
+                contentScrollView.topAnchor.constraint(equalTo: self.topAnchor, constant: options.tabView.height),
+                contentScrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+                contentScrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+                contentScrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+                ])
+        } else {
+            let views = ["contentScrollView": contentScrollView]
+            let metrics = ["top": options.tabView.height]
+            let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|[contentScrollView]|", options: [], metrics: nil, views: views)
+            addConstraints(hConstraint)
+            let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-top-[contentScrollView]|", options: [], metrics: metrics, views: views)
+            addConstraints(vConstraint)
+        }
     }
 
     private func reset() {

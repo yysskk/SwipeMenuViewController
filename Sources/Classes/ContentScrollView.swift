@@ -95,14 +95,24 @@ open class ContentScrollView: UIScrollView {
             pageViews.append(pageView)
             addSubview(pageView)
 
-            let leadingAnchor = i > 0 ? pageViews[i - 1].trailingAnchor : self.leadingAnchor
             pageView.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                pageView.topAnchor.constraint(equalTo: self.topAnchor),
-                pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
-                pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
-                pageView.leadingAnchor.constraint(equalTo: leadingAnchor)
-            ])
+            if #available(iOS 9.0, *) {
+                let leadingAnchor = i > 0 ? pageViews[i - 1].trailingAnchor : self.leadingAnchor
+                NSLayoutConstraint.activate([
+                    pageView.topAnchor.constraint(equalTo: self.topAnchor),
+                    pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
+                    pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
+                    pageView.leadingAnchor.constraint(equalTo: leadingAnchor)
+                    ])
+            } else {
+                let leadingView = i > 0 ? pageViews[i - 1] : self
+                let leading = i > 0 ? "|" : "[leadingView]"
+                let views = ["pageView": pageView, "self": self, "leadingView": leadingView]
+                let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:\(leading)[pageView(==self)]", options: [], metrics: nil, views: views)
+                addConstraints(hConstraint)
+                let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|[pageView(==self)]", options: [], metrics: nil, views: views)
+                addConstraints(vConstraint)
+            }
         }
 
         guard currentIndex < dataSource.numberOfPages(in: self) else { return }
@@ -112,12 +122,20 @@ open class ContentScrollView: UIScrollView {
             addSubview(pageView)
 
             pageView.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                pageView.topAnchor.constraint(equalTo: self.topAnchor),
-                pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
-                pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
-                pageView.leadingAnchor.constraint(equalTo: pageViews[i - 1].trailingAnchor)
-            ])
+            if #available(iOS 9.0, *) {
+                NSLayoutConstraint.activate([
+                    pageView.topAnchor.constraint(equalTo: self.topAnchor),
+                    pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
+                    pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
+                    pageView.leadingAnchor.constraint(equalTo: pageViews[i - 1].trailingAnchor)
+                    ])
+            } else {
+                let views = ["pageView": pageView, "self": self, "leadingView": pageViews[i - 1]]
+                let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:[leadingView][pageView(==self)]", options: [], metrics: nil, views: views)
+                addConstraints(hConstraint)
+                let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|[pageView(==self)]", options: [], metrics: nil, views: views)
+                addConstraints(vConstraint)
+            }
         }
     }
 }
