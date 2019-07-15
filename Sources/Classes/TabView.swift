@@ -233,6 +233,8 @@ open class TabView: UIScrollView {
                 if options.style == .segmented, options.addition == .none {
                     tabItemView.labelBackgroundColor = options.itemView.labelBackgroundColor
                     tabItemView.selectedLabelBackgroundColor = options.itemView.selectedLabelBackgroundColor
+                    tabItemView.backgroundImage = options.itemView.backgroundImage
+                    tabItemView.selectedbackgroundImage = options.itemView.selectedbackgroundImage
                     tabItemView.isRoundBackground = options.itemView.isRoundBackground
                 }
             }
@@ -526,7 +528,7 @@ extension TabView {
                 nextItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
                 currentItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
             }
-            if options.style == .segmented, options.addition == .none {
+            if options.needsConvertBackgroundColorRatio, options.style == .segmented, options.addition == .none {
                 nextItem.titleLabel.backgroundColor = options.itemView.labelBackgroundColor.convert(to: options.itemView.selectedLabelBackgroundColor, multiplier: ratio)
                 currentItem.titleLabel.backgroundColor = options.itemView.selectedLabelBackgroundColor.convert(to: options.itemView.labelBackgroundColor, multiplier: ratio)
             }
@@ -537,7 +539,7 @@ extension TabView {
                 previousItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
                 currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
             }
-            if options.style == .segmented, options.addition == .none {
+            if options.needsConvertBackgroundColorRatio, options.style == .segmented, options.addition == .none {
                 previousItem.titleLabel.backgroundColor = options.itemView.selectedLabelBackgroundColor.convert(to: options.itemView.labelBackgroundColor, multiplier: ratio)
                 currentItem.titleLabel.backgroundColor = options.itemView.labelBackgroundColor.convert(to: options.itemView.selectedLabelBackgroundColor, multiplier: ratio)
             }

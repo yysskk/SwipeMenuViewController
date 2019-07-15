@@ -45,6 +45,12 @@ public struct SwipeMenuViewOptions {
             /// ItemView selected backgroundColor. Defaults to `.clear`. Only availiable on Addition.none.
             public var selectedLabelBackgroundColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
             
+            /// ItemView backgroundImge. Defaults to `nil`. Only availiable on Addition.none.
+            public var backgroundImage: UIImage? = nil
+            
+            /// ItemView selected backgroundImge. Defaults to `nil`. Only availiable on Addition.none.
+            public var selectedbackgroundImage: UIImage? = nil
+            
             /// ItemView isRoundBackground. Defaults to `false`. Only availiable on Addition.none.
             public var isRoundBackground: Bool = false
         }
@@ -105,6 +111,9 @@ public struct SwipeMenuViewOptions {
 
         /// Convert the text color of ItemView to selected text color by scroll rate of ContentScrollView. Defaults to `true`.
         public var needsConvertTextColorRatio: Bool = true
+        
+        /// Convert the text color of ItemView to selected background color by scroll rate of ContentScrollView. Defaults to `true`.
+        public var needsConvertBackgroundColorRatio: Bool = true
 
         /// TabView enable safeAreaLayout. Defaults to `true`.
         public var isSafeAreaEnabled: Bool = true
