@@ -175,6 +175,7 @@ open class TabView: UIScrollView {
                 containerView.distribution = .fill
             case .segmented:
                 containerView.distribution = .fillEqually
+                containerView.spacing = options.itemView.spacing
             }
         }
 
@@ -229,6 +230,11 @@ open class TabView: UIScrollView {
                 tabItemView.titleLabel.font = options.itemView.font
                 tabItemView.textColor = options.itemView.textColor
                 tabItemView.selectedTextColor = options.itemView.selectedTextColor
+                if options.style == .segmented, options.addition == .none {
+                    tabItemView.labelBackgroundColor = options.itemView.labelBackgroundColor
+                    tabItemView.selectedLabelBackgroundColor = options.itemView.selectedLabelBackgroundColor
+                    tabItemView.isRoundBackground = options.itemView.isRoundBackground
+                }
             }
 
             tabItemView.isSelected = index == currentIndex
@@ -288,9 +294,9 @@ open class TabView: UIScrollView {
             case .segmented:
                 let adjustCellSize: CGSize
                 if #available(iOS 11.0, *), options.isSafeAreaEnabled {
-                    adjustCellSize = CGSize(width: (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(itemCount), height: tabItemView.frame.size.height)
+                    adjustCellSize = CGSize(width: (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(itemCount) - options.itemView.spacing * CGFloat(itemCount - 1) / CGFloat(itemCount), height: tabItemView.frame.size.height)
                 } else {
-                    adjustCellSize = CGSize(width: (frame.width - options.margin * 2) / CGFloat(itemCount), height: tabItemView.frame.size.height)
+                    adjustCellSize = CGSize(width: (frame.width - options.margin * 2) / CGFloat(itemCount) - options.itemView.spacing * CGFloat(itemCount - 1) / CGFloat(itemCount), height: tabItemView.frame.size.height)
                 }
                 
                 if #available(iOS 9.0, *) {
@@ -305,17 +311,18 @@ open class TabView: UIScrollView {
                     
                     let widthConstraint: NSLayoutConstraint
                     if index == 0 {
-                        widthConstraint = NSLayoutConstraint(item: tabItemView, attribute: .width, relatedBy: .equal, toItem: containerView, attribute: .width, multiplier: 1 / CGFloat(itemCount), constant: 0)
+                        widthConstraint = NSLayoutConstraint(item: tabItemView, attribute: .width, relatedBy: .equal, toItem: containerView, attribute: .width, multiplier: 1 / CGFloat(itemCount), constant: 0 - options.itemView.spacing * CGFloat(itemCount - 1) / CGFloat(itemCount))
                     } else {
                         widthConstraint = NSLayoutConstraint(item: tabItemView, attribute: .width, relatedBy: .equal, toItem: leadingView, attribute: .width, multiplier: 1, constant: 0)
                     }
                     containerView.addConstraint(widthConstraint)
                     
                     let leading = index > 0 ?  "[leadingView]" : "|"
+                    let spacing = index > 0 ?  "-\(options.itemView.spacing)-" : ""
                     let trailling = index == itemCount - 1 ? "|" : ""
                     let views = ["tabItemView": tabItemView, "leadingView": leadingView]
                     let metrics = ["width": adjustCellSize.width, "height": adjustCellSize.height]
-                    let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:\(leading)[tabItemView]\(trailling)", options: [], metrics: metrics, views: views)
+                    let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:\(leading)\(spacing)[tabItemView]\(trailling)", options: [], metrics: metrics, views: views)
                     containerView.addConstraints(hConstraint)
                     let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|[tabItemView(==height)]|", options: [], metrics: metrics, views: views)
                     containerView.addConstraints(vConstraint)
@@ -484,9 +491,9 @@ extension TabView {
             dataSource.numberOfItems(in: self) > 0 else { return }
         let adjustCellWidth: CGFloat
         if #available(iOS 11.0, *), options.isSafeAreaEnabled && safeAreaInsets != .zero {
-            adjustCellWidth = (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal
+            adjustCellWidth = (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal - options.itemView.spacing * CGFloat(itemViews.count - 1) / CGFloat(itemViews.count)
         } else {
-            adjustCellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal
+            adjustCellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal - options.itemView.spacing * CGFloat(itemViews.count - 1) / CGFloat(itemViews.count)
         }
         additionView.frame.origin.x = adjustCellWidth * CGFloat(index) - options.additionView.padding.left
         additionView.frame.size.width = adjustCellWidth
@@ -519,12 +526,20 @@ extension TabView {
                 nextItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
                 currentItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
             }
+            if options.style == .segmented, options.addition == .none {
+                nextItem.titleLabel.backgroundColor = options.itemView.labelBackgroundColor.convert(to: options.itemView.selectedLabelBackgroundColor, multiplier: ratio)
+                currentItem.titleLabel.backgroundColor = options.itemView.selectedLabelBackgroundColor.convert(to: options.itemView.labelBackgroundColor, multiplier: ratio)
+            }
         case .reverse:
             additionView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.additionView.padding.left
             additionView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.additionView.padding.horizontal
             if options.needsConvertTextColorRatio {
                 previousItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
                 currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
+            }
+            if options.style == .segmented, options.addition == .none {
+                previousItem.titleLabel.backgroundColor = options.itemView.selectedLabelBackgroundColor.convert(to: options.itemView.labelBackgroundColor, multiplier: ratio)
+                currentItem.titleLabel.backgroundColor = options.itemView.labelBackgroundColor.convert(to: options.itemView.selectedLabelBackgroundColor, multiplier: ratio)
             }
         }
 

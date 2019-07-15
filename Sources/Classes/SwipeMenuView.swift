@@ -35,6 +35,18 @@ public struct SwipeMenuViewOptions {
 
             /// ItemView selected textColor. Defaults to `.black`.
             public var selectedTextColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+            
+            /// ItemView spacing. Defaults to `0`. Only availiable on Style.segmented.
+            public var spacing: CGFloat = 0.0
+            
+            /// ItemView backgroundColor. Defaults to `.clear`. Only availiable on Addition.none.
+            public var labelBackgroundColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
+            
+            /// ItemView selected backgroundColor. Defaults to `.clear`. Only availiable on Addition.none.
+            public var selectedLabelBackgroundColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
+            
+            /// ItemView isRoundBackground. Defaults to `false`. Only availiable on Addition.none.
+            public var isRoundBackground: Bool = false
         }
 
         public struct AdditionView {

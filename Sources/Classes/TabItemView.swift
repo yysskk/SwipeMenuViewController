@@ -6,13 +6,27 @@ final class TabItemView: UIView {
 
     public var textColor: UIColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
     public var selectedTextColor: UIColor = .white
+    public var labelBackgroundColor: UIColor = .clear
+    public var selectedLabelBackgroundColor: UIColor = .clear
+    public var isRoundBackground: Bool = false {
+        didSet {
+            titleLabel.clipsToBounds = isRoundBackground
+            if isRoundBackground {
+                titleLabel.layer.cornerRadius = titleLabel.bounds.height * 0.5
+            } else {
+                titleLabel.layer.cornerRadius = 0
+            }
+        }
+    }
 
     public var isSelected: Bool = false {
         didSet {
             if isSelected {
                 titleLabel.textColor = selectedTextColor
+                titleLabel.backgroundColor = selectedLabelBackgroundColor
             } else {
                 titleLabel.textColor = textColor
+                titleLabel.backgroundColor = labelBackgroundColor
             }
         }
     }
