@@ -48,7 +48,7 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
                     swipeMenuView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
                     ])
             } else {
-                let views = ["swipeMenuView": swipeMenuView, "topLayoutGuide": topLayoutGuide] as [String : Any]
+                let views = ["swipeMenuView": swipeMenuView as Any, "topLayoutGuide": topLayoutGuide] as [String : Any]
                 let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|[swipeMenuView]|", options: [], metrics: nil, views: views)
                 view.addConstraints(hConstraint)
                 let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:[topLayoutGuide][swipeMenuView]|", options: [], metrics: nil, views: views)
