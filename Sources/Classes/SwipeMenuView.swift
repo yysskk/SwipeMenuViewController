@@ -91,6 +91,12 @@ public struct SwipeMenuViewOptions {
         /// TabView height. Defaults to `44.0`.
         public var height: CGFloat = 44.0
 
+        /// ItemView top margin. Defaults to `0.0`.
+        public var top: CGFloat = 0.0
+        
+        /// ItemView bottom margin. Defaults to `0.0`.
+        public var bottom: CGFloat = 0.0
+        
         /// TabView side margin. Defaults to `0.0`.
         public var margin: CGFloat = 0.0
 
@@ -206,14 +212,19 @@ open class SwipeMenuView: UIView {
 
     /// An object conforms `SwipeMenuViewDataSource`. Provide views and respond to `SwipeMenuView` events.
     open weak var dataSource: SwipeMenuViewDataSource?
-
+    
+    open fileprivate(set) var tabViewBase: UIView?
+    
     open fileprivate(set) var tabView: TabView? {
         didSet {
             guard let tabView = tabView else { return }
+            let baseView = UIView()
+            addSubview(baseView)
+            tabViewBase = baseView
             tabView.dataSource = self
             tabView.tabViewDelegate = self
-            addSubview(tabView)
-            layout(tabView: tabView)
+            baseView.addSubview(tabView)
+            layout(tabView: tabView, baseView: baseView)
         }
     }
 
@@ -337,6 +348,8 @@ open class SwipeMenuView: UIView {
 
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         tabView?.clipsToBounds = options.tabView.clipsToBounds
+        
+        tabViewBase?.backgroundColor = options.tabView.backgroundColor
 
         contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height), default: defaultIndex, options: options.contentScrollView)
         contentScrollView?.clipsToBounds = options.contentScrollView.clipsToBounds
@@ -348,24 +361,44 @@ open class SwipeMenuView: UIView {
         delegate?.swipeMenuView(self, viewDidSetupAt: defaultIndex)
     }
 
-    private func layout(tabView: TabView) {
+    private func layout(tabView: TabView, baseView: UIView) {
 
+        baseView.translatesAutoresizingMaskIntoConstraints = false
         tabView.translatesAutoresizingMaskIntoConstraints = false
 
         if #available(iOS 9.0, *) {
             NSLayoutConstraint.activate([
-                tabView.topAnchor.constraint(equalTo: self.topAnchor),
-                tabView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-                tabView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-                tabView.heightAnchor.constraint(equalToConstant: options.tabView.height)
+                baseView.topAnchor.constraint(equalTo: self.topAnchor),
+                baseView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+                baseView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+                baseView.heightAnchor.constraint(equalToConstant: options.tabView.height + options.tabView.top + options.tabView.bottom)
+                ])
+            NSLayoutConstraint.activate([
+                tabView.topAnchor.constraint(equalTo: baseView.topAnchor, constant: options.tabView.top),
+                tabView.leadingAnchor.constraint(equalTo: baseView.leadingAnchor),
+                tabView.trailingAnchor.constraint(equalTo: baseView.trailingAnchor),
+                tabView.bottomAnchor.constraint(equalTo: baseView.bottomAnchor, constant: -options.tabView.bottom)
                 ])
         } else {
-            let views = ["tabView": tabView]
-            let metrics = ["height": options.tabView.height]
-            let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|[tabView]|", options: [], metrics: nil, views: views)
-            addConstraints(hConstraint)
-            let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|[tabView(==height)]", options: [], metrics: metrics, views: views)
-            addConstraints(vConstraint)
+            func layoutBaseView() {
+                let views = ["baseView": baseView]
+                let metrics = ["height": options.tabView.height + options.tabView.top + options.tabView.bottom]
+                let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|[baseView]|", options: [], metrics: nil, views: views)
+                NSLayoutConstraint.activate(hConstraint)
+                let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|[baseView(==height)]", options: [], metrics: metrics, views: views)
+                NSLayoutConstraint.activate(vConstraint)
+            }
+            layoutBaseView()
+            
+            func layoutTabView() {
+                let views = ["tabView": tabView]
+                let metrics = ["top": options.tabView.top, "bottom": options.tabView.bottom]
+                let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|[tabView]|", options: [], metrics: nil, views: views)
+                NSLayoutConstraint.activate(hConstraint)
+                let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-top-[tabView]-bottom-|", options: [], metrics: metrics, views: views)
+                NSLayoutConstraint.activate(vConstraint)
+            }
+            layoutTabView()
         }
     }
 
@@ -375,14 +408,14 @@ open class SwipeMenuView: UIView {
 
         if #available(iOS 9.0, *) {
             NSLayoutConstraint.activate([
-                contentScrollView.topAnchor.constraint(equalTo: self.topAnchor, constant: options.tabView.height),
+                contentScrollView.topAnchor.constraint(equalTo: self.topAnchor, constant: options.tabView.height + options.tabView.top + options.tabView.bottom),
                 contentScrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
                 contentScrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
                 contentScrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
                 ])
         } else {
             let views = ["contentScrollView": contentScrollView]
-            let metrics = ["top": options.tabView.height]
+            let metrics = ["top": options.tabView.height + options.tabView.top + options.tabView.bottom]
             let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|[contentScrollView]|", options: [], metrics: nil, views: views)
             addConstraints(hConstraint)
             let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-top-[contentScrollView]|", options: [], metrics: metrics, views: views)
