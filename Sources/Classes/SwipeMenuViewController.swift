@@ -37,21 +37,21 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
                 swipeMenuView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
                 swipeMenuView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 swipeMenuView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                swipeMenuView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+                swipeMenuView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
             ])
         } else {
-            if #available(iOS 9.0, *) {
+            if #available(iOS 9.0, *){
                 NSLayoutConstraint.activate([
-                    swipeMenuView.topAnchor.constraint(equalTo: topLayoutGuide.topAnchor),
+                    swipeMenuView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor),
                     swipeMenuView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                     swipeMenuView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                    swipeMenuView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+                    swipeMenuView.bottomAnchor.constraint(equalTo: bottomLayoutGuide.topAnchor)
                     ])
             } else {
-                let views = ["swipeMenuView": swipeMenuView as Any, "topLayoutGuide": topLayoutGuide] as [String : Any]
+                let views = ["swipeMenuView": swipeMenuView as Any, "topLayoutGuide": topLayoutGuide, "bottomLayoutGuide": bottomLayoutGuide] as [String : Any]
                 let hConstraint = NSLayoutConstraint.constraints(withVisualFormat: "H:|[swipeMenuView]|", options: [], metrics: nil, views: views)
                 view.addConstraints(hConstraint)
-                let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:[topLayoutGuide][swipeMenuView]|", options: [], metrics: nil, views: views)
+                let vConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:[topLayoutGuide][swipeMenuView][bottomLayoutGuide]", options: [], metrics: nil, views: views)
                 view.addConstraints(vConstraint)
             }
         }
