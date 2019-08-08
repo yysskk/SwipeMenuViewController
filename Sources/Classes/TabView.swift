@@ -361,6 +361,35 @@ extension TabView {
             additionView.layer.position.y = itemView.layer.position.y
             additionView.layer.cornerRadius = options.additionView.circle.cornerRadius ?? additionView.frame.height / 2
             additionView.backgroundColor = options.additionView.backgroundColor
+            
+                        if #available(iOS 11.0, *) {
+                if let m = options.additionView.circle.maskedCorners {
+                    additionView.layer.maskedCorners = m
+                }
+            } else {
+                var cornerMask = UIRectCorner()
+                
+                if let maskedCorners = options.additionView.circle.maskedCorners
+                {
+                    if(maskedCorners.contains(.layerMinXMinYCorner)){
+                        cornerMask.insert(.topLeft)
+                    }
+                    if(maskedCorners.contains(.layerMaxXMinYCorner)){
+                        cornerMask.insert(.topRight)
+                    }
+                    if(maskedCorners.contains(.layerMinXMaxYCorner)){
+                        cornerMask.insert(.bottomLeft)
+                    }
+                    if(maskedCorners.contains(.layerMaxXMaxYCorner)){
+                        cornerMask.insert(.bottomRight)
+                    }
+                    let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: cornerMask, cornerRadii: CGSize(width: options.additionView.circle.cornerRadius ?? additionView.frame.height / 2, height: options.additionView.circle.cornerRadius ?? additionView.frame.height / 2))
+                    let mask = CAShapeLayer()
+                    mask.path = path.cgPath
+                    additionView.layer.mask = mask
+                }
+            }
+            
             containerView.addSubview(additionView)
             containerView.sendSubviewToBack(additionView)
         case .none:
