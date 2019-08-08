@@ -48,6 +48,10 @@ public struct SwipeMenuViewOptions {
                 /// Circle cornerRadius if addition style select `.circle`. Defaults to `nil`.
                 /// `AdditionView.height / 2` in the case of nil.
                 public var cornerRadius: CGFloat? = nil
+                
+                /// Circle maskedCorners if addition style select `.circle`. Defaults to `nil`.
+                /// It helps to make specific corners rounded.
+                public var maskedCorners: CACornerMask? = nil
             }
 
             /// AdditionView side margin. Defaults to `0.0`.
