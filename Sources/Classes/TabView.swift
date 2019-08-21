@@ -264,7 +264,8 @@ open class TabView: UIScrollView {
             xPosition += tabItemView.frame.size.width
         }
 
-        layout(containerView: containerView, containerWidth: xPosition)
+        let w = superview?.bounds.width ?? xPosition
+        layout(containerView: containerView, containerWidth: w)
         addTabItemGestures()
         animateAdditionView(index: currentIndex, animated: false)
     }
