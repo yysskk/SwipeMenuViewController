@@ -159,7 +159,7 @@ open class TabView: UIScrollView {
 
     fileprivate func setupContainerView(dataSource: TabViewDataSource) {
 
-        containerView.alignment = .leading
+        containerView.alignment = .center
 
         switch options.style {
         case .flexible:
