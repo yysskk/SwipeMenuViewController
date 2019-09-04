@@ -66,6 +66,9 @@ public struct SwipeMenuViewOptions {
             
             /// AdditionView animating duration. Defaults to `0.3`.
             public var animationDuration: Double = 0.3
+            
+            /// AdditionView swipe animation disable feature Defaults to 'true'
+            public var animationOnSwipe: Bool = true
 
             /// Underline style options.
             public var underline = Underline()
