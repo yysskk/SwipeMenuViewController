@@ -69,8 +69,6 @@ final class TabItemView: UIView {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: self.topAnchor),
-            titleLabel.leadingAnchor.constraint(greaterThanOrEqualTo: self.leadingAnchor),
-            titleLabel.trailingAnchor.constraint(greaterThanOrEqualTo: self.trailingAnchor),
             titleLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor)
             ])
@@ -90,9 +88,8 @@ final class TabItemView: UIView {
     
     private func updateXConstraintForDot() {
         let w = titleLabel.sizeThatFits(self.frame.size).width
-        let c = ((self.frame.width - titleLabel.sizeThatFits(self.frame.size).width) / 2 - 8)
+        let c = ((self.frame.width - w) / 2 - 8)
         let constant = max(c, 0)
-        print("constant \(constant) c \(c)")
         dotTrailingConstraint.constant = -constant
     }
 }
