@@ -413,7 +413,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-        if isJumping || isLayoutingSubviews { return }
+        if isJumping || isLayoutingSubviews || isNeedToResetTabBar { return }
 
         // update currentIndex
         if scrollView.contentOffset.x >= frame.width * CGFloat(currentIndex + 1) {
@@ -427,7 +427,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
     public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
 
-        if isJumping || isLayoutingSubviews {
+        if isJumping || isLayoutingSubviews || isNeedToResetTabBar {
             if let toIndex = jumpingToIndex {
                 delegate?.swipeMenuView(self, didChangeIndexFrom: currentIndex, to: toIndex)
                 currentIndex = toIndex
@@ -435,6 +435,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
             }
             isJumping = false
             isLayoutingSubviews = false
+            isNeedToResetTabBar = false
             return
         }
 
