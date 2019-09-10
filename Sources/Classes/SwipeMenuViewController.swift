@@ -1,6 +1,6 @@
 import UIKit
 
-open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, SwipeMenuViewDataSource {
+open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, SwipeMenuViewDataSource {    
 
     open var swipeMenuView: SwipeMenuView!
 
@@ -49,6 +49,8 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) { }
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, dotColor index: Int) -> UIColor { return .red }
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, needToShowDot index: Int) -> Bool { return false }
 
     // MARK: - SwipeMenuViewDataSource
 
