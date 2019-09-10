@@ -260,14 +260,14 @@ open class SwipeMenuView: UIView {
     }
 
     /// Reloads all `SwipeMenuView` item views with the dataSource and refreshes the display.
-    public func reloadData(options: SwipeMenuViewOptions? = nil, default defaultIndex: Int? = nil, isOrientationChange: Bool = false, isNeedToResetTabBar: Bool = false) {
+    public func reloadData(options: SwipeMenuViewOptions? = nil, default defaultIndex: Int? = nil, isOrientationChange: Bool = false, isResetTabBar: Bool = false) {
 
         if let options = options {
             self.options = options
         }
 
         isLayoutingSubviews = isOrientationChange
-        isNeedToResetTabBar = isNeedToResetTabBar
+        isNeedToResetTabBar = isResetTabBar
 
         if !isLayoutingSubviews || isNeedToResetTabBar {
             reset()
