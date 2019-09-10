@@ -12,6 +12,7 @@ final class TabItemView: UIView {
         dot.isHidden = true
         return dot
     }()
+    private var dotTrailingConstraint: NSLayoutConstraint!
     
     var dotHidden = true {
         didSet {
@@ -45,6 +46,8 @@ final class TabItemView: UIView {
 
     override public func layoutSubviews() {
         super.layoutSubviews()
+
+        updateXConstraintForDot()
     }
 
     private func setupLabel() {
@@ -75,11 +78,20 @@ final class TabItemView: UIView {
     
     private func layoutDot() {
         dotView.translatesAutoresizingMaskIntoConstraints = false
+        dotTrailingConstraint = dotView.trailingAnchor.constraint(equalTo: trailingAnchor)
+
         NSLayoutConstraint.activate([
-            dotView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            dotTrailingConstraint,
             dotView.topAnchor.constraint(equalTo: topAnchor),
             dotView.widthAnchor.constraint(equalToConstant: 8.0),
             dotView.heightAnchor.constraint(equalToConstant: 8.0)
             ])
+    }
+    
+    private func updateXConstraintForDot() {
+        let w = titleLabel.sizeThatFits(self.frame.size).width
+        let c = ((self.frame.width - titleLabel.sizeThatFits(self.frame.size).width) / 2 - 8)
+        let constant = max(c, 0)
+        dotTrailingConstraint.constant = -constant
     }
 }
