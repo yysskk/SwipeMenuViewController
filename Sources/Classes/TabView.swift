@@ -272,6 +272,9 @@ open class TabView: UIScrollView {
                 ])
 
             xPosition += tabItemView.frame.size.width
+            
+            tabItemView.setNeedsLayout()
+            tabItemView.layoutIfNeeded()
         }
 
         let w = superview?.bounds.width ?? xPosition
