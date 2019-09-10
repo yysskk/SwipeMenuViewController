@@ -92,6 +92,7 @@ final class TabItemView: UIView {
         let w = titleLabel.sizeThatFits(self.frame.size).width
         let c = ((self.frame.width - titleLabel.sizeThatFits(self.frame.size).width) / 2 - 8)
         let constant = max(c, 0)
+        print("constant \(constant) c \(c)")
         dotTrailingConstraint.constant = -constant
     }
 }
