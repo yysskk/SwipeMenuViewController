@@ -215,6 +215,7 @@ open class SwipeMenuView: UIView {
     public var options: SwipeMenuViewOptions
 
     fileprivate var isLayoutingSubviews: Bool = false
+    fileprivate var isNeedToResetTabBar: Bool = false
 
     fileprivate var pageCount: Int {
         return dataSource?.numberOfPages(in: self) ?? 0
@@ -259,15 +260,16 @@ open class SwipeMenuView: UIView {
     }
 
     /// Reloads all `SwipeMenuView` item views with the dataSource and refreshes the display.
-    public func reloadData(options: SwipeMenuViewOptions? = nil, default defaultIndex: Int? = nil, isOrientationChange: Bool = false) {
+    public func reloadData(options: SwipeMenuViewOptions? = nil, default defaultIndex: Int? = nil, isOrientationChange: Bool = false, isNeedToResetTabBar: Bool = false) {
 
         if let options = options {
             self.options = options
         }
 
         isLayoutingSubviews = isOrientationChange
+        isNeedToResetTabBar = isNeedToResetTabBar
 
-        if !isLayoutingSubviews {
+        if !isLayoutingSubviews || isNeedToResetTabBar {
             reset()
             setup(default: defaultIndex ?? currentIndex)
         }
@@ -359,7 +361,7 @@ open class SwipeMenuView: UIView {
 
     private func reset() {
 
-        if !isLayoutingSubviews {
+        if !isLayoutingSubviews && !isNeedToResetTabBar {
             currentIndex = 0
         }
 
