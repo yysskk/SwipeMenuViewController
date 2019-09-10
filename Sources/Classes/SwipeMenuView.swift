@@ -174,6 +174,12 @@ public protocol SwipeMenuViewDataSource: class {
 
     /// Return a ViewController to be displayed at the page in `SwipeMenuView`.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController
+    
+    /// Should dot be displayed at the tab in `SwipeMenuView`.
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, needToShowDot index: Int) -> Bool
+    
+    /// Return color for dot background displayed at the tab in `SwipeMenuView`.
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, dotColor index: Int) -> UIColor
 }
 
 // MARK: - SwipeMenuView
@@ -369,7 +375,14 @@ open class SwipeMenuView: UIView {
 // MARK: - TabViewDelegate, TabViewDataSource
 
 extension SwipeMenuView: TabViewDelegate, TabViewDataSource {
-
+    public func tabView(_ tabView: TabView, colorAtIndex index: Int) -> UIColor {
+        return dataSource?.swipeMenuView(self, dotColor: index) ?? UIColor.red
+    }
+    
+    public func tabView(_ tabView: TabView, needToShowDot index: Int) -> Bool {
+        return dataSource?.swipeMenuView(self, needToShowDot: index) ?? false
+    }
+    
     public func tabView(_ tabView: TabView, didSelectTabAt index: Int) {
 
         guard let contentScrollView = contentScrollView,

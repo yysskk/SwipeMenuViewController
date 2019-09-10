@@ -26,6 +26,12 @@ public protocol TabViewDataSource: class {
 
     /// Return strings to be displayed at the tab in `TabView`.
     func tabView(_ tabView: TabView, titleForItemAt index: Int) -> String?
+    
+    ///Show dot on tab
+    func tabView(_ tabView: TabView, needToShowDot index: Int) -> Bool
+    
+    ///Dot color
+    func tabView(_ tabView: TabView, colorAtIndex index: Int) -> UIColor
 }
 
 open class TabView: UIScrollView {
@@ -214,6 +220,10 @@ open class TabView: UIScrollView {
             let tabItemView = TabItemView(frame: CGRect(x: xPosition, y: 0, width: options.itemView.width, height: containerView.frame.size.height))
             tabItemView.translatesAutoresizingMaskIntoConstraints = false
             tabItemView.clipsToBounds = options.clipsToBounds
+           
+            tabItemView.dotHidden = !dataSource.tabView(self, needToShowDot: index)
+            tabItemView.dotView.backgroundColor = dataSource.tabView(self, colorAtIndex: index)
+            
             if let title = dataSource.tabView(self, titleForItemAt: index) {
                 tabItemView.titleLabel.text = title
                 tabItemView.titleLabel.font = options.itemView.font
