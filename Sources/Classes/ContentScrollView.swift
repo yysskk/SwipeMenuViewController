@@ -1,5 +1,6 @@
 import UIKit
 
+// MARK: - ContentScrollViewDataSource
 public protocol ContentScrollViewDataSource {
 
     func numberOfPages(in contentScrollView: ContentScrollView) -> Int
@@ -7,6 +8,7 @@ public protocol ContentScrollViewDataSource {
     func contentScrollView(_ contentScrollView: ContentScrollView, viewForPageAt index: Int) -> UIView?
 }
 
+// MARK: - ContentScrollView
 open class ContentScrollView: UIScrollView {
 
     open var dataSource: ContentScrollViewDataSource?
@@ -48,6 +50,7 @@ open class ContentScrollView: UIScrollView {
     public func reset() {
         pageViews = []
         currentIndex = 0
+        self.subviews.forEach({ $0.removeFromSuperview() })
     }
 
     public func reload() {
@@ -56,6 +59,16 @@ open class ContentScrollView: UIScrollView {
 
     public func update(_ newIndex: Int) {
         currentIndex = newIndex
+    }
+    
+    func updateSemantic() {
+        if #available(iOS 9.0, *) {
+            if options.isLanguageRTL {
+                self.semanticContentAttribute = .forceRightToLeft
+            } else {
+                self.semanticContentAttribute = .forceLeftToRight
+            }
+        }
     }
 
     // MARK: - Setup
@@ -102,23 +115,38 @@ open class ContentScrollView: UIScrollView {
                 pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
                 pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
                 pageView.leadingAnchor.constraint(equalTo: leadingAnchor)
-            ])
+                ])
         }
 
         guard currentIndex < dataSource.numberOfPages(in: self) else { return }
+        
+        var lastPageView :UIView?
+        
         for i in (currentIndex + 1)..<dataSource.numberOfPages(in: self) {
             guard let pageView = dataSource.contentScrollView(self, viewForPageAt: i) else { return }
             pageViews.append(pageView)
             addSubview(pageView)
 
             pageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            lastPageView = pageView
+            
             NSLayoutConstraint.activate([
                 pageView.topAnchor.constraint(equalTo: self.topAnchor),
                 pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
                 pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
                 pageView.leadingAnchor.constraint(equalTo: pageViews[i - 1].trailingAnchor)
-            ])
+                ])
         }
+        
+        
+        if let lastView = lastPageView {
+            NSLayoutConstraint.activate([
+                lastView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
+                ])
+        }
+        
+        
     }
 }
 
@@ -153,6 +181,13 @@ extension ContentScrollView {
 
     public func jump(to index: Int, animated: Bool) {
         update(index)
-        self.setContentOffset(CGPoint(x: self.frame.width * CGFloat(currentIndex), y: 0), animated: animated)
+        
+        if options.isLanguageRTL {
+            self.setContentOffset(CGPoint(x: self.frame.width * CGFloat((pageViews.count - 1) - currentIndex), y: 0), animated: animated)
+        } else {
+            self.setContentOffset(CGPoint(x: self.frame.width * CGFloat(currentIndex), y: 0), animated: animated)
+        }
+        
+        
     }
 }

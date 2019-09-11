@@ -39,6 +39,7 @@ class PopupViewController: UIViewController {
     @IBOutlet weak var tabItemViewWidthSlider: UISlider!
     @IBOutlet weak var tabAdditionSegmentedControl: UISegmentedControl!
     @IBOutlet weak var contentScrolEnabledSegmentedControl: UISegmentedControl!
+    @IBOutlet weak var languageDirectionSegmentedControl: UISegmentedControl!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,6 +88,12 @@ class PopupViewController: UIViewController {
             contentScrolEnabledSegmentedControl.selectedSegmentIndex = 0
         } else {
             contentScrolEnabledSegmentedControl.selectedSegmentIndex = 1
+        }
+        
+        if options.isLanguageRTL {
+            languageDirectionSegmentedControl.selectedSegmentIndex = 1
+        } else {
+            languageDirectionSegmentedControl.selectedSegmentIndex = 0
         }
     }
     
@@ -192,6 +199,18 @@ class PopupViewController: UIViewController {
             options.contentScrollView.isScrollEnabled = true
         case 1:
             options.contentScrollView.isScrollEnabled = false
+        default:
+            break
+        }
+    }
+   
+    @IBAction func changeLanguageDirection(_ sender: UISegmentedControl) {
+        
+        switch sender.selectedSegmentIndex {
+        case 0:
+            options.isLanguageRTL = false
+        case 1:
+            options.isLanguageRTL = true
         default:
             break
         }
