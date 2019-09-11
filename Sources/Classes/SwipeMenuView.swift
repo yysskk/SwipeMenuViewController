@@ -215,6 +215,7 @@ open class SwipeMenuView: UIView {
     public var options: SwipeMenuViewOptions
 
     fileprivate var isLayoutingSubviews: Bool = false
+    fileprivate var isNeedToResetTabBar: Bool = false
 
     fileprivate var pageCount: Int {
         return dataSource?.numberOfPages(in: self) ?? 0
@@ -259,15 +260,16 @@ open class SwipeMenuView: UIView {
     }
 
     /// Reloads all `SwipeMenuView` item views with the dataSource and refreshes the display.
-    public func reloadData(options: SwipeMenuViewOptions? = nil, default defaultIndex: Int? = nil, isOrientationChange: Bool = false) {
+    public func reloadData(options: SwipeMenuViewOptions? = nil, default defaultIndex: Int? = nil, isOrientationChange: Bool = false, isResetTabBar: Bool = false) {
 
         if let options = options {
             self.options = options
         }
 
         isLayoutingSubviews = isOrientationChange
+        isNeedToResetTabBar = isResetTabBar
 
-        if !isLayoutingSubviews {
+        if !isLayoutingSubviews || isNeedToResetTabBar {
             reset()
             setup(default: defaultIndex ?? currentIndex)
         }
@@ -359,7 +361,7 @@ open class SwipeMenuView: UIView {
 
     private func reset() {
 
-        if !isLayoutingSubviews {
+        if !isLayoutingSubviews && !isNeedToResetTabBar {
             currentIndex = 0
         }
 
@@ -411,7 +413,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-        if isJumping || isLayoutingSubviews { return }
+        if isJumping || isLayoutingSubviews || isNeedToResetTabBar { return }
 
         // update currentIndex
         if scrollView.contentOffset.x >= frame.width * CGFloat(currentIndex + 1) {
@@ -425,7 +427,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
     public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
 
-        if isJumping || isLayoutingSubviews {
+        if isJumping || isLayoutingSubviews || isNeedToResetTabBar {
             if let toIndex = jumpingToIndex {
                 delegate?.swipeMenuView(self, didChangeIndexFrom: currentIndex, to: toIndex)
                 currentIndex = toIndex
@@ -433,6 +435,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
             }
             isJumping = false
             isLayoutingSubviews = false
+            isNeedToResetTabBar = false
             return
         }
 
