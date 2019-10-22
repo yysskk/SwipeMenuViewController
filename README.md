@@ -344,6 +344,10 @@ and run `carthage update`
 - Xcode 10.x
 - Swift 4.2 ~
 
+### 4.0.0 ~
+- Xcode 11.x
+- Swift5.0 ~
+
 ## Author
 ### Yusuke Morishita
 - [Github](https://github.com/yysskk)
