@@ -1,6 +1,6 @@
 import UIKit
 
-protocol TabItemView: UIView {
+public protocol TabItemView: UIView {
     var isSelected: Bool { set get }
 }
 
