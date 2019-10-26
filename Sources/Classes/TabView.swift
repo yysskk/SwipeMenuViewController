@@ -210,6 +210,8 @@ open class TabView: UIScrollView {
         itemViews = []
 
         let itemCount = dataSource.numberOfItems(in: self)
+        
+        let tabItemWidthConstraintIdentifier = "TabItemWidthConstraint"
 
         var xPosition: CGFloat = 0
 
@@ -217,6 +219,7 @@ open class TabView: UIScrollView {
             let tabItemView: TabItemView
             if let customTabItemView = dataSource.tabView(self, viewForItemAt: index) {
                 tabItemView = customTabItemView
+                tabItemView.removeConstraints(tabItemView.constraints.filter({ $0.identifier == tabItemWidthConstraintIdentifier }))
                 tabItemView.frame = CGRect(x: xPosition, y: 0, width: options.itemView.width, height: containerView.frame.size.height)
             } else {
                 let defaultTabItemView = DefaultTabItemView(frame: CGRect(x: xPosition, y: 0, width: options.itemView.width, height: containerView.frame.size.height))
@@ -242,14 +245,19 @@ open class TabView: UIScrollView {
 
                     containerView.addArrangedSubview(tabItemView)
 
+                    let widthConstraint = tabItemView.widthAnchor.constraint(equalToConstant: adjustCellSize.width)
+                    widthConstraint.identifier = tabItemWidthConstraintIdentifier
+                    
                     NSLayoutConstraint.activate([
-                        tabItemView.widthAnchor.constraint(equalToConstant: adjustCellSize.width)
+                        widthConstraint
                         ])
                 } else {
                     containerView.addArrangedSubview(tabItemView)
 
+                    let widthConstraint = tabItemView.widthAnchor.constraint(equalToConstant: options.itemView.width)
+                    widthConstraint.identifier = tabItemWidthConstraintIdentifier
                     NSLayoutConstraint.activate([
-                        tabItemView.widthAnchor.constraint(equalToConstant: options.itemView.width)
+                        widthConstraint
                         ])
                 }
             case .segmented:
