@@ -211,7 +211,7 @@ open class TabView: UIScrollView {
         var xPosition: CGFloat = 0
 
         for index in 0..<itemCount {
-            let tabItemView = TabItemView(frame: CGRect(x: xPosition, y: 0, width: options.itemView.width, height: containerView.frame.size.height))
+            let tabItemView = DefaultTabItemView(frame: CGRect(x: xPosition, y: 0, width: options.itemView.width, height: containerView.frame.size.height))
             tabItemView.translatesAutoresizingMaskIntoConstraints = false
             tabItemView.clipsToBounds = options.clipsToBounds
             if let title = dataSource.tabView(self, titleForItemAt: index) {
@@ -422,15 +422,23 @@ extension TabView {
             additionView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.additionView.padding.left
             additionView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.additionView.padding.horizontal
             if options.needsConvertTextColorRatio {
-                nextItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
-                currentItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
+                if let nextItem = nextItem as? DefaultTabItemView {
+                    nextItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
+                }
+                if let currentItem = currentItem as? DefaultTabItemView {
+                    currentItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
+                }
             }
         case .reverse:
             additionView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.additionView.padding.left
             additionView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.additionView.padding.horizontal
             if options.needsConvertTextColorRatio {
-                previousItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
-                currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
+                if let previousItem = previousItem as? DefaultTabItemView {
+                    previousItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
+                }
+                if let currentItem = currentItem as? DefaultTabItemView {
+                    currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
+                }
             }
         }
 
@@ -494,7 +502,7 @@ extension TabView {
 
     @objc func tapItemView(_ recognizer: UITapGestureRecognizer) {
         guard let itemView = recognizer.view as? TabItemView,
-            let index: Int = itemViews.firstIndex(of: itemView),
+            let index: Int = itemViews.firstIndex(where: { $0 == itemView }),
             currentIndex != index else { return }
         tabViewDelegate?.tabView(self, willSelectTabAt: index)
         moveTabItem(index: index, animated: true)
