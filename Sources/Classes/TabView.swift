@@ -26,6 +26,9 @@ public protocol TabViewDataSource: class {
 
     /// Return strings to be displayed at the tab in `TabView`.
     func tabView(_ tabView: TabView, titleForItemAt index: Int) -> String?
+    
+    /// Return UIView to be displayed at the tab in `TabView`.
+    func tabView(_ tabView: TabView, viewForItemAt index: Int) -> TabItemView?
 }
 
 open class TabView: UIScrollView {
@@ -211,23 +214,30 @@ open class TabView: UIScrollView {
         var xPosition: CGFloat = 0
 
         for index in 0..<itemCount {
-            let tabItemView = DefaultTabItemView(frame: CGRect(x: xPosition, y: 0, width: options.itemView.width, height: containerView.frame.size.height))
+            let tabItemView: TabItemView
+            if let customTabItemView = dataSource.tabView(self, viewForItemAt: index) {
+                tabItemView = customTabItemView
+                tabItemView.frame = CGRect(x: xPosition, y: 0, width: options.itemView.width, height: containerView.frame.size.height)
+            } else {
+                let defaultTabItemView = DefaultTabItemView(frame: CGRect(x: xPosition, y: 0, width: options.itemView.width, height: containerView.frame.size.height))
+                if let title = dataSource.tabView(self, titleForItemAt: index) {
+                    defaultTabItemView.titleLabel.text = title
+                    defaultTabItemView.titleLabel.font = options.itemView.font
+                    defaultTabItemView.textColor = options.itemView.textColor
+                    defaultTabItemView.selectedTextColor = options.itemView.selectedTextColor
+                }
+                tabItemView = defaultTabItemView
+            }
             tabItemView.translatesAutoresizingMaskIntoConstraints = false
             tabItemView.clipsToBounds = options.clipsToBounds
-            if let title = dataSource.tabView(self, titleForItemAt: index) {
-                tabItemView.titleLabel.text = title
-                tabItemView.titleLabel.font = options.itemView.font
-                tabItemView.textColor = options.itemView.textColor
-                tabItemView.selectedTextColor = options.itemView.selectedTextColor
-            }
 
             tabItemView.isSelected = index == currentIndex
 
             switch options.style {
             case .flexible:
-                if options.needsAdjustItemViewWidth {
+                if let defaultTabItem = tabItemView as? DefaultTabItemView, options.needsAdjustItemViewWidth {
                     var adjustCellSize = tabItemView.frame.size
-                    adjustCellSize.width = tabItemView.titleLabel.sizeThatFits(containerView.frame.size).width + options.itemView.margin * 2
+                    adjustCellSize.width = defaultTabItem.titleLabel.sizeThatFits(containerView.frame.size).width + options.itemView.margin * 2
                     tabItemView.frame.size = adjustCellSize
 
                     containerView.addArrangedSubview(tabItemView)
