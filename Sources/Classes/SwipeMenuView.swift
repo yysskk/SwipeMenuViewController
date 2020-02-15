@@ -243,7 +243,9 @@ open class SwipeMenuView: UIView {
 
         isLayoutingSubviews = true
         super.layoutSubviews()
-        reloadData(isOrientationChange: true)
+        if !isJumping {
+            reloadData(isOrientationChange: true)
+        }
     }
 
     open override func didMoveToSuperview() {
