@@ -3,6 +3,7 @@
 [![Platform](http://img.shields.io/badge/platform-iOS-blue.svg?style=for-the-badge)](https://developer.apple.com/iphone/index.action)
 [![Cocoapods](https://img.shields.io/badge/Cocoapods-compatible-brightgreen.svg?style=for-the-badge)](https://img.shields.io/badge/Cocoapods-compatible-brightgreen.svg)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-Compatible-brightgreen.svg?style=for-the-badge)](https://github.com/Carthage/Carthage)
+[![SPM compatible](https://img.shields.io/badge/SPM-Compatible-brightgreen.svg?style=for-the-badge)](https://github.com/apple/swift-package-manager)
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=for-the-badge)](http://mit-license.org)
 
 ## Overview
@@ -326,6 +327,13 @@ github "yysskk/SwipeMenuViewController"
 ```
 
 and run `carthage update`
+
+#### Swift Package Manager
+
+You can integrate via [Swift Package Manager](https://github.com/apple/swift-package-manager), too.
+See the following site for instructions.
+
+- [Adding Package Dependencies to Your App](https://developer.apple.com/documentation/xcode/adding_package_dependencies_to_your_app)
 
 ## Versioning
 ### ~ 1.1.5
