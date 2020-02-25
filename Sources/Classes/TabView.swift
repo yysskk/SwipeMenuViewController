@@ -362,7 +362,7 @@ extension TabView {
             additionView.layer.cornerRadius = options.additionView.circle.cornerRadius ?? additionView.frame.height / 2
             additionView.backgroundColor = options.additionView.backgroundColor
             
-                        if #available(iOS 11.0, *) {
+            if #available(iOS 11.0, *) {
                 if let m = options.additionView.circle.maskedCorners {
                     additionView.layer.maskedCorners = m
                 }
@@ -446,7 +446,7 @@ extension TabView {
 
         guard let currentItem = currentItem else { return }
 
-        if options.additionView.animationOnSwipe {
+        if options.additionView.isAnimationOnSwipeEnable {
             switch direction {
             case .forward:
                 additionView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.additionView.padding.left
@@ -463,7 +463,7 @@ extension TabView {
                     currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
                 }
             }
-        }else {
+        } else {
             moveTabItem(index: index, animated: true)
         }
 
