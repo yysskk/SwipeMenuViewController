@@ -527,7 +527,7 @@ extension TabView {
 
     @objc func tapItemView(_ recognizer: UITapGestureRecognizer) {
         guard let itemView = recognizer.view as? TabItemView,
-            let index: Int = itemViews.index(of: itemView),
+            let index: Int = itemViews.firstIndex(of: itemView),
             currentIndex != index else { return }
         tabViewDelegate?.tabView(self, willSelectTabAt: index)
         moveTabItem(index: index, animated: true)
