@@ -244,6 +244,9 @@ public var needsConvertTextColorRatio: Bool
 
 // TabView enable safeAreaLayout. Defaults to `true`.
 public var isSafeAreaEnabled: Bool
+
+// TabView enable AdditionView swipe animation. Defaults to `true`.
+public var isAnimationOnSwipeEnable: Bool
 ```
 
 ##### ItemView
@@ -288,6 +291,9 @@ public var underline = Underline()
 
 // Circle style options.
 public var circle = Circle()
+
+// Circle style maskedCorner options. It helps to make specific corners rounded. Defaults to `nil`.
+public var maskedCorners: CACornerMask? = nil
 ```
 
 #### ContentScrollView
