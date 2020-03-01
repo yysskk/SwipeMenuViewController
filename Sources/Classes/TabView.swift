@@ -361,6 +361,35 @@ extension TabView {
             additionView.layer.position.y = itemView.layer.position.y
             additionView.layer.cornerRadius = options.additionView.circle.cornerRadius ?? additionView.frame.height / 2
             additionView.backgroundColor = options.additionView.backgroundColor
+            
+            if #available(iOS 11.0, *) {
+                if let m = options.additionView.circle.maskedCorners {
+                    additionView.layer.maskedCorners = m
+                }
+            } else {
+                var cornerMask = UIRectCorner()
+                
+                if let maskedCorners = options.additionView.circle.maskedCorners
+                {
+                    if(maskedCorners.contains(.layerMinXMinYCorner)){
+                        cornerMask.insert(.topLeft)
+                    }
+                    if(maskedCorners.contains(.layerMaxXMinYCorner)){
+                        cornerMask.insert(.topRight)
+                    }
+                    if(maskedCorners.contains(.layerMinXMaxYCorner)){
+                        cornerMask.insert(.bottomLeft)
+                    }
+                    if(maskedCorners.contains(.layerMaxXMaxYCorner)){
+                        cornerMask.insert(.bottomRight)
+                    }
+                    let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: cornerMask, cornerRadii: CGSize(width: options.additionView.circle.cornerRadius ?? additionView.frame.height / 2, height: options.additionView.circle.cornerRadius ?? additionView.frame.height / 2))
+                    let mask = CAShapeLayer()
+                    mask.path = path.cgPath
+                    additionView.layer.mask = mask
+                }
+            }
+            
             containerView.addSubview(additionView)
             containerView.sendSubviewToBack(additionView)
         case .none:
@@ -417,21 +446,25 @@ extension TabView {
 
         guard let currentItem = currentItem else { return }
 
-        switch direction {
-        case .forward:
-            additionView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.additionView.padding.left
-            additionView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.additionView.padding.horizontal
-            if options.needsConvertTextColorRatio {
-                nextItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
-                currentItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
+        if options.additionView.isAnimationOnSwipeEnable {
+            switch direction {
+            case .forward:
+                additionView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.additionView.padding.left
+                additionView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.additionView.padding.horizontal
+                if options.needsConvertTextColorRatio {
+                    nextItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
+                    currentItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
+                }
+            case .reverse:
+                additionView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.additionView.padding.left
+                additionView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.additionView.padding.horizontal
+                if options.needsConvertTextColorRatio {
+                    previousItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
+                    currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
+                }
             }
-        case .reverse:
-            additionView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.additionView.padding.left
-            additionView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.additionView.padding.horizontal
-            if options.needsConvertTextColorRatio {
-                previousItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
-                currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
-            }
+        } else {
+            moveTabItem(index: index, animated: true)
         }
 
         if options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio) == nil {
