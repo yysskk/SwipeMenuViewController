@@ -49,7 +49,7 @@ See the following site for instructions.
 
 ## Documentation
 - See [Usage](Documentation/Usage.md) documentation for all the various properties and options that can be set
-- See [Versioning](Documentaion/Versioning.md) for versioning documentation
+- See [Versioning](Documentation/Versioning.md) for versioning documentation
 
 ## Author
 ### Yusuke Morishita
