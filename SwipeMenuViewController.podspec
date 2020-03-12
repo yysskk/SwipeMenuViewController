@@ -11,18 +11,11 @@ Pod::Spec.new do |s|
   s.version      = "4.1.0"
   s.summary      = "Swipable tab and menu UI framework"
 
-  # This description is used to generate tags and improve search results.
-  #   * Think: What does it do? Why did you write it? What is the focus?
-  #   * Try to keep it short, snappy and to the point.
-  #   * Write the description between the DESC delimiters below.
-  #   * Finally, don't worry about the indent, CocoaPods strips it!
   s.description  = <<-DESC
   SwipeMenuViewController provides SwipeMenuView and SwipeMenuViewController. This is very useful to build swipe-based paging UI. The interface is as simple as UIKit's.
                    DESC
 
   s.homepage     = "https://github.com/yysskk/SwipeMenuViewController"
-  s.screenshots  = "github.com/yysskk/Assets/blob/master/SwipeMenuViewController/demo_segmented_underline.gif", "github.com/yysskk/Assets/blob/master/SwipeMenuViewController/demo_flexible_underline.gif", "github.com/yysskk/Assets/blob/master/SwipeMenuViewController/demo_flexible_circle.gif"
-
 
   # ―――  Spec License  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
