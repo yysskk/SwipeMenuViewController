@@ -39,6 +39,8 @@ open class TabView: UIScrollView {
 
     fileprivate var additionView: UIView = .init()
 
+    fileprivate var borderView: UIView = .init()
+
     fileprivate var currentIndex: Int = 0
 
     fileprivate(set) var options: SwipeMenuViewOptions.TabView = SwipeMenuViewOptions.TabView()
@@ -127,12 +129,15 @@ open class TabView: UIScrollView {
         if let defaultIndex = defaultIndex {
             moveTabItem(index: defaultIndex, animated: animated)
         }
+
+        setupBorder()
     }
 
     func reset() {
         currentIndex = 0
         itemViews.forEach { $0.removeFromSuperview() }
         additionView.removeFromSuperview()
+        borderView.removeFromSuperview()
         containerView.removeFromSuperview()
         itemViews = []
     }
@@ -143,6 +148,14 @@ open class TabView: UIScrollView {
 
         currentIndex = index
         updateSelectedItem(by: currentIndex)
+    }
+
+    private func setupBorder() {
+        borderView = UIView()
+        let height = options.bottomBorderView.borderWidth
+        borderView.frame = CGRect(x: 0, y: frame.height - height, width: frame.width, height: height)
+        addSubview(borderView)
+        borderView.backgroundColor = options.bottomBorderView.borderColor
     }
 
     fileprivate func setupScrollView() {

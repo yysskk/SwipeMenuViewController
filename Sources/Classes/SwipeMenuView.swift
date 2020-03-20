@@ -77,6 +77,15 @@ public struct SwipeMenuViewOptions {
             public var circle = Circle()
         }
 
+        public struct BottomBorderView {
+
+            /// Width of bottom border
+            public var borderWidth: CGFloat = 0.0
+
+            /// Color of bottom border
+            public var borderColor: UIColor = .black
+        }
+
         /// TabView height. Defaults to `44.0`.
         public var height: CGFloat = 44.0
 
@@ -109,6 +118,9 @@ public struct SwipeMenuViewOptions {
 
         /// AdditionView options
         public var additionView = AdditionView()
+
+        /// BottomBorderView options
+        public var bottomBorderView = BottomBorderView()
 
         public init() { }
     }
