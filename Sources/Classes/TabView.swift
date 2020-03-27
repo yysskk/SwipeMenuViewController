@@ -216,7 +216,11 @@ open class TabView: UIScrollView {
             tabItemView.clipsToBounds = options.clipsToBounds
             if let title = dataSource.tabView(self, titleForItemAt: index) {
                 tabItemView.titleLabel.text = title
-                tabItemView.titleLabel.font = options.itemView.font
+                
+                tabItemView.textFont = options.itemView.font
+                tabItemView.selectedFont = options.itemView.selectedFont
+
+                
                 tabItemView.textColor = options.itemView.textColor
                 tabItemView.selectedTextColor = options.itemView.selectedTextColor
             }

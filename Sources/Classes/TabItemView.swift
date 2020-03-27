@@ -3,6 +3,8 @@ import UIKit
 final class TabItemView: UIView {
 
     private(set) var titleLabel: UILabel = UILabel()
+    public var textFont : UIFont = UIFont.boldSystemFont(ofSize: 14)
+    public var selectedFont : UIFont = UIFont.boldSystemFont(ofSize: 16)
 
     public var textColor: UIColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
     public var selectedTextColor: UIColor = .white
@@ -11,8 +13,12 @@ final class TabItemView: UIView {
         didSet {
             if isSelected {
                 titleLabel.textColor = selectedTextColor
+                titleLabel.font = selectedFont
+
             } else {
                 titleLabel.textColor = textColor
+                titleLabel.font = textFont
+
             }
         }
     }
