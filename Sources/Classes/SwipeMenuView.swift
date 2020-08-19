@@ -48,6 +48,10 @@ public struct SwipeMenuViewOptions {
                 /// Circle cornerRadius if addition style select `.circle`. Defaults to `nil`.
                 /// `AdditionView.height / 2` in the case of nil.
                 public var cornerRadius: CGFloat? = nil
+                
+                /// Circle maskedCorners if addition style select `.circle`. Defaults to `nil`.
+                /// It helps to make specific corners rounded.
+                public var maskedCorners: CACornerMask? = nil
             }
             
             /// AdditionView side margin. Defaults to `0.0`.
@@ -62,7 +66,10 @@ public struct SwipeMenuViewOptions {
             
             /// AdditionView animating duration. Defaults to `0.3`.
             public var animationDuration: Double = 0.3
-            
+
+            /// AdditionView swipe animation disable feature. Defaults to 'true'
+            public var isAnimationOnSwipeEnable: Bool = true
+
             /// Underline style options.
             public var underline = Underline()
             
@@ -257,7 +264,9 @@ open class SwipeMenuView: UIView {
         
         isLayoutingSubviews = true
         super.layoutSubviews()
-        reloadData(isOrientationChange: true)
+        if !isJumping {
+            reloadData(isOrientationChange: true)
+        }
     }
     
     open override func didMoveToSuperview() {
