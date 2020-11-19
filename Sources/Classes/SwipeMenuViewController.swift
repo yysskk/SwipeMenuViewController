@@ -58,8 +58,12 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
         return children.count
     }
 
-    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String? {
         return children[index].title ?? ""
+    }
+
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, attributedTitleForPageAt index: Int) -> NSAttributedString? {
+        return nil
     }
 
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {

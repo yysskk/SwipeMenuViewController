@@ -177,7 +177,10 @@ public protocol SwipeMenuViewDataSource: class {
     func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int
 
     /// Return strings to be displayed at the tab in `SwipeMenuView`.
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String?
+
+    /// Return attributed strings to be displayed at the tab in `SwipeMenuView`.
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, attributedTitleForPageAt index: Int) -> NSAttributedString?
 
     /// Return a ViewController to be displayed at the page in `SwipeMenuView`.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController
@@ -398,6 +401,10 @@ extension SwipeMenuView: TabViewDelegate, TabViewDataSource {
 
     public func tabView(_ tabView: TabView, titleForItemAt index: Int) -> String? {
         return dataSource?.swipeMenuView(self, titleForPageAt: index)
+    }
+
+    public func tabView(_ tabView: TabView, attributedTitleForItemAt index: Int) -> NSAttributedString? {
+        return dataSource?.swipeMenuView(self, attributedTitleForPageAt: index)
     }
 }
 

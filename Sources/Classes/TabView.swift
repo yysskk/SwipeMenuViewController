@@ -26,6 +26,9 @@ public protocol TabViewDataSource: class {
 
     /// Return strings to be displayed at the tab in `TabView`.
     func tabView(_ tabView: TabView, titleForItemAt index: Int) -> String?
+
+    /// Return attributed strings to be displayed at the tab in `TabView`.
+    func tabView(_ tabView: TabView, attributedTitleForItemAt index: Int) -> NSAttributedString?
 }
 
 open class TabView: UIScrollView {
@@ -216,6 +219,11 @@ open class TabView: UIScrollView {
             tabItemView.clipsToBounds = options.clipsToBounds
             if let title = dataSource.tabView(self, titleForItemAt: index) {
                 tabItemView.titleLabel.text = title
+                tabItemView.titleLabel.font = options.itemView.font
+                tabItemView.textColor = options.itemView.textColor
+                tabItemView.selectedTextColor = options.itemView.selectedTextColor
+            } else if let attributedTitle = dataSource.tabView(self, attributedTitleForItemAt: index) {
+                tabItemView.titleLabel.attributedText = attributedTitle
                 tabItemView.titleLabel.font = options.itemView.font
                 tabItemView.textColor = options.itemView.textColor
                 tabItemView.selectedTextColor = options.itemView.selectedTextColor
