@@ -4,15 +4,15 @@ import UIKit
 
 public protocol TabViewDelegate: class {
 
-    /// Called before selecting the tab.
-    func tabView(_ tabView: TabView, willSelectTabAt index: Int)
+    /// Called when reselecting the tab.
+    func tabView(_ tabView: TabView, didReselectTabAt index: Int)
 
     /// Called after selecting the tab.
     func tabView(_ tabView: TabView, didSelectTabAt index: Int)
 }
 
 extension TabViewDelegate {
-    public func tabView(_ tabView: TabView, willSelectTabAt index: Int) {}
+    public func tabView(_ tabView: TabView, didReselectTabAt index: Int) {}
 
     public func tabView(_ tabView: TabView, didSelectTabAt index: Int) {}
 }
@@ -529,7 +529,9 @@ extension TabView {
         guard let itemView = recognizer.view as? TabItemView,
             let index: Int = itemViews.firstIndex(of: itemView)
             else { return }
-        tabViewDelegate?.tabView(self, willSelectTabAt: index)
+        if currentIndex == index {
+            tabViewDelegate?.tabView(self, didReselectTabAt: index)
+        }
         moveTabItem(index: index, animated: true)
         update(index)
         tabViewDelegate?.tabView(self, didSelectTabAt: index)
