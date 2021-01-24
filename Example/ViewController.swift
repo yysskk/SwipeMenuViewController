@@ -59,6 +59,11 @@ final class ViewController: SwipeMenuViewController {
         super.swipeMenuView(swipeMenuView, didChangeIndexFrom: fromIndex, to: toIndex)
         print("did change from section\(fromIndex + 1)  to section\(toIndex + 1)")
     }
+    
+    override func swipeMenuView(_ swipeMenuView: SwipeMenuView, willSelectTabAt index: Int) {
+        super.swipeMenuView(swipeMenuView, willSelectTabAt: index)
+        print("will select tab at \(index + 1)")
+    }
 
 
     // MARK - SwipeMenuViewDataSource
