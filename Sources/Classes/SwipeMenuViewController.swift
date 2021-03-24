@@ -1,7 +1,7 @@
 import UIKit
 
 open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, SwipeMenuViewDataSource {
-
+    
     open var swipeMenuView: SwipeMenuView!
 
     open override func viewDidLoad() {
@@ -60,6 +60,10 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
 
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {
         return children[index].title ?? ""
+    }
+    
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, hasNotificationPageAt index: Int) -> Bool {
+        return false
     }
 
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {

@@ -35,6 +35,9 @@ public struct SwipeMenuViewOptions {
 
             /// ItemView selected textColor. Defaults to `.black`.
             public var selectedTextColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+            
+            /// ItemView notification badge color. Defaults to `.red`.
+            public var notificationBadgeColor: UIColor = UIColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
         }
 
         public struct AdditionView {
@@ -178,6 +181,9 @@ public protocol SwipeMenuViewDataSource: class {
 
     /// Return strings to be displayed at the tab in `SwipeMenuView`.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String
+    
+    /// Returns whether or not the tab in `SwipeMenuView` has notifications.
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, hasNotificationPageAt index: Int) -> Bool
 
     /// Return a ViewController to be displayed at the page in `SwipeMenuView`.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController
@@ -398,6 +404,10 @@ extension SwipeMenuView: TabViewDelegate, TabViewDataSource {
 
     public func tabView(_ tabView: TabView, titleForItemAt index: Int) -> String? {
         return dataSource?.swipeMenuView(self, titleForPageAt: index)
+    }
+    
+    public func tabView(_ tabView: TabView, hasNotificationForItemAt index: Int) -> Bool? {
+        return dataSource?.swipeMenuView(self, hasNotificationPageAt: index)
     }
 }
 
