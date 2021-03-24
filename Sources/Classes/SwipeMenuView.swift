@@ -26,6 +26,9 @@ public struct SwipeMenuViewOptions {
 
             /// ItemView font. Defaults to `14 pt as bold SystemFont`.
             public var font: UIFont = UIFont.boldSystemFont(ofSize: 14)
+            
+            /// ItemView font kerning. Defaults to `0`
+            public var kern: CGFloat = 0
 
             /// ItemView clipsToBounds. Defaults to `true`.
             public var clipsToBounds: Bool = true

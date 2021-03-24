@@ -218,8 +218,11 @@ open class TabView: UIScrollView {
             tabItemView.translatesAutoresizingMaskIntoConstraints = false
             tabItemView.clipsToBounds = options.clipsToBounds
             if let title = dataSource.tabView(self, titleForItemAt: index) {
-                tabItemView.titleLabel.text = title
-                tabItemView.titleLabel.font = options.itemView.font
+                let attributedTitle: NSMutableAttributedString = .init(string: title)
+                attributedTitle.addAttribute(.font, value: options.itemView.font, range: .init(location: 0, length: title.count))
+                attributedTitle.addAttribute(.kern, value: options.itemView.kern, range: .init(location: 0, length: title.count))
+
+                tabItemView.titleLabel.attributedText = attributedTitle
                 tabItemView.textColor = options.itemView.textColor
                 tabItemView.selectedTextColor = options.itemView.selectedTextColor
             }
