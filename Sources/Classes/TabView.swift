@@ -423,10 +423,15 @@ extension TabView {
             adjustCellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal
         }
         
-        let itemWidth = adjustCellWidth + options.additionView.padding.horizontal
-        let startX = index > 0 ? options.margin : options.margin + (itemWidth * CGFloat(index))
-        additionView.frame.origin.x = startX + options.additionView.padding.left
-        additionView.frame.size.width = adjustCellWidth
+        if options.addition == .underline {
+            let itemWidth = adjustCellWidth + options.additionView.padding.horizontal
+            let startX = index > 0 ? options.margin : options.margin + (itemWidth * CGFloat(index))
+            additionView.frame.origin.x = startX + options.additionView.padding.left
+            additionView.frame.size.width = adjustCellWidth
+        } else {
+            additionView.frame.origin.x = adjustCellWidth * CGFloat(index) - options.additionView.padding.left
+            additionView.frame.size.width = adjustCellWidth
+        }
     }
 
     fileprivate func animateAdditionView(index: Int, animated: Bool, completion: ((Bool) -> Swift.Void)? = nil) {
