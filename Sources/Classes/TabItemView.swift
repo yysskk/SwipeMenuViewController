@@ -1,6 +1,17 @@
 import UIKit
 
-final class TabItemView: UIView {
+public protocol TabItemViewProtocol: UIView {
+    var titleLabel: UILabel { get }
+    var notificationBadgeViewSize: CGSize { get }
+    var textColor: UIColor { get set }
+    var selectedTextColor: UIColor { get set }
+    var notificationBadgeColor: UIColor { get set }
+    var isSelected: Bool { get set }
+    var notificationBadgeViewFrame: CGRect { get set }
+    var hasNotification: Bool { get set }
+}
+
+final class TabItemView: UIView, TabItemViewProtocol {
 
     private(set) var titleLabel: UILabel = UILabel()
     private var notificationBadgeView: UIView = UIView()

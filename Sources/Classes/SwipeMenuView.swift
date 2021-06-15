@@ -153,7 +153,7 @@ public struct SwipeMenuViewOptions {
 
 // MARK: - SwipeMenuViewDelegate
 
-public protocol SwipeMenuViewDelegate: class {
+public protocol SwipeMenuViewDelegate: AnyObject {
 
     /// Called before setup self.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int)
@@ -177,7 +177,7 @@ extension SwipeMenuViewDelegate {
 
 // MARK: - SwipeMenuViewDataSource
 
-public protocol SwipeMenuViewDataSource: class {
+public protocol SwipeMenuViewDataSource: AnyObject {
 
     /// Return the number of pages in `SwipeMenuView`.
     func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int
@@ -185,9 +185,8 @@ public protocol SwipeMenuViewDataSource: class {
     /// Return strings to be displayed at the tab in `SwipeMenuView`.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String
     
-    /// Returns whether or not the tab in `SwipeMenuView` has notifications.
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, hasNotificationPageAt index: Int) -> Bool
-
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, itemViweForPageAt index: Int) -> TabItemViewProtocol?
+    
     /// Return a ViewController to be displayed at the page in `SwipeMenuView`.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController
 }
@@ -409,8 +408,8 @@ extension SwipeMenuView: TabViewDelegate, TabViewDataSource {
         return dataSource?.swipeMenuView(self, titleForPageAt: index)
     }
     
-    public func tabView(_ tabView: TabView, hasNotificationForItemAt index: Int) -> Bool? {
-        return dataSource?.swipeMenuView(self, hasNotificationPageAt: index)
+    public func tabView(_ tabView: TabView, viewForItemAt index: Int) -> TabItemViewProtocol? {
+        return dataSource?.swipeMenuView(self, itemViweForPageAt: index)
     }
 }
 

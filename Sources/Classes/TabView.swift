@@ -2,7 +2,7 @@ import UIKit
 
 // MARK: - TabViewDelegate
 
-public protocol TabViewDelegate: class {
+public protocol TabViewDelegate: AnyObject {
 
     /// Called before selecting the tab.
     func tabView(_ tabView: TabView, willSelectTabAt index: Int)
@@ -19,7 +19,7 @@ extension TabViewDelegate {
 
 // MARK: - TabViewDataSource
 
-public protocol TabViewDataSource: class {
+public protocol TabViewDataSource: AnyObject {
 
     /// Return the number of Items in `TabView`.
     func numberOfItems(in tabView: TabView) -> Int
@@ -27,8 +27,8 @@ public protocol TabViewDataSource: class {
     /// Return strings to be displayed at the tab in `TabView`.
     func tabView(_ tabView: TabView, titleForItemAt index: Int) -> String?
     
-    /// Returns whether or not the tab in `TabView` has notifications.
-    func tabView(_ tabView: TabView, hasNotificationForItemAt index: Int) -> Bool?
+    /// Return views to be displayed at the tab in `TabView`.
+    func tabView(_ tabView: TabView, viewForItemAt index: Int) -> TabItemViewProtocol?
 }
 
 open class TabView: UIScrollView {
@@ -36,7 +36,7 @@ open class TabView: UIScrollView {
     open weak var tabViewDelegate: TabViewDelegate?
     open weak var dataSource: TabViewDataSource?
 
-    var itemViews: [TabItemView] = []
+    var itemViews: [TabItemViewProtocol] = []
 
     fileprivate let containerView: UIStackView = UIStackView()
 
@@ -214,7 +214,14 @@ open class TabView: UIScrollView {
         var xPosition: CGFloat = 0
 
         for index in 0..<itemCount {
-            let tabItemView = TabItemView(frame: CGRect(x: xPosition, y: 0, width: options.itemView.width, height: containerView.frame.size.height))
+            let tabItemViewFrame = CGRect(x: xPosition, y: 0, width: options.itemView.width, height: containerView.frame.size.height)
+            let tabItemView: TabItemViewProtocol
+            if let originalItemView = dataSource.tabView(self, viewForItemAt: index) {
+                tabItemView = originalItemView
+                tabItemView.frame = tabItemViewFrame
+            } else {
+                tabItemView = TabItemView(frame: tabItemViewFrame)
+            }
             tabItemView.translatesAutoresizingMaskIntoConstraints = false
             tabItemView.clipsToBounds = options.clipsToBounds
             if let title = dataSource.tabView(self, titleForItemAt: index) {
@@ -226,10 +233,7 @@ open class TabView: UIScrollView {
                 tabItemView.textColor = options.itemView.textColor
                 tabItemView.selectedTextColor = options.itemView.selectedTextColor
             }
-            if let hasNotification = dataSource.tabView(self, hasNotificationForItemAt: index) {
-                tabItemView.notificationBadgeColor = options.itemView.notificationBadgeColor
-                tabItemView.hasNotification = hasNotification
-            }
+            tabItemView.notificationBadgeColor = options.itemView.notificationBadgeColor
 
             tabItemView.isSelected = index == currentIndex
 
@@ -497,18 +501,18 @@ extension TabView {
 }
 
 extension TabView {
-    var currentItem: TabItemView? {
+    var currentItem: TabItemViewProtocol? {
         return currentIndex < itemViews.count ? itemViews[currentIndex] : nil
     }
 
-    var nextItem: TabItemView {
+    var nextItem: TabItemViewProtocol {
         if currentIndex < itemViews.count - 1 {
             return itemViews[currentIndex + 1]
         }
         return itemViews[currentIndex]
     }
 
-    var previousItem: TabItemView {
+    var previousItem: TabItemViewProtocol {
         if currentIndex > 0 {
             return itemViews[currentIndex - 1]
         }
@@ -547,8 +551,8 @@ extension TabView {
     }
 
     @objc func tapItemView(_ recognizer: UITapGestureRecognizer) {
-        guard let itemView = recognizer.view as? TabItemView,
-            let index: Int = itemViews.firstIndex(of: itemView),
+        guard let itemView = recognizer.view,
+            let index: Int = (itemViews as [UIView]).firstIndex(of: itemView),
             currentIndex != index else { return }
         tabViewDelegate?.tabView(self, willSelectTabAt: index)
         moveTabItem(index: index, animated: true)

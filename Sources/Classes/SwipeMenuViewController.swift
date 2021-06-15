@@ -62,10 +62,10 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
         return children[index].title ?? ""
     }
     
-    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, hasNotificationPageAt index: Int) -> Bool {
-        return false
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, itemViweForPageAt index: Int) -> TabItemViewProtocol? {
+        nil
     }
-
+    
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
         let vc = children[index]
         vc.didMove(toParent: self)
