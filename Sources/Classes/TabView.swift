@@ -426,7 +426,7 @@ extension TabView {
         
         if options.addition == .underline {
             let itemWidth = adjustCellWidth + options.additionView.padding.horizontal
-            let startX = index > 0 ? options.margin : options.margin + (itemWidth * CGFloat(index))
+            let startX = (itemWidth * CGFloat(index))
             additionView.frame.origin.x = startX + options.additionView.padding.left
             additionView.frame.size.width = adjustCellWidth
         } else {
