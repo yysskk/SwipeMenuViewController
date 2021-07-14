@@ -6,13 +6,18 @@ final class TabItemView: UIView {
 
     public var textColor: UIColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
     public var selectedTextColor: UIColor = .white
+    public var selectedFont: UIFont = UIFont.boldSystemFont(ofSize: 14)
+    public var font: UIFont = UIFont.boldSystemFont(ofSize: 14)
+    
 
     public var isSelected: Bool = false {
         didSet {
             if isSelected {
                 titleLabel.textColor = selectedTextColor
+                titleLabel.font = selectedFont
             } else {
                 titleLabel.textColor = textColor
+                titleLabel.font = font
             }
         }
     }
@@ -34,7 +39,7 @@ final class TabItemView: UIView {
     private func setupLabel() {
         titleLabel = UILabel(frame: bounds)
         titleLabel.textAlignment = .center
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 14)
+        titleLabel.font = font
         titleLabel.textColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
         titleLabel.backgroundColor = UIColor.clear
         addSubview(titleLabel)

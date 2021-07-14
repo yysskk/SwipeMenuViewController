@@ -219,6 +219,7 @@ open class TabView: UIScrollView {
                 tabItemView.titleLabel.font = options.itemView.font
                 tabItemView.textColor = options.itemView.textColor
                 tabItemView.selectedTextColor = options.itemView.selectedTextColor
+                tabItemView.selectedFont = options.itemView.selectedFont
             }
 
             tabItemView.isSelected = index == currentIndex
