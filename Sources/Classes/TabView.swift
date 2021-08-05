@@ -423,7 +423,7 @@ extension TabView {
             adjustCellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal
         }
 
-        additionView.frame.origin.x = adjustCellWidth * CGFloat(index) - options.additionView.padding.left
+        additionView.frame.origin.x = adjustCellWidth * CGFloat(index) + options.additionView.padding.left
         additionView.frame.size.width = adjustCellWidth
     }
 
