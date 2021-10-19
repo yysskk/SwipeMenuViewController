@@ -298,7 +298,7 @@ open class SwipeMenuView: UIView {
         setNeedsLayout()
     }
 
-    fileprivate func update(from fromIndex: Int, to toIndex: Int) {
+    public func update(from fromIndex: Int, to toIndex: Int) {
 
         if !isLayoutingSubviews {
             delegate?.swipeMenuView(self, willChangeIndexFrom: fromIndex, to: toIndex)
