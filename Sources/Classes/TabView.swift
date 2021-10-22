@@ -352,6 +352,7 @@ extension TabView {
         case .underline:
             let itemView = itemViews[currentIndex]
             additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.padding.left, y: itemView.frame.height - options.additionView.padding.vertical, width: itemView.frame.width - options.additionView.padding.horizontal, height: options.additionView.underline.height))
+            additionView.layer.cornerRadius = options.additionView.underline.height / 2
             additionView.backgroundColor = options.additionView.backgroundColor
             containerView.addSubview(additionView)
         case .circle:
@@ -423,7 +424,7 @@ extension TabView {
             adjustCellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal
         }
 
-        additionView.frame.origin.x = adjustCellWidth * CGFloat(index) - options.additionView.padding.left
+        additionView.frame.origin.x = adjustCellWidth * CGFloat(index) + options.additionView.padding.left
         additionView.frame.size.width = adjustCellWidth
     }
 
