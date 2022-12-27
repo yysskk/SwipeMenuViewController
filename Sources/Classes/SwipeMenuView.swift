@@ -61,6 +61,9 @@ public struct SwipeMenuViewOptions {
             /// AdditionView paddings. Defaults to `.zero`.
             public var padding: UIEdgeInsets = .zero
             
+            /// AdditionView ratio is AdditionView / TabView. Defaults to `0.5`.
+            public var widthRatio: Double = 0.5
+            
             /// AdditionView backgroundColor. Defaults to `.black`.
             public var backgroundColor: UIColor = .black
             
@@ -100,6 +103,9 @@ public struct SwipeMenuViewOptions {
 
         /// Convert the text color of ItemView to selected text color by scroll rate of ContentScrollView. Defaults to `true`.
         public var needsConvertTextColorRatio: Bool = true
+        
+        /// TabView adjust width ratio or not. Defaults to `true`.
+        public var needsAdjustItemViewRaitoWidth: Bool = true
 
         /// TabView enable safeAreaLayout. Defaults to `true`.
         public var isSafeAreaEnabled: Bool = true
@@ -147,7 +153,7 @@ public struct SwipeMenuViewOptions {
 
 // MARK: - SwipeMenuViewDelegate
 
-public protocol SwipeMenuViewDelegate: class {
+public protocol SwipeMenuViewDelegate: AnyObject {
 
     /// Called before setup self.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int)
@@ -171,7 +177,7 @@ extension SwipeMenuViewDelegate {
 
 // MARK: - SwipeMenuViewDataSource
 
-public protocol SwipeMenuViewDataSource: class {
+public protocol SwipeMenuViewDataSource: AnyObject {
 
     /// Return the number of pages in `SwipeMenuView`.
     func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int

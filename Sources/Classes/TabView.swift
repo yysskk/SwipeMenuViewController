@@ -2,7 +2,7 @@ import UIKit
 
 // MARK: - TabViewDelegate
 
-public protocol TabViewDelegate: class {
+public protocol TabViewDelegate: AnyObject {
 
     /// Called before selecting the tab.
     func tabView(_ tabView: TabView, willSelectTabAt index: Int)
@@ -19,7 +19,7 @@ extension TabViewDelegate {
 
 // MARK: - TabViewDataSource
 
-public protocol TabViewDataSource: class {
+public protocol TabViewDataSource: AnyObject {
 
     /// Return the number of Items in `TabView`.
     func numberOfItems(in tabView: TabView) -> Int
@@ -351,6 +351,11 @@ extension TabView {
         switch options.addition {
         case .underline:
             let itemView = itemViews[currentIndex]
+            if options.needsAdjustItemViewRaitoWidth {
+                let padding = itemView.frame.width * (1 - options.additionView.widthRatio) / 2
+                options.additionView.padding.left = padding
+                options.additionView.padding.right = padding
+            }
             additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.padding.left, y: itemView.frame.height - options.additionView.padding.vertical, width: itemView.frame.width - options.additionView.padding.horizontal, height: options.additionView.underline.height))
             additionView.backgroundColor = options.additionView.backgroundColor
             containerView.addSubview(additionView)
@@ -402,10 +407,14 @@ extension TabView {
     private func updateAdditionViewPosition(index: Int) {
         guard let target = currentItem else { return }
 
-        additionView.frame.origin.x = target.frame.origin.x + options.additionView.padding.left
-
         if options.needsAdjustItemViewWidth {
             let cellWidth = itemViews[index].frame.width
+            if options.needsAdjustItemViewRaitoWidth {
+                let padding = cellWidth * (1 - options.additionView.widthRatio) / 2
+                options.additionView.padding.left = padding
+                options.additionView.padding.right = padding
+            }
+            additionView.frame.origin.x = target.frame.origin.x + options.additionView.padding.left
             additionView.frame.size.width = cellWidth - options.additionView.padding.horizontal
         }
 
