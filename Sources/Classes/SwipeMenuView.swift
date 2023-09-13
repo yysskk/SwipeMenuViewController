@@ -35,6 +35,10 @@ public struct SwipeMenuViewOptions {
 
             /// ItemView selected textColor. Defaults to `.black`.
             public var selectedTextColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+            
+            /// ItemView title number of lines . Defaults to `1`.
+            public var numberOfLines: Int = 1
+            
         }
 
         public struct AdditionView {
