@@ -25,6 +25,19 @@ class PopupViewController: UIViewController {
             }
         }
     }
+    
+    var titleLinesCount: Int = 1 {
+        didSet {
+            if titleLinesCountLabel != nil {
+                titleLinesCountLabel.text = "Number Of Lines: \(titleLinesCount)"
+            }
+
+            if titleLinesCountStepper != nil {
+                titleLinesCountStepper.value = Double(titleLinesCount)
+            }
+        }
+    }
+
 
     var reloadClosure: (() -> Swift.Void)!
 
@@ -39,24 +52,32 @@ class PopupViewController: UIViewController {
     @IBOutlet weak var tabItemViewWidthSlider: UISlider!
     @IBOutlet weak var tabAdditionSegmentedControl: UISegmentedControl!
     @IBOutlet weak var contentScrolEnabledSegmentedControl: UISegmentedControl!
+    @IBOutlet weak var titleLinesCountLabel: UILabel!
+    @IBOutlet weak var titleLinesCountStepper: UIStepper!
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         dataCountLabel.text = "Page Number: \(dataCount)"
+        titleLinesCountLabel.text = "Number Of Lines: \(titleLinesCount)"
 
         tabMarginLabel.text = "Tab Margin: \(String(format: "%.0f", Float(options.tabView.margin)))"
         tabMarginSlider.setValue(Float(options.tabView.margin), animated: false)
 
         dataCountStepper.value = Double(dataCount)
+        titleLinesCountStepper.value = Double(titleLinesCount)
 
         switch options.tabView.style {
         case .flexible:
             styleSegmentedControl.selectedSegmentIndex = 0
             dataCountStepper.maximumValue = 8
+            titleLinesCountStepper.maximumValue = 1
         case .segmented:
             styleSegmentedControl.selectedSegmentIndex = 1
             dataCountStepper.maximumValue = 4
+            titleLinesCountStepper.maximumValue = 4
+            titleLinesCountStepper.minimumValue = 1
         }
 
         if options.tabView.needsAdjustItemViewWidth {
@@ -88,6 +109,10 @@ class PopupViewController: UIViewController {
         } else {
             contentScrolEnabledSegmentedControl.selectedSegmentIndex = 1
         }
+        
+        titleLinesCountLabel.isHidden = options.tabView.style == .flexible
+        titleLinesCountStepper.isHidden = options.tabView.style == .flexible
+        titleLinesCount = options.tabView.itemView.numberOfLines
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -102,6 +127,8 @@ class PopupViewController: UIViewController {
 
     @IBAction func changeOptions(_ sender: UIButton) {
         if let vc = self.presentingViewController as? ViewController {
+            options.tabView.itemView.numberOfLines = titleLinesCount
+            options.tabView.height = CGFloat(20 * titleLinesCount)
             vc.options = options
             vc.dataCount = dataCount
         }
@@ -121,6 +148,10 @@ class PopupViewController: UIViewController {
     @IBAction func changeDataCount(_ sender: UIStepper) {
         dataCount = Int(sender.value)
     }
+    
+    @IBAction func changeTitleLinesCount(_ sender: UIStepper) {
+        titleLinesCount = Int(sender.value)
+    }
 
     @IBAction func changeTabMargin(_ sender: UISlider) {
         options.tabView.margin = CGFloat(sender.value)
@@ -132,9 +163,15 @@ class PopupViewController: UIViewController {
         case 0:
             options.tabView.style = .flexible
             dataCountStepper.maximumValue = 8
+            titleLinesCountStepper.maximumValue = 1
+            if titleLinesCount > 1 || titleLinesCount == 0 {
+                titleLinesCount = 1
+            }
         case 1:
             options.tabView.style = .segmented
             dataCountStepper.maximumValue = 4
+            titleLinesCountStepper.maximumValue = 4
+            titleLinesCountStepper.minimumValue = 1
             if dataCount > 4 {
                 dataCount = 4
             }
@@ -147,6 +184,9 @@ class PopupViewController: UIViewController {
 
         tabItemViewWidthLabel.isHidden = options.tabView.needsAdjustItemViewWidth || options.tabView.style == .segmented
         tabItemViewWidthSlider.isHidden = options.tabView.needsAdjustItemViewWidth || options.tabView.style == .segmented
+        
+        titleLinesCountLabel.isHidden = options.tabView.style == .flexible
+        titleLinesCountStepper.isHidden = options.tabView.style == .flexible
     }
 
     @IBAction func changeAdjustTabItemWidthEnabled(_ sender: UISegmentedControl) {

@@ -3,7 +3,7 @@ import SwipeMenuViewController
 
 final class ViewController: SwipeMenuViewController {
 
-    private var datas: [String] = ["Bulbasaur","Caterpie", "Golem", "Jynx", "Marshtomp", "Salamence", "Riolu", "Araquanid"]
+    private var datas: [String] = ["This is my first tab with three lines","My second tab 2 lines", "Third tab", "Jynx", "Marshtomp", "Salamence", "Riolu", "Araquanid"]
 
     var options = SwipeMenuViewOptions()
     var dataCount: Int = 5
