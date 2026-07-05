@@ -1,6 +1,7 @@
 import UIKit
 
-public protocol ContentScrollViewDataSource {
+/// A main-actor-isolated protocol that provides page views to a `ContentScrollView`.
+@MainActor public protocol ContentScrollViewDataSource {
 
     func numberOfPages(in contentScrollView: ContentScrollView) -> Int
 
@@ -22,9 +23,7 @@ open class ContentScrollView: UIScrollView {
 
         currentIndex = defaultIndex
 
-        if #available(iOS 11.0, *) {
-            self.contentInsetAdjustmentBehavior = .never
-        }
+        self.contentInsetAdjustmentBehavior = .never
 
         if let options = options {
             self.options = options

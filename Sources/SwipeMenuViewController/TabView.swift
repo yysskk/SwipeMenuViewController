@@ -2,7 +2,8 @@ import UIKit
 
 // MARK: - TabViewDelegate
 
-public protocol TabViewDelegate: class {
+/// A main-actor-isolated protocol that responds to `TabView` selection events.
+@MainActor public protocol TabViewDelegate: AnyObject {
 
     /// Called before selecting the tab.
     func tabView(_ tabView: TabView, willSelectTabAt index: Int)
@@ -19,7 +20,8 @@ extension TabViewDelegate {
 
 // MARK: - TabViewDataSource
 
-public protocol TabViewDataSource: class {
+/// A main-actor-isolated protocol that provides items and titles to a `TabView`.
+@MainActor public protocol TabViewDataSource: AnyObject {
 
     /// Return the number of Items in `TabView`.
     func numberOfItems(in tabView: TabView) -> Int
@@ -67,7 +69,6 @@ open class TabView: UIScrollView {
         resetAdditionViewPosition(index: currentIndex)
     }
 
-    @available(iOS 11.0, *)
     open override func safeAreaInsetsDidChange() {
         super.safeAreaInsetsDidChange()
 
@@ -86,7 +87,7 @@ open class TabView: UIScrollView {
         let offset: CGFloat
         let contentWidth: CGFloat
 
-        if #available(iOS 11.0, *), options.isSafeAreaEnabled {
+        if options.isSafeAreaEnabled {
             offset = target.center.x + options.margin + safeAreaInsets.left - self.frame.width / 2
             contentWidth = containerView.frame.width + options.margin * 2 + safeAreaInsets.left + safeAreaInsets.right
         } else {
@@ -181,7 +182,7 @@ open class TabView: UIScrollView {
         switch options.style {
         case .flexible:
             let containerWidth = options.itemView.width * CGFloat(itemCount)
-            if #available(iOS 11.0, *), options.isSafeAreaEnabled {
+            if options.isSafeAreaEnabled {
                 contentSize = CGSize(width: containerWidth + options.margin * 2 + safeAreaInsets.left + safeAreaInsets.right, height: options.height)
                 containerView.frame = CGRect(x: 0, y: options.margin + safeAreaInsets.left, width: containerWidth, height: containerHeight)
             } else {
@@ -189,7 +190,7 @@ open class TabView: UIScrollView {
                 containerView.frame = CGRect(x: 0, y: options.margin, width: containerWidth, height: containerHeight)
             }
         case .segmented:
-            if #available(iOS 11.0, *), options.isSafeAreaEnabled {
+            if options.isSafeAreaEnabled {
                 contentSize = CGSize(width: frame.width, height: options.height)
                 containerView .frame = CGRect(x: 0, y: options.margin + safeAreaInsets.left, width: frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right, height: containerHeight)
             } else {
@@ -244,7 +245,7 @@ open class TabView: UIScrollView {
                 }
             case .segmented:
                 let adjustCellSize: CGSize
-                if #available(iOS 11.0, *), options.isSafeAreaEnabled {
+                if options.isSafeAreaEnabled {
                     adjustCellSize = CGSize(width: (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(itemCount), height: tabItemView.frame.size.height)
                 } else {
                     adjustCellSize = CGSize(width: (frame.width - options.margin * 2) / CGFloat(itemCount), height: tabItemView.frame.size.height)
@@ -284,7 +285,7 @@ open class TabView: UIScrollView {
 
         switch options.style {
         case .flexible:
-            if #available(iOS 11.0, *), options.isSafeAreaEnabled {
+            if options.isSafeAreaEnabled {
                 leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin + safeAreaInsets.left)
 
                 NSLayoutConstraint.activate([
@@ -305,7 +306,7 @@ open class TabView: UIScrollView {
                 contentSize.width = containerWidth + options.margin * 2
             }
         case .segmented:
-            if #available(iOS 11.0, *), options.isSafeAreaEnabled {
+            if options.isSafeAreaEnabled {
                 leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin + safeAreaInsets.left)
                 widthConstraint = containerView.widthAnchor.constraint(equalTo: self.widthAnchor, constant: options.margin * -2 - safeAreaInsets.left - safeAreaInsets.right)
                 NSLayoutConstraint.activate([
@@ -340,7 +341,7 @@ open class TabView: UIScrollView {
 
 extension TabView {
 
-    public enum Direction {
+    public nonisolated enum Direction: Sendable {
         case forward
         case reverse
     }
@@ -362,34 +363,10 @@ extension TabView {
             additionView.layer.cornerRadius = options.additionView.circle.cornerRadius ?? additionView.frame.height / 2
             additionView.backgroundColor = options.additionView.backgroundColor
             
-            if #available(iOS 11.0, *) {
-                if let m = options.additionView.circle.maskedCorners {
-                    additionView.layer.maskedCorners = m
-                }
-            } else {
-                var cornerMask = UIRectCorner()
-                
-                if let maskedCorners = options.additionView.circle.maskedCorners
-                {
-                    if(maskedCorners.contains(.layerMinXMinYCorner)){
-                        cornerMask.insert(.topLeft)
-                    }
-                    if(maskedCorners.contains(.layerMaxXMinYCorner)){
-                        cornerMask.insert(.topRight)
-                    }
-                    if(maskedCorners.contains(.layerMinXMaxYCorner)){
-                        cornerMask.insert(.bottomLeft)
-                    }
-                    if(maskedCorners.contains(.layerMaxXMaxYCorner)){
-                        cornerMask.insert(.bottomRight)
-                    }
-                    let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: cornerMask, cornerRadii: CGSize(width: options.additionView.circle.cornerRadius ?? additionView.frame.height / 2, height: options.additionView.circle.cornerRadius ?? additionView.frame.height / 2))
-                    let mask = CAShapeLayer()
-                    mask.path = path.cgPath
-                    additionView.layer.mask = mask
-                }
+            if let m = options.additionView.circle.maskedCorners {
+                additionView.layer.maskedCorners = m
             }
-            
+
             containerView.addSubview(additionView)
             containerView.sendSubviewToBack(additionView)
         case .none:
@@ -417,7 +394,7 @@ extension TabView {
             let dataSource = dataSource,
             dataSource.numberOfItems(in: self) > 0 else { return }
         let adjustCellWidth: CGFloat
-        if #available(iOS 11.0, *), options.isSafeAreaEnabled && safeAreaInsets != .zero {
+        if options.isSafeAreaEnabled && safeAreaInsets != .zero {
             adjustCellWidth = (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal
         } else {
             adjustCellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal

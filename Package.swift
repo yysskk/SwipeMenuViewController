@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
@@ -10,6 +10,11 @@ let package = Package(
         .library(name: "SwipeMenuViewController", targets: ["SwipeMenuViewController"])
     ],
     targets: [
-        .target(name: "SwipeMenuViewController")
+        .target(
+            name: "SwipeMenuViewController",
+            swiftSettings: [
+                .defaultIsolation(MainActor.self)
+            ]
+        )
     ]
 )

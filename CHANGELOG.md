@@ -5,6 +5,10 @@
 ### Breaking
 - Distribution is Swift Package Manager only. CocoaPods and Carthage support has been removed (the podspec and the framework Xcode project were deleted).
 - The minimum deployment target was raised from iOS 11 to iOS 16.
+- Requires the Swift 6.2 toolchain (Xcode 26+); the package now builds in Swift 6 language mode with main-actor default isolation.
+- The public delegate and data source protocols are now `@MainActor`-isolated and use `AnyObject` instead of `class`.
+- `SwipeMenuViewOptions` and its nested types are now `Sendable`.
+- Removed the deprecated `SwipeMenuViewOptions.TabView.AdditionView.margin` property; use `padding` instead.
 
 ### Changed
 - Sources were reorganized into the standard Swift package layout (`Sources/SwipeMenuViewController`).
