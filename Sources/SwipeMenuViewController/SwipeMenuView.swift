@@ -1,23 +1,23 @@
 import UIKit
 
 // MARK: - SwipeMenuViewOptions
-public struct SwipeMenuViewOptions {
+public nonisolated struct SwipeMenuViewOptions: Sendable {
 
-    public struct TabView {
+    public nonisolated struct TabView: Sendable {
 
-        public enum Style {
+        public nonisolated enum Style: Sendable {
             case flexible
             case segmented
             // TODO: case infinity
         }
 
-        public enum Addition {
+        public nonisolated enum Addition: Sendable {
             case underline
             case circle
             case none
         }
 
-        public struct ItemView {
+        public nonisolated struct ItemView: Sendable {
             /// ItemView width. Defaults to `100.0`.
             public var width: CGFloat = 100.0
 
@@ -37,14 +37,14 @@ public struct SwipeMenuViewOptions {
             public var selectedTextColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         }
 
-        public struct AdditionView {
-            
-            public struct Underline {
+        public nonisolated struct AdditionView: Sendable {
+
+            public nonisolated struct Underline: Sendable {
                 /// Underline height if addition style select `.underline`. Defaults to `2.0`.
                 public var height: CGFloat = 2.0
             }
-            
-            public struct Circle {
+
+            public nonisolated struct Circle: Sendable {
                 /// Circle cornerRadius if addition style select `.circle`. Defaults to `nil`.
                 /// `AdditionView.height / 2` in the case of nil.
                 public var cornerRadius: CGFloat? = nil
@@ -53,10 +53,6 @@ public struct SwipeMenuViewOptions {
                 /// It helps to make specific corners rounded.
                 public var maskedCorners: CACornerMask? = nil
             }
-
-            /// AdditionView side margin. Defaults to `0.0`.
-            @available(*, deprecated, message: "Use `SwipeMenuViewOptions.TabView.AdditionView.padding` instead.")
-            public var margin: CGFloat = 0.0
 
             /// AdditionView paddings. Defaults to `.zero`.
             public var padding: UIEdgeInsets = .zero
@@ -113,7 +109,7 @@ public struct SwipeMenuViewOptions {
         public init() { }
     }
 
-    public struct ContentScrollView {
+    public nonisolated struct ContentScrollView: Sendable {
 
         /// ContentScrollView backgroundColor. Defaults to `.clear`.
         public var backgroundColor: UIColor = .clear
@@ -147,7 +143,8 @@ public struct SwipeMenuViewOptions {
 
 // MARK: - SwipeMenuViewDelegate
 
-public protocol SwipeMenuViewDelegate: class {
+/// A main-actor-isolated protocol that responds to `SwipeMenuView` lifecycle and paging events.
+@MainActor public protocol SwipeMenuViewDelegate: AnyObject {
 
     /// Called before setup self.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int)
@@ -171,7 +168,8 @@ extension SwipeMenuViewDelegate {
 
 // MARK: - SwipeMenuViewDataSource
 
-public protocol SwipeMenuViewDataSource: class {
+/// A main-actor-isolated protocol that provides pages and titles to a `SwipeMenuView`.
+@MainActor public protocol SwipeMenuViewDataSource: AnyObject {
 
     /// Return the number of pages in `SwipeMenuView`.
     func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int
