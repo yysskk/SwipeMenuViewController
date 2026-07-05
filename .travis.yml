@@ -1,6 +1,0 @@
-language: swift
-osx_image: xcode11
-
-script:
-    - xcodebuild clean build -sdk iphonesimulator -workspace SwipeMenuViewController.xcworkspace -scheme SwipeMenuViewController CODE_SIGNING_REQUIRED=NO
-
