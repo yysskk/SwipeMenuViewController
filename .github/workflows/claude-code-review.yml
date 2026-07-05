@@ -1,0 +1,74 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: claude-review-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  claude-review:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: Run Claude Code Review
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            Review the changes in this pull request. Focus on:
+            - Bugs, logic errors, and unhandled edge cases
+            - Security issues (injection, authentication/authorization, leakage of secrets, etc.)
+            - Performance problems
+            - Readability, maintainability, and naming
+            - Missing test coverage
+            - Swift / Swift Concurrency correctness (data races, actor isolation, Sendable conformance)
+
+            Note: the PR branch is already checked out in the current directory.
+
+            This workflow re-runs on every push to the PR, so avoid duplicate reviews:
+            - Before posting anything, fetch the feedback you already left on this PR with
+              `gh pr view <PR NUMBER above> --comments` and
+              `gh api repos/<REPO above>/pulls/<PR NUMBER above>/comments`.
+            - Do NOT repeat a point that is already covered by an existing comment. Comment only on
+              code that changed since your last review, or on issues that are still unresolved.
+
+            How to post feedback:
+            - For feedback on a specific line of code, use `mcp__github_inline_comment__create_inline_comment`
+              with `confirmed: true` to post an inline comment on that line.
+            - Keep every comment as concise as possible: state the issue and the suggested fix in one or
+              two sentences, with no preamble.
+            - Be specific and constructive, but avoid over-commenting on trivial or stylistic preferences;
+              focus on what matters.
+            - Do not return the review as a message; always post it as GitHub comments.
+
+            Merge decision (approve / request-changes):
+            - At the end of the review, run `gh pr review` exactly once to record your overall verdict.
+              Put a brief summary in `--body` (a separate `gh pr comment` for the summary is not needed).
+            - If there are no bugs, security issues, or serious design problems and the PR is safe to merge,
+              run `gh pr review <PR NUMBER above> --approve --body "<summary with the approval rationale>"`
+              to approve the PR. Minor suggestions may be left as inline comments.
+            - If there is even one bug, security issue, or serious design problem that must be fixed,
+              run `gh pr review <PR NUMBER above> --request-changes --body "<summary of the requested changes and fix direction>"`
+              to request changes.
+            - approve and request-changes are mutually exclusive. Run exactly one of them, exactly once, at the end of the review.
+
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr review:*),Bash(gh api:*)"
