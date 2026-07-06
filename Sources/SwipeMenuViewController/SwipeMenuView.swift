@@ -342,7 +342,7 @@ open class SwipeMenuView: UIView {
     ///   - index: The index of the page to display.
     ///   - animated: Whether the content transition is animated.
     public func jump(to index: Int, animated: Bool) {
-        guard let tabView = tabView, let contentScrollView = contentScrollView else { return }
+        guard let tabView, let contentScrollView else { return }
         // Ignore indices that have no corresponding page rather than scrolling
         // into empty space (or trapping on a negative index).
         guard (0..<pageCount).contains(index) else { return }
@@ -489,8 +489,14 @@ extension SwipeMenuView: TabViewDelegate, TabViewDataSource {
 
     public func tabView(_ tabView: TabView, didSelectTabAt index: Int) {
 
-        guard let contentScrollView = contentScrollView,
-            currentIndex != index else { return }
+        guard let contentScrollView else { return }
+
+        // Finalize any in-flight jump first so its `willChange` is paired with a
+        // `didChange` before this selection starts (a tap can interrupt an
+        // animated `jump(to:)` because the tab bar stays interactive during it).
+        finalizePendingJump()
+
+        guard currentIndex != index else { return }
 
         isJumping = true
         jumpingToIndex = index

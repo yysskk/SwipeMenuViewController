@@ -125,6 +125,29 @@ struct SwipeMenuViewTests {
         ])
     }
 
+    @Test("Selecting a tab during an in-flight jump keeps delegate calls paired")
+    func tabSelectionDuringJumpKeepsDelegatePaired() throws {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C", "D"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        let delegate = RecordingMenuDelegate()
+        view.delegate = delegate
+        defer { withExtendedLifetime((window, dataSource, delegate)) {} }
+
+        let tabView = try #require(view.tabView)
+
+        // Start an animated jump (in flight in this synchronous test), then tap a
+        // different tab before it completes. `finalizePendingJump()` runs
+        // synchronously at the start of the tab selection, so the first jump is
+        // paired deterministically regardless of the tap animation's timing.
+        view.jump(to: 2, animated: true)
+        view.tabView(tabView, didSelectTabAt: 3)
+
+        #expect(delegate.events.prefix(2) == [.willChange(from: 0, to: 2), .didChange(from: 0, to: 2)])
+    }
+
     @Test("jump(to:) ignores an out-of-range index")
     func jumpIgnoresOutOfRangeIndex() throws {
         let view = SwipeMenuView(frame: .zero)
