@@ -221,4 +221,41 @@ struct SwipeMenuViewTests {
             #expect(contentScrollView.contentSize.width == 0)
         }
     }
+
+    @Test("reloadData(default:) shows the requested page")
+    func reloadDataWithDefaultIndex() throws {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C", "D"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        view.reloadData(default: 2)
+
+        #expect(view.currentIndex == 2)
+        let contentScrollView = try #require(view.contentScrollView)
+        #expect(abs(contentScrollView.contentOffset.x - contentScrollView.frame.width * 2) < 0.5)
+    }
+
+    @Test("An orientation relayout preserves the current index")
+    func orientationPreservesCurrentIndex() {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C", "D"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        view.jump(to: 2, animated: false)
+        #expect(view.currentIndex == 2)
+
+        // Simulate an orientation change: willChangeOrientation() marks the next
+        // layout pass as a relayout that must not reset paging state.
+        view.willChangeOrientation()
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+
+        #expect(view.currentIndex == 2)
+    }
 }
