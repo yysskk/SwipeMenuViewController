@@ -123,4 +123,54 @@ struct TabViewTests {
         // With `.none`, the addition view is never added to the container.
         #expect(additionViewCount(in: tabView) == 0)
     }
+
+    // MARK: - BUG 4: boundary items
+
+    @Test("nextItem/previousItem are nil at the boundaries")
+    func boundaryNeighborsAreNil() {
+        let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: SwipeMenuViewOptions.TabView())
+
+        let window = hostTabView(tabView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        tabView.jump(to: 2)
+        #expect(tabView.nextItem == nil)
+
+        tabView.jump(to: 0)
+        #expect(tabView.previousItem == nil)
+    }
+
+    @Test("Swiping past the last tab does not fade the current item's label")
+    func forwardSwipeAtLastItemLeavesLabelSelected() {
+        let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: SwipeMenuViewOptions.TabView())
+
+        let window = hostTabView(tabView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        // Select the last item. `isSelected` sets its label to the selected
+        // text color, so record that as the expected, stable color.
+        tabView.jump(to: 2)
+        let lastItem = tabView.itemViews[2]
+        #expect(lastItem.isSelected == true)
+        let expectedColor = lastItem.selectedTextColor
+
+        // A forward swipe at the last item has no next neighbor. Pre-fix,
+        // `nextItem` returned the current item and its label was overwritten
+        // with an interpolated (mid-fade) color, causing a flicker. Post-fix the
+        // branch is skipped, so the label keeps the selected color.
+        tabView.moveAdditionView(index: 2, ratio: 0.3, direction: .forward)
+
+        let actual = lastItem.titleLabel.textColor ?? .clear
+        #expect(colorsEqual(actual, expectedColor))
+    }
+
+    /// Compares two colors by their RGBA components with a small tolerance.
+    private func colorsEqual(_ lhs: UIColor, _ rhs: UIColor, tolerance: CGFloat = 0.01) -> Bool {
+        var lr: CGFloat = 0, lg: CGFloat = 0, lb: CGFloat = 0, la: CGFloat = 0
+        var rr: CGFloat = 0, rg: CGFloat = 0, rb: CGFloat = 0, ra: CGFloat = 0
+        lhs.getRed(&lr, green: &lg, blue: &lb, alpha: &la)
+        rhs.getRed(&rr, green: &rg, blue: &rb, alpha: &ra)
+        return abs(lr - rr) < tolerance && abs(lg - rg) < tolerance
+            && abs(lb - rb) < tolerance && abs(la - ra) < tolerance
+    }
 }

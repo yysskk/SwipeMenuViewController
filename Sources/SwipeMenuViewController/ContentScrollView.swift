@@ -1,7 +1,7 @@
 import UIKit
 
 /// A main-actor-isolated protocol that provides page views to a `ContentScrollView`.
-@MainActor public protocol ContentScrollViewDataSource {
+@MainActor public protocol ContentScrollViewDataSource: AnyObject {
 
     func numberOfPages(in contentScrollView: ContentScrollView) -> Int
 
@@ -10,7 +10,7 @@ import UIKit
 
 open class ContentScrollView: UIScrollView {
 
-    open var dataSource: ContentScrollViewDataSource?
+    open weak var dataSource: ContentScrollViewDataSource?
 
     fileprivate var pageViews: [UIView] = []
 
