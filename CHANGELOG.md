@@ -2,9 +2,6 @@
 
 ## 5.0.0 (Unreleased)
 
-### Added
-- DocC documentation catalog with Getting Started and Customizing Appearance articles, plus documentation comments across the public API.
-
 ### Breaking
 - Distribution is Swift Package Manager only. CocoaPods and Carthage support has been removed (the podspec and the framework Xcode project were deleted).
 - The minimum deployment target was raised from iOS 11 to iOS 16.
@@ -14,10 +11,14 @@
 - Removed the deprecated `SwipeMenuViewOptions.TabView.AdditionView.margin` property; use `padding` instead.
 - `ContentScrollViewDataSource` now requires `AnyObject` and `ContentScrollView.dataSource` is now a `weak` reference (fixes a retain cycle that leaked `SwipeMenuView`).
 
+### Added
+- DocC documentation catalog with Getting Started and Customizing Appearance articles, plus documentation comments across the public API.
+- A unit test suite (Swift Testing) that runs on the iOS simulator in CI.
+
 ### Changed
 - Sources were reorganized into the standard Swift package layout (`Sources/SwipeMenuViewController`).
 - The example app was rebuilt as a standalone Xcode project (`Example/Example.xcodeproj`) that consumes the library as a local package dependency.
-- CI now builds the Swift package and the example app on the latest Xcode.
+- CI now builds the Swift package and the example app and runs the tests on the latest Xcode.
 
 ### Fixed
 - Fixed a crash and broken tab text-color interpolation when tab colors are defined in a non-RGB color space (for example `.white`/`.black`).
