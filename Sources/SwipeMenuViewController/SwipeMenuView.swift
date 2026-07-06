@@ -35,6 +35,13 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
 
             /// ItemView selected textColor. Defaults to `.black`.
             public var selectedTextColor: UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+
+            /// The maximum number of lines used to render the title. Use `0` to allow as many lines
+            /// as the title needs. Titles that do not fit are truncated. Defaults to `1`.
+            ///
+            /// This is most useful with the `.segmented` style, where each item has a fixed width and
+            /// a long title would otherwise be truncated onto a single line.
+            public var numberOfLines: Int = 1
         }
 
         public nonisolated struct AdditionView: Sendable {

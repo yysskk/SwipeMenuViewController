@@ -42,6 +42,33 @@ struct TabViewTests {
         #expect(tabView.itemViews.dropFirst().allSatisfy { $0.isSelected == false })
     }
 
+    // MARK: - Item title lines
+
+    @Test("By default each title label is limited to a single line")
+    func titleLabelsAreSingleLineByDefault() {
+        let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: SwipeMenuViewOptions.TabView())
+
+        let window = hostTabView(tabView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        #expect(tabView.itemViews.allSatisfy { $0.titleLabel.numberOfLines == 1 })
+    }
+
+    @Test("itemView.numberOfLines is applied to every title label")
+    func numberOfLinesIsApplied() {
+        var options = SwipeMenuViewOptions.TabView()
+        options.style = .segmented
+        // `0` means the label uses as many lines as the title needs.
+        options.itemView.numberOfLines = 0
+
+        let (tabView, dataSource) = makeTabView(titles: ["Long title one", "Long title two"], options: options)
+
+        let window = hostTabView(tabView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        #expect(tabView.itemViews.allSatisfy { $0.titleLabel.numberOfLines == 0 })
+    }
+
     @Test("Flexible style with fixed width uses options.itemView.width")
     func flexibleFixedWidth() {
         var options = SwipeMenuViewOptions.TabView()
