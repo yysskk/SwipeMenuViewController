@@ -64,9 +64,60 @@ final class MenuViewController: SwipeMenuViewController {
 }
 ```
 
-By default each page is backed by one of the controller's `children`: the page count is `children.count`, each tab title is the child's `title`, and each page shows the child's view. Override the `SwipeMenuViewDataSource` methods for fully custom paging, or embed a `SwipeMenuView` directly when you want the paging UI inside an existing view hierarchy.
+By default each page is backed by one of the controller's `children`: the page count is `children.count`, each tab title is the child's `title`, and each page shows the child's view. Override the `SwipeMenuViewDataSource` methods for fully custom paging.
 
-The delegate and data source callbacks are main-actor isolated, so implement them from your (main-actor) view controllers as usual.
+To place the paging UI inside a view hierarchy you already have, add a `SwipeMenuView` directly, set its `dataSource` (and optional `delegate`), and customize it with `SwipeMenuViewOptions`.
+
+`SwipeMenuView` is a plain `UIView`, so it only reads each page's `view` — it cannot establish view-controller containment for you. When your pages are view controllers, add them as children yourself so they receive the usual appearance and trait-collection callbacks:
+
+```swift
+import SwipeMenuViewController
+
+final class CatalogViewController: UIViewController {
+
+    private let swipeMenuView = SwipeMenuView(frame: .zero)
+
+    private let pages: [UIViewController] = ["Sports", "News", "Weather"].map { title in
+        let page = UIViewController()
+        page.title = title
+        return page
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Establish containment: the host view controller owns the pages.
+        pages.forEach { addChild($0) }
+
+        swipeMenuView.frame = view.bounds
+        swipeMenuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        swipeMenuView.dataSource = self
+        view.addSubview(swipeMenuView)
+
+        var options = SwipeMenuViewOptions()
+        options.tabView.style = .segmented
+        swipeMenuView.reloadData(options: options)
+
+        // reloadData added each page's view, so finish containment.
+        pages.forEach { $0.didMove(toParent: self) }
+    }
+}
+
+extension CatalogViewController: SwipeMenuViewDataSource {
+
+    func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int { pages.count }
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {
+        pages[index].title ?? ""
+    }
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
+        pages[index]
+    }
+}
+```
+
+The delegate and data source callbacks are main-actor isolated, so implement them from your (main-actor) view controllers as usual. See the [documentation](#documentation) for every `SwipeMenuViewOptions` field.
 
 ## Documentation
 The full API reference and articles are published online with DocC:
