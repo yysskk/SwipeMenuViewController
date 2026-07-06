@@ -101,6 +101,12 @@ open class TabView: UIScrollView {
     open override func safeAreaInsetsDidChange() {
         super.safeAreaInsetsDidChange()
 
+        // Respect `isSafeAreaEnabled`: when safe-area layout is turned off, a
+        // safe-area change (rotation, a notch coming into play) must not shift
+        // the tab bar by the inset. The initial layout already positioned the
+        // container without the inset, so leave the constraints untouched.
+        guard options.isSafeAreaEnabled else { return }
+
         leftMarginConstraint.constant = options.margin + safeAreaInsets.left
         if options.style == .segmented {
             widthConstraint.constant = options.margin * -2 - safeAreaInsets.left - safeAreaInsets.right
