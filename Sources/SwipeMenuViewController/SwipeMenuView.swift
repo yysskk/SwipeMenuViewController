@@ -333,18 +333,47 @@ open class SwipeMenuView: UIView {
     }
 
     /// Moves directly to the given page.
+    ///
+    /// After the call, ``currentIndex`` equals `index` and the delegate receives exactly one
+    /// ``SwipeMenuViewDelegate/swipeMenuView(_:willChangeIndexFrom:to:)`` and one
+    /// ``SwipeMenuViewDelegate/swipeMenuView(_:didChangeIndexFrom:to:)`` when the page actually
+    /// changes. An `index` with no corresponding page is ignored.
     /// - Parameters:
     ///   - index: The index of the page to display.
     ///   - animated: Whether the content transition is animated.
     public func jump(to index: Int, animated: Bool) {
         guard let tabView = tabView, let contentScrollView = contentScrollView else { return }
-        if currentIndex != index {
-            delegate?.swipeMenuView(self, willChangeIndexFrom: currentIndex, to: index)
-        }
-        jumpingToIndex = index
+        // Ignore indices that have no corresponding page rather than scrolling
+        // into empty space (or trapping on a negative index).
+        guard (0..<pageCount).contains(index) else { return }
 
+        let fromIndex = currentIndex
+
+        // The tab bar is repositioned immediately; only the content scroll honors `animated`.
         tabView.jump(to: index)
+
+        guard fromIndex != index else {
+            // Already on the target page; just keep the content offset aligned.
+            contentScrollView.jump(to: index, animated: animated)
+            return
+        }
+
+        delegate?.swipeMenuView(self, willChangeIndexFrom: fromIndex, to: index)
+
+        // While the programmatic scroll runs, `isJumping` suppresses the
+        // scroll-driven, one-page-at-a-time index updates in `scrollViewDidScroll(_:)`.
+        isJumping = true
+        jumpingToIndex = index
         contentScrollView.jump(to: index, animated: animated)
+
+        if !animated {
+            // A non-animated offset change fires no
+            // `scrollViewDidEndScrollingAnimation(_:)`, so finalize synchronously.
+            currentIndex = index
+            jumpingToIndex = nil
+            isJumping = false
+            delegate?.swipeMenuView(self, didChangeIndexFrom: fromIndex, to: index)
+        }
     }
 
     /// Notifies the view that an orientation change is about to occur so it can relayout.

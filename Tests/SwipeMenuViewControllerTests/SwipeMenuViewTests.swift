@@ -62,6 +62,61 @@ struct SwipeMenuViewTests {
         #expect(abs(contentScrollView.contentOffset.x - pageWidth * 2) < 0.5)
     }
 
+    @Test("jump(to:animated:false) updates currentIndex to the target page")
+    func jumpUpdatesCurrentIndex() {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C", "D"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        // Jump across more than one page. The content offset and currentIndex
+        // must both land on the target.
+        view.jump(to: 3, animated: false)
+        #expect(view.currentIndex == 3)
+
+        view.jump(to: 1, animated: false)
+        #expect(view.currentIndex == 1)
+    }
+
+    @Test("jump(to:) emits one willChange/didChange pair to the target")
+    func jumpEmitsSingleDelegatePair() {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C", "D"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        // Attach the delegate after hosting so only the jump's events are recorded.
+        let delegate = RecordingMenuDelegate()
+        view.delegate = delegate
+        defer { withExtendedLifetime((window, dataSource, delegate)) {} }
+
+        view.jump(to: 2, animated: false)
+
+        #expect(delegate.events == [.willChange(from: 0, to: 2), .didChange(from: 0, to: 2)])
+    }
+
+    @Test("jump(to:) ignores an out-of-range index")
+    func jumpIgnoresOutOfRangeIndex() throws {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        let contentScrollView = try #require(view.contentScrollView)
+
+        view.jump(to: 99, animated: false)
+        #expect(view.currentIndex == 0)
+        #expect(abs(contentScrollView.contentOffset.x) < 0.5)
+
+        view.jump(to: -1, animated: false)
+        #expect(view.currentIndex == 0)
+        #expect(abs(contentScrollView.contentOffset.x) < 0.5)
+    }
+
     @Test("Delegate receives willSetup before didSetup")
     func delegateSetupOrdering() throws {
         let view = SwipeMenuView(frame: .zero)
