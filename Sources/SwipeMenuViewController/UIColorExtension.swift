@@ -2,23 +2,22 @@ import UIKit
 
 extension UIColor {
 
-    func convert(to color: UIColor, multiplier _multiplier: CGFloat) -> UIColor? {
-        let multiplier = min(max(_multiplier, 0), 1)
+    func convert(to color: UIColor, multiplier: CGFloat) -> UIColor? {
+        let ratio = min(max(multiplier, 0), 1)
 
-        let components = cgColor.components ?? []
-        let toComponents = color.cgColor.components ?? []
+        var fromRed: CGFloat = 0, fromGreen: CGFloat = 0, fromBlue: CGFloat = 0, fromAlpha: CGFloat = 0
+        var toRed: CGFloat = 0, toGreen: CGFloat = 0, toBlue: CGFloat = 0, toAlpha: CGFloat = 0
 
-        if components.isEmpty || components.count < 3 || toComponents.isEmpty || toComponents.count < 3 {
+        guard getRed(&fromRed, green: &fromGreen, blue: &fromBlue, alpha: &fromAlpha),
+              color.getRed(&toRed, green: &toGreen, blue: &toBlue, alpha: &toAlpha) else {
             return nil
         }
 
-        var results: [CGFloat] = []
-
-        for index in 0...3 {
-            let result = (toComponents[index] - components[index]) * abs(multiplier) + components[index]
-            results.append(result)
-        }
-
-        return UIColor(red: results[0], green: results[1], blue: results[2], alpha: results[3])
+        return UIColor(
+            red: fromRed + (toRed - fromRed) * ratio,
+            green: fromGreen + (toGreen - fromGreen) * ratio,
+            blue: fromBlue + (toBlue - fromBlue) * ratio,
+            alpha: fromAlpha + (toAlpha - fromAlpha) * ratio
+        )
     }
 }
