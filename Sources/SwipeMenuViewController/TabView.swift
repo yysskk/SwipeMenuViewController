@@ -77,7 +77,7 @@ open class TabView: UIScrollView {
     public init(frame: CGRect, options: SwipeMenuViewOptions.TabView? = nil) {
         super.init(frame: frame)
 
-        if let options = options {
+        if let options {
             self.options = options
         }
     }
@@ -150,13 +150,13 @@ open class TabView: UIScrollView {
                            default defaultIndex: Int? = nil,
                            animated: Bool = true) {
 
-        if let options = options {
+        if let options {
             self.options = options
         }
 
         reset()
 
-        guard let dataSource = dataSource,
+        guard let dataSource,
             dataSource.numberOfItems(in: self) > 0 else { return }
 
         setupScrollView()
@@ -164,7 +164,7 @@ open class TabView: UIScrollView {
         setupTabItemViews(dataSource: dataSource)
         setupAdditionView()
 
-        if let defaultIndex = defaultIndex {
+        if let defaultIndex {
             moveTabItem(index: defaultIndex, animated: animated)
         }
     }
@@ -463,12 +463,12 @@ extension TabView {
 
         update(index)
 
-        guard let currentItem = currentItem else { return }
+        guard let currentItem else { return }
 
         if options.additionView.isAnimationOnSwipeEnable {
             switch direction {
             case .forward:
-                if let nextItem = nextItem {
+                if let nextItem {
                     additionView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.additionView.padding.left
                     additionView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.additionView.padding.horizontal
                     if options.needsConvertTextColorRatio {
@@ -477,7 +477,7 @@ extension TabView {
                     }
                 }
             case .reverse:
-                if let previousItem = previousItem {
+                if let previousItem {
                     additionView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.additionView.padding.left
                     additionView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.additionView.padding.horizontal
                     if options.needsConvertTextColorRatio {
@@ -516,7 +516,7 @@ extension TabView {
     func jump(to index: Int) {
         update(index)
 
-        guard let currentItem = currentItem else { return }
+        guard let currentItem else { return }
 
         if options.addition == .underline {
             additionView.frame.origin.x = currentItem.frame.origin.x + options.additionView.padding.left

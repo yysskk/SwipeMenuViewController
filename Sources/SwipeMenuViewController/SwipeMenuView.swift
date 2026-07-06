@@ -236,7 +236,7 @@ open class SwipeMenuView: UIView {
     /// The tab bar displayed above the content, or `nil` before the view is set up.
     open fileprivate(set) var tabView: TabView? {
         didSet {
-            guard let tabView = tabView else { return }
+            guard let tabView else { return }
             tabView.dataSource = self
             tabView.tabViewDelegate = self
             addSubview(tabView)
@@ -247,7 +247,7 @@ open class SwipeMenuView: UIView {
     /// The horizontally paging scroll view that hosts the page views, or `nil` before the view is set up.
     open fileprivate(set) var contentScrollView: ContentScrollView? {
         didSet {
-            guard let contentScrollView = contentScrollView else { return }
+            guard let contentScrollView else { return }
             contentScrollView.delegate = self
             contentScrollView.dataSource = self
             addSubview(contentScrollView)
@@ -277,7 +277,7 @@ open class SwipeMenuView: UIView {
     ///   - options: The appearance and behavior options. Pass `nil` to use the defaults.
     public init(frame: CGRect, options: SwipeMenuViewOptions? = nil) {
 
-        if let options = options {
+        if let options {
             self.options = options
         } else {
             self.options = .init()
@@ -327,7 +327,7 @@ open class SwipeMenuView: UIView {
     ///     view relayouts without resetting its state. Defaults to `false`.
     public func reloadData(options: SwipeMenuViewOptions? = nil, default defaultIndex: Int? = nil, isOrientationChange: Bool = false) {
 
-        if let options = options {
+        if let options {
             self.options = options
         }
 
@@ -485,7 +485,7 @@ open class SwipeMenuView: UIView {
             currentIndex = 0
         }
 
-        if let tabView = tabView, let contentScrollView = contentScrollView {
+        if let tabView, let contentScrollView {
             tabView.removeFromSuperview()
             contentScrollView.removeFromSuperview()
             tabView.reset()
@@ -568,7 +568,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
     /// update underbar position
     private func moveAdditionView(scrollView: UIScrollView) {
 
-        if let tabView = tabView, let contentScrollView = contentScrollView {
+        if let tabView, let contentScrollView {
 
             let ratio = scrollView.contentOffset.x.truncatingRemainder(dividingBy: contentScrollView.frame.width) / contentScrollView.frame.width
 

@@ -46,7 +46,7 @@ open class ContentScrollView: UIScrollView {
 
         self.contentInsetAdjustmentBehavior = .never
 
-        if let options = options {
+        if let options {
             self.options = options
         }
     }
