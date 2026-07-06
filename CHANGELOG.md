@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.0.0 (Unreleased)
+## 5.0.0 - 2026-07-05
 
 ### Breaking
 - Distribution is Swift Package Manager only. CocoaPods and Carthage support has been removed (the podspec and the framework Xcode project were deleted).
