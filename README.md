@@ -7,33 +7,22 @@
 [![Documentation](https://img.shields.io/badge/documentation-DocC-blueviolet.svg?style=for-the-badge)](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-## Overview
-SwipeMenuViewController provides `SwipeMenuView` and `SwipeMenuViewController`, which make it easy to build swipe-based paging UI. A scrollable tab bar sits above a horizontally paging content area, and swiping the content keeps the tab selection in sync. The interface is modeled on UIKit's own data source and delegate patterns, so it should feel familiar.
-
-## Demo
-Here are some of the styles you can build with `SwipeMenuView`.
+Swipe-based paging UI for iOS: a scrollable tab bar sits above a horizontally paging content area, and swiping the content keeps the tab selection in sync. You populate it through data source and delegate protocols modeled on UIKit's own, and tune its appearance with `SwipeMenuViewOptions`.
 
 | Segmented Tab & Underline | Flexible Tab & Underline | Flexible Tab & Circle |
 |:---:|:---:|:---:|
 | <img src="https://raw.githubusercontent.com/yysskk/Assets/master/SwipeMenuViewController/demo_segmented_underline.gif"> | <img src="https://raw.githubusercontent.com/yysskk/Assets/master/SwipeMenuViewController/demo_flexible_underline.gif"> | <img src="https://raw.githubusercontent.com/yysskk/Assets/master/SwipeMenuViewController/demo_flexible_circle.gif"> |
 
 ## Requirements
+
 - iOS 16.0+
 - Xcode 26.0+ / Swift 6.2+
 
 > Need an older toolchain or deployment target? Use the [4.x releases](https://github.com/yysskk/SwipeMenuViewController/releases).
 
 ## Installation
-### Swift Package Manager
-SwipeMenuViewController is distributed exclusively through [Swift Package Manager](https://www.swift.org/documentation/package-manager/).
 
-In Xcode, choose **File ▸ Add Package Dependencies…** and enter:
-
-```
-https://github.com/yysskk/SwipeMenuViewController.git
-```
-
-Or add it to a `Package.swift` manifest:
+SwipeMenuViewController is distributed with [Swift Package Manager](https://www.swift.org/documentation/package-manager/). In Xcode, choose **File ▸ Add Package Dependencies…** and enter the repository URL, or add it to a `Package.swift` manifest:
 
 ```swift
 dependencies: [
@@ -41,8 +30,9 @@ dependencies: [
 ]
 ```
 
-## Usage
-The quickest way to get started is to subclass `SwipeMenuViewController` and add your pages as child view controllers:
+## Quick Start
+
+Subclass `SwipeMenuViewController` and add your pages as child view controllers. Each child becomes a page: its `title` is the tab title and its view is the page content.
 
 ```swift
 import SwipeMenuViewController
@@ -64,73 +54,27 @@ final class MenuViewController: SwipeMenuViewController {
 }
 ```
 
-By default each page is backed by one of the controller's `children`: the page count is `children.count`, each tab title is the child's `title`, and each page shows the child's view. Override the `SwipeMenuViewDataSource` methods for fully custom paging.
-
-To place the paging UI inside a view hierarchy you already have, add a `SwipeMenuView` directly, set its `dataSource` (and optional `delegate`), and customize it with `SwipeMenuViewOptions`.
-
-`SwipeMenuView` is a plain `UIView`, so it only reads each page's `view` — it cannot establish view-controller containment for you. When your pages are view controllers, add them as children yourself so they receive the usual appearance and trait-collection callbacks:
-
-```swift
-import SwipeMenuViewController
-
-final class CatalogViewController: UIViewController {
-
-    private let swipeMenuView = SwipeMenuView(frame: .zero)
-
-    private let pages: [UIViewController] = ["Sports", "News", "Weather"].map { title in
-        let page = UIViewController()
-        page.title = title
-        return page
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Establish containment: the host view controller owns the pages.
-        pages.forEach { addChild($0) }
-
-        swipeMenuView.frame = view.bounds
-        swipeMenuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        swipeMenuView.dataSource = self
-        view.addSubview(swipeMenuView)
-
-        var options = SwipeMenuViewOptions()
-        options.tabView.style = .segmented
-        swipeMenuView.reloadData(options: options)
-
-        // reloadData added each page's view, so finish containment.
-        pages.forEach { $0.didMove(toParent: self) }
-    }
-}
-
-extension CatalogViewController: SwipeMenuViewDataSource {
-
-    func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int { pages.count }
-
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {
-        pages[index].title ?? ""
-    }
-
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
-        pages[index]
-    }
-}
-```
-
-The delegate and data source callbacks are main-actor isolated, so implement them from your (main-actor) view controllers as usual. See the [documentation](#documentation) for every `SwipeMenuViewOptions` field.
+To embed the paging UI in a view hierarchy you already have, add a `SwipeMenuView` directly and drive it through `SwipeMenuViewDataSource` — the [Getting Started](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/gettingstarted) article walks through both approaches.
 
 ## Documentation
-The full API reference and articles are published online with DocC:
+
+The full API reference and guides are published with DocC:
 
 **[Read the documentation →](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/)**
 
-Start with the **Getting Started** and **Customizing Appearance** articles for the full setup walkthrough and every available option. You can also build the documentation locally in Xcode with **Product ▸ Build Documentation**.
+- [Getting Started](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/gettingstarted) — set up `SwipeMenuView` or `SwipeMenuViewController`
+- [Customizing Appearance](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/customizingappearance) — every `SwipeMenuViewOptions` field
+
+You can also build the documentation locally in Xcode with **Product ▸ Build Documentation**, or explore the [Example app](./Example) in this repository.
 
 ## Contributing
+
 Bug reports and pull requests are welcome. Please open an issue using one of the templates, and make sure the test suite passes (`xcodebuild test -scheme SwipeMenuViewController -destination 'platform=iOS Simulator,name=iPhone 16'`).
 
 ## Changelog
+
 See [CHANGELOG.md](./CHANGELOG.md) for the release history.
 
 ## License
+
 SwipeMenuViewController is available under the MIT license. See the [LICENSE](./LICENSE) file for details.
