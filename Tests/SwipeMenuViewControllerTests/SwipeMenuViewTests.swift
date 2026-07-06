@@ -62,6 +62,112 @@ struct SwipeMenuViewTests {
         #expect(abs(contentScrollView.contentOffset.x - pageWidth * 2) < 0.5)
     }
 
+    @Test("jump(to:animated:false) updates currentIndex to the target page")
+    func jumpUpdatesCurrentIndex() {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C", "D"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        // Jump across more than one page. The content offset and currentIndex
+        // must both land on the target.
+        view.jump(to: 3, animated: false)
+        #expect(view.currentIndex == 3)
+
+        view.jump(to: 1, animated: false)
+        #expect(view.currentIndex == 1)
+    }
+
+    @Test("jump(to:) emits one willChange/didChange pair to the target")
+    func jumpEmitsSingleDelegatePair() {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C", "D"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        // Attach the delegate after hosting so only the jump's events are recorded.
+        let delegate = RecordingMenuDelegate()
+        view.delegate = delegate
+        defer { withExtendedLifetime((window, dataSource, delegate)) {} }
+
+        view.jump(to: 2, animated: false)
+
+        #expect(delegate.events == [.willChange(from: 0, to: 2), .didChange(from: 0, to: 2)])
+    }
+
+    @Test("A re-entrant jump keeps willChange/didChange calls paired")
+    func reentrantJumpKeepsDelegatePaired() {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C", "D"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        let delegate = RecordingMenuDelegate()
+        view.delegate = delegate
+        defer { withExtendedLifetime((window, dataSource, delegate)) {} }
+
+        // Start an animated jump (its end-of-animation callback does not fire in
+        // this synchronous test, so the jump stays "in flight"), then issue a
+        // second jump before the first completes.
+        view.jump(to: 2, animated: true)
+        view.jump(to: 0, animated: false)
+
+        // Each jump contributes exactly one paired willChange/didChange, and the
+        // view lands on the most recent target.
+        #expect(view.currentIndex == 0)
+        #expect(delegate.events == [
+            .willChange(from: 0, to: 2),
+            .didChange(from: 0, to: 2),
+            .willChange(from: 2, to: 0),
+            .didChange(from: 2, to: 0)
+        ])
+    }
+
+    @Test("Selecting a tab during an in-flight jump keeps delegate calls paired")
+    func tabSelectionDuringJumpKeepsDelegatePaired() throws {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C", "D"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        let delegate = RecordingMenuDelegate()
+        view.delegate = delegate
+        defer { withExtendedLifetime((window, dataSource, delegate)) {} }
+
+        let tabView = try #require(view.tabView)
+
+        // Start an animated jump (in flight in this synchronous test), then tap a
+        // different tab before it completes. `finalizePendingJump()` runs
+        // synchronously at the start of the tab selection, so the first jump is
+        // paired deterministically regardless of the tap animation's timing.
+        view.jump(to: 2, animated: true)
+        view.tabView(tabView, didSelectTabAt: 3)
+
+        #expect(delegate.events.prefix(2) == [.willChange(from: 0, to: 2), .didChange(from: 0, to: 2)])
+    }
+
+    @Test("jump(to:) ignores an out-of-range index")
+    func jumpIgnoresOutOfRangeIndex() throws {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        let contentScrollView = try #require(view.contentScrollView)
+
+        view.jump(to: 99, animated: false)
+        #expect(view.currentIndex == 0)
+        #expect(abs(contentScrollView.contentOffset.x) < 0.5)
+
+        view.jump(to: -1, animated: false)
+        #expect(view.currentIndex == 0)
+        #expect(abs(contentScrollView.contentOffset.x) < 0.5)
+    }
+
     @Test("Delegate receives willSetup before didSetup")
     func delegateSetupOrdering() throws {
         let view = SwipeMenuView(frame: .zero)
