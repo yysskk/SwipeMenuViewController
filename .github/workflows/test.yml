@@ -61,3 +61,23 @@ jobs:
             -scheme Example \
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO
+
+  docc:
+    name: Documentation build
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v7
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '^26.0'
+      - name: Build documentation
+        run: |
+          set -o pipefail
+          # Treat DocC warnings (for example broken symbol links) as errors so
+          # documentation regressions fail the build.
+          xcodebuild docbuild \
+            -scheme SwipeMenuViewController \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            OTHER_DOCC_FLAGS='--warnings-as-errors'

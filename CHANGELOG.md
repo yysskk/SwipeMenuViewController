@@ -2,6 +2,9 @@
 
 ## 5.0.0 (Unreleased)
 
+### Added
+- DocC documentation catalog with Getting Started and Customizing Appearance articles, plus documentation comments across the public API.
+
 ### Breaking
 - Distribution is Swift Package Manager only. CocoaPods and Carthage support has been removed (the podspec and the framework Xcode project were deleted).
 - The minimum deployment target was raised from iOS 11 to iOS 16.
