@@ -222,6 +222,39 @@ struct TabViewTests {
         #expect(additionViewCount(in: tabView) == 0)
     }
 
+    // MARK: - Underline corner radius
+
+    @Test("The underline indicator has square corners by default")
+    func underlineCornerRadiusDefaultsToSquare() throws {
+        var options = SwipeMenuViewOptions.TabView()
+        options.addition = .underline
+
+        let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: options)
+
+        let window = hostTabView(tabView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        let indicator = try #require(additionView(in: tabView))
+        #expect(indicator.layer.cornerRadius == 0)
+    }
+
+    @Test("underline.cornerRadius is applied to the indicator layer")
+    func underlineCornerRadiusIsApplied() throws {
+        var options = SwipeMenuViewOptions.TabView()
+        options.addition = .underline
+        options.additionView.underline.height = 4
+        // Half the height rounds the underline into a pill.
+        options.additionView.underline.cornerRadius = 2
+
+        let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: options)
+
+        let window = hostTabView(tabView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        let indicator = try #require(additionView(in: tabView))
+        #expect(indicator.layer.cornerRadius == 2)
+    }
+
     // MARK: - Segmented indicator offset (issue #25)
 
     @Test("Segmented indicator sits inside every tab, inset by the padding")

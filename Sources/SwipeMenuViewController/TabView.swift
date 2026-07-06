@@ -396,6 +396,7 @@ extension TabView {
         case .underline:
             let itemView = itemViews[currentIndex]
             additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.padding.left, y: itemView.frame.height - options.additionView.padding.vertical, width: itemView.frame.width - options.additionView.padding.horizontal, height: options.additionView.underline.height))
+            additionView.layer.cornerRadius = options.additionView.underline.cornerRadius
             additionView.backgroundColor = options.additionView.backgroundColor
             containerView.addSubview(additionView)
         case .circle:

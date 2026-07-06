@@ -49,6 +49,10 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
             public nonisolated struct Underline: Sendable {
                 /// Underline height if addition style select `.underline`. Defaults to `2.0`.
                 public var height: CGFloat = 2.0
+
+                /// Corner radius of the underline if addition style select `.underline`.
+                /// Defaults to `0` (square corners). Set it to half of `height` for a pill shape.
+                public var cornerRadius: CGFloat = 0
             }
 
             public nonisolated struct Circle: Sendable {

@@ -41,6 +41,7 @@ struct SwipeMenuViewOptionsTests {
         let options = SwipeMenuViewOptions()
 
         #expect(options.tabView.additionView.underline.height == 2.0)
+        #expect(options.tabView.additionView.underline.cornerRadius == 0)
         #expect(options.tabView.additionView.animationDuration == 0.3)
         #expect(options.tabView.additionView.isAnimationOnSwipeEnable == true)
         #expect(options.tabView.additionView.padding == .zero)

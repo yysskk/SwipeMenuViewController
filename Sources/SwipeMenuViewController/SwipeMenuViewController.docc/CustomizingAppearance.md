@@ -102,10 +102,12 @@ When `addition` is `.underline`, the `underline` group sets the underline thickn
 top-level height on the addition view — the thickness lives on the underline options:
 
 - `height`: the underline thickness. Defaults to `2.0`.
+- `cornerRadius`: the underline's corner radius. Defaults to `0` (square corners). Set it to half the height for a pill shape.
 
 ```swift
 options.tabView.addition = .underline
 options.tabView.additionView.underline.height = 3
+options.tabView.additionView.underline.cornerRadius = 1.5
 ```
 
 ### Circle

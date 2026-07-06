@@ -4,6 +4,7 @@
 
 ### Added
 - `SwipeMenuViewOptions.TabView.ItemView.numberOfLines` to let tab titles wrap onto multiple lines (use `0` for as many lines as the title needs). Defaults to `1`, preserving the previous single-line behavior. Most useful with the `.segmented` style, where a long title would otherwise be truncated.
+- `SwipeMenuViewOptions.TabView.AdditionView.Underline.cornerRadius` to round the corners of the underline indicator (set it to half the underline height for a pill shape). Defaults to `0`, preserving the previous square corners.
 
 ### Fixed
 - The `.segmented` tab style mispositioned the selection indicator when `additionView.padding` had non-zero horizontal insets: the first tab's indicator spilled off the leading edge, and each later tab drifted increasingly to the left. The indicator now aligns with every tab, inset by the padding, consistent with the other tab styles (issue #25).
