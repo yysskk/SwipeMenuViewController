@@ -16,7 +16,9 @@ final class MenuViewController: SwipeMenuViewController {
     private var settings = SwipeMenuSettings()
 
     private lazy var settingsButton: UIButton = {
-        var configuration = UIButton.Configuration.filled()
+        // A prominent Liquid Glass button that floats over the paging content and
+        // refracts what scrolls beneath it.
+        var configuration = UIButton.Configuration.prominentGlass()
         configuration.image = UIImage(systemName: "gearshape")
         configuration.cornerStyle = .capsule
         configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
