@@ -258,4 +258,48 @@ struct SwipeMenuViewTests {
 
         #expect(view.currentIndex == 2)
     }
+
+    @Test("Removing and re-adding the view does not duplicate its subviews")
+    func reAddDoesNotDuplicateSubviews() {
+        let view = SwipeMenuView(frame: CGRect(x: 0, y: 0, width: 375, height: 667))
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C"])
+        view.dataSource = dataSource
+
+        let window1 = UIWindow(frame: CGRect(x: 0, y: 0, width: 375, height: 667))
+        window1.addSubview(view)
+        view.layoutIfNeeded()
+
+        view.removeFromSuperview()
+
+        let window2 = UIWindow(frame: CGRect(x: 0, y: 0, width: 375, height: 667))
+        window2.addSubview(view)
+        view.layoutIfNeeded()
+        defer { withExtendedLifetime((window1, window2, dataSource)) {} }
+
+        // Exactly one tab view and one content view, not one per attach.
+        #expect(view.subviews.compactMap { $0 as? TabView }.count == 1)
+        #expect(view.subviews.compactMap { $0 as? ContentScrollView }.count == 1)
+        #expect(view.tabView?.itemViews.count == 3)
+    }
+
+    @Test("Removal does not emit setup callbacks")
+    func removalDoesNotEmitSetupCallbacks() {
+        let view = SwipeMenuView(frame: CGRect(x: 0, y: 0, width: 375, height: 667))
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C"])
+        view.dataSource = dataSource
+
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 375, height: 667))
+        window.addSubview(view)
+        view.layoutIfNeeded()
+
+        // Attach the delegate after the initial setup so only removal is observed.
+        let delegate = RecordingMenuDelegate()
+        view.delegate = delegate
+        defer { withExtendedLifetime((window, dataSource, delegate)) {} }
+
+        view.removeFromSuperview()
+
+        // Removal must not run setup again.
+        #expect(delegate.events.isEmpty)
+    }
 }

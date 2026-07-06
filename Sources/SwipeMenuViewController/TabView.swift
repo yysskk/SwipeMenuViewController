@@ -87,6 +87,9 @@ open class TabView: UIScrollView {
     }
 
     open override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        // Skip the rebuild when the view is being removed (superview is nil).
+        guard superview != nil else { return }
         reloadData()
     }
 
