@@ -26,6 +26,7 @@
 - Fixed a potential crash in the default data source when `numberOfPages(in:)` returns more pages than there are child view controllers.
 - Fixed tab underline/text-color artifacts when swiping past the first or last tab.
 - Fixed `SwipeMenuView.jump(to:animated:)` leaving `currentIndex` and the delegate change callbacks out of sync with the content when jumping across more than one page, and made it ignore out-of-range indices (a negative index previously crashed).
+- Fixed `ContentScrollView` requesting nonexistent pages from its data source when built with an out-of-range initial index (for example `reloadData(default:)` past the last page).
 
 ## 4.1.0 - 2020-03-12
 - Added `circle` addition style with `cornerRadius` and `maskedCorners` options.

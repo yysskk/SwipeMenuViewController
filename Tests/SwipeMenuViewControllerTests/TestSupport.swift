@@ -107,6 +107,27 @@ final class StubContentDataSource: ContentScrollViewDataSource {
     }
 }
 
+/// A `ContentScrollViewDataSource` that records every page index it is asked
+/// for, so tests can assert that setup never over-reads past the last page.
+final class CountingContentDataSource: ContentScrollViewDataSource {
+
+    let pageCount: Int
+    private(set) var requestedIndices: [Int] = []
+
+    init(pageCount: Int) {
+        self.pageCount = pageCount
+    }
+
+    func numberOfPages(in contentScrollView: ContentScrollView) -> Int {
+        return pageCount
+    }
+
+    func contentScrollView(_ contentScrollView: ContentScrollView, viewForPageAt index: Int) -> UIView? {
+        requestedIndices.append(index)
+        return UIView()
+    }
+}
+
 // MARK: - Hosting helper
 
 /// Hosts `view` in a real window so that `didMoveToSuperview()` fires and layout
