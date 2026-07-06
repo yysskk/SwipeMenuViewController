@@ -24,6 +24,9 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
 
     private func setUpSwipeMenuViewConstraints() {
         swipeMenuView.translatesAutoresizingMaskIntoConstraints = false
+        // The top anchor is chosen once from the initial options. Toggling
+        // `options.tabView.isSafeAreaEnabled` at runtime does not re-pin the
+        // view, so configure the safe area behavior before the view loads.
         let topAnchor = swipeMenuView.options.tabView.isSafeAreaEnabled
             ? view.safeAreaLayoutGuide.topAnchor
             : view.topAnchor
@@ -55,6 +58,10 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
         guard children.indices.contains(index) else {
             assertionFailure("SwipeMenuViewController: requested a page at \(index) but only \(children.count) child view controllers exist. Override the data source to provide the missing pages.")
+            // Return a detached placeholder rather than crashing. It is
+            // intentionally not added via `addChild(_:)`: the default
+            // `numberOfPages(in:)` counts `children`, so adding children on this
+            // recovery path could feed back into that count.
             return UIViewController()
         }
         let vc = children[index]
