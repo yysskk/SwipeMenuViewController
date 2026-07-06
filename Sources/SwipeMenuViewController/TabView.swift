@@ -434,17 +434,22 @@ extension TabView {
 
     fileprivate func resetAdditionViewPosition(index: Int) {
         guard options.style == .segmented,
-            let dataSource = dataSource,
+            let dataSource,
             dataSource.numberOfItems(in: self) > 0 else { return }
-        let adjustCellWidth: CGFloat
+
+        // Each `.segmented` tab item spans the full (unadjusted) cell width, so
+        // that width is the indicator's per-tab stride. The indicator itself is
+        // inset by the horizontal padding. Using the padding-adjusted width as the
+        // stride would drift the indicator left by `index * padding.horizontal`.
+        let cellWidth: CGFloat
         if options.isSafeAreaEnabled && safeAreaInsets != .zero {
-            adjustCellWidth = (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal
+            cellWidth = (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(dataSource.numberOfItems(in: self))
         } else {
-            adjustCellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self)) - options.additionView.padding.horizontal
+            cellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self))
         }
 
-        additionView.frame.origin.x = adjustCellWidth * CGFloat(index) - options.additionView.padding.left
-        additionView.frame.size.width = adjustCellWidth
+        additionView.frame.origin.x = cellWidth * CGFloat(index) + options.additionView.padding.left
+        additionView.frame.size.width = cellWidth - options.additionView.padding.horizontal
     }
 
     fileprivate func animateAdditionView(index: Int, animated: Bool, completion: ((Bool) -> Swift.Void)? = nil) {
