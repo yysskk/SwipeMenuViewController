@@ -54,7 +54,16 @@ jobs:
         with:
           xcode-version: '^26.0'
       - name: Install XcodeGen
-        run: brew install xcodegen
+        # Pin to a specific release so project generation is reproducible and an
+        # upstream XcodeGen change cannot silently break CI.
+        env:
+          XCODEGEN_VERSION: "2.45.4"
+        run: |
+          set -euo pipefail
+          curl -fsSL "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip" -o "$RUNNER_TEMP/xcodegen.zip"
+          unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP/xcodegen"
+          chmod +x "$RUNNER_TEMP/xcodegen/xcodegen/bin/xcodegen"
+          echo "$RUNNER_TEMP/xcodegen/xcodegen/bin" >> "$GITHUB_PATH"
       - name: Generate Xcode project
         # The .xcodeproj is not committed; it is generated from Example/project.yml.
         run: xcodegen generate --spec Example/project.yml
