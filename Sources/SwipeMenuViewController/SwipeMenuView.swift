@@ -143,19 +143,37 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
 
 // MARK: - SwipeMenuViewDelegate
 
-/// A main-actor-isolated protocol that responds to `SwipeMenuView` lifecycle and paging events.
+/// A main-actor-isolated protocol that responds to ``SwipeMenuView`` lifecycle and paging events.
+///
+/// All methods are optional; default no-op implementations are provided through a
+/// protocol extension, so a conforming type only implements the callbacks it cares about.
+/// Because the protocol is `@MainActor`-isolated, every method is called on the main actor.
 @MainActor public protocol SwipeMenuViewDelegate: AnyObject {
 
-    /// Called before setup self.
+    /// Called before the swipe menu view sets up its tab and content views.
+    /// - Parameters:
+    ///   - swipeMenuView: The swipe menu view that is about to be set up.
+    ///   - currentIndex: The index that will be shown once setup finishes.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int)
 
-    /// Called after setup self.
+    /// Called after the swipe menu view has finished setting up its tab and content views.
+    /// - Parameters:
+    ///   - swipeMenuView: The swipe menu view that finished setting up.
+    ///   - currentIndex: The index that is now shown.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int)
 
-    /// Called before swiping the page.
+    /// Called before the front page changes.
+    /// - Parameters:
+    ///   - swipeMenuView: The swipe menu view whose page is about to change.
+    ///   - fromIndex: The index of the page currently in front.
+    ///   - toIndex: The index of the page that will move to the front.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int)
 
-    /// Called after swiping the page.
+    /// Called after the front page has changed.
+    /// - Parameters:
+    ///   - swipeMenuView: The swipe menu view whose page changed.
+    ///   - fromIndex: The index of the page that was previously in front.
+    ///   - toIndex: The index of the page now in front.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int)
 }
 
@@ -168,29 +186,54 @@ extension SwipeMenuViewDelegate {
 
 // MARK: - SwipeMenuViewDataSource
 
-/// A main-actor-isolated protocol that provides pages and titles to a `SwipeMenuView`.
+/// A main-actor-isolated protocol that provides pages and titles to a ``SwipeMenuView``.
+///
+/// A ``SwipeMenuView`` displays nothing until it is given a data source. Because the protocol
+/// is `@MainActor`-isolated, every method is called on the main actor.
 @MainActor public protocol SwipeMenuViewDataSource: AnyObject {
 
-    /// Return the number of pages in `SwipeMenuView`.
+    /// Returns the number of pages in the swipe menu view.
+    /// - Parameter swipeMenuView: The swipe menu view requesting the count.
+    /// - Returns: The total number of pages.
     func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int
 
-    /// Return strings to be displayed at the tab in `SwipeMenuView`.
+    /// Returns the title displayed in the tab for the given page.
+    /// - Parameters:
+    ///   - swipeMenuView: The swipe menu view requesting the title.
+    ///   - index: The index of the page.
+    /// - Returns: The title for the tab at `index`.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String
 
-    /// Return a ViewController to be displayed at the page in `SwipeMenuView`.
+    /// Returns the view controller whose view is displayed for the given page.
+    /// - Parameters:
+    ///   - swipeMenuView: The swipe menu view requesting the view controller.
+    ///   - index: The index of the page.
+    /// - Returns: The view controller for the page at `index`.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController
 }
 
 // MARK: - SwipeMenuView
 
+/// A view that presents a scrollable tab bar above a horizontally paging content area.
+///
+/// Assign a ``dataSource`` to provide the pages and their titles, and optionally a
+/// ``delegate`` to observe setup and paging events. The view builds its tab bar
+/// (``tabView``) and paging area (``contentScrollView``) from the data source the first
+/// time it is added to a superview, so it must be hosted inside a view hierarchy to
+/// display anything. Appearance is configured through ``options``. Call
+/// ``reloadData(options:default:isOrientationChange:)`` to rebuild the pages after the
+/// data source changes.
 open class SwipeMenuView: UIView {
 
-    /// An object conforms `SwipeMenuViewDelegate`. Provide views to populate the `SwipeMenuView`.
+    /// The delegate that receives ``SwipeMenuView`` setup and paging events.
     open weak var delegate: SwipeMenuViewDelegate?
 
-    /// An object conforms `SwipeMenuViewDataSource`. Provide views and respond to `SwipeMenuView` events.
+    /// The data source that provides the pages and titles for the ``SwipeMenuView``.
+    ///
+    /// The view displays nothing until this is set.
     open weak var dataSource: SwipeMenuViewDataSource?
 
+    /// The tab bar displayed above the content, or `nil` before the view is set up.
     open fileprivate(set) var tabView: TabView? {
         didSet {
             guard let tabView = tabView else { return }
@@ -201,6 +244,7 @@ open class SwipeMenuView: UIView {
         }
     }
 
+    /// The horizontally paging scroll view that hosts the page views, or `nil` before the view is set up.
     open fileprivate(set) var contentScrollView: ContentScrollView? {
         didSet {
             guard let contentScrollView = contentScrollView else { return }
@@ -211,6 +255,7 @@ open class SwipeMenuView: UIView {
         }
     }
 
+    /// The options that control the appearance and behavior of the tab bar and content area.
     public var options: SwipeMenuViewOptions
 
     fileprivate var isLayoutingSubviews: Bool = false
@@ -226,6 +271,10 @@ open class SwipeMenuView: UIView {
     open private(set) var currentIndex: Int = 0
     private var jumpingToIndex: Int?
 
+    /// Creates a swipe menu view with the given frame and options.
+    /// - Parameters:
+    ///   - frame: The frame rectangle for the view.
+    ///   - options: The appearance and behavior options. Pass `nil` to use the defaults.
     public init(frame: CGRect, options: SwipeMenuViewOptions? = nil) {
 
         if let options = options {
@@ -259,7 +308,12 @@ open class SwipeMenuView: UIView {
         setup()
     }
 
-    /// Reloads all `SwipeMenuView` item views with the dataSource and refreshes the display.
+    /// Rebuilds the tab bar and pages from the data source and refreshes the display.
+    /// - Parameters:
+    ///   - options: New options to apply before reloading. Pass `nil` to keep the current ``options``.
+    ///   - defaultIndex: The page to show after reloading. Pass `nil` to keep the current ``currentIndex``.
+    ///   - isOrientationChange: Pass `true` when reloading in response to an orientation change so the
+    ///     view relayouts without resetting its state. Defaults to `false`.
     public func reloadData(options: SwipeMenuViewOptions? = nil, default defaultIndex: Int? = nil, isOrientationChange: Bool = false) {
 
         if let options = options {
@@ -278,7 +332,10 @@ open class SwipeMenuView: UIView {
         isLayoutingSubviews = false
     }
 
-    /// Jump to the selected page.
+    /// Moves directly to the given page.
+    /// - Parameters:
+    ///   - index: The index of the page to display.
+    ///   - animated: Whether the content transition is animated.
     public func jump(to index: Int, animated: Bool) {
         guard let tabView = tabView, let contentScrollView = contentScrollView else { return }
         if currentIndex != index {
@@ -290,7 +347,9 @@ open class SwipeMenuView: UIView {
         contentScrollView.jump(to: index, animated: animated)
     }
 
-    /// Notify changing orientaion to `SwipeMenuView` before it.
+    /// Notifies the view that an orientation change is about to occur so it can relayout.
+    ///
+    /// Call this from `viewWillTransition(to:with:)` before the size change takes effect.
     public func willChangeOrientation() {
         isLayoutingSubviews = true
         setNeedsLayout()

@@ -1,12 +1,18 @@
 import UIKit
 
+/// A single tab item that displays a centered title and reflects its selected state.
 final class TabItemView: UIView {
 
+    /// The label that displays the tab's title.
     private(set) var titleLabel: UILabel = UILabel()
 
+    /// The title color used when the item is not selected.
     public var textColor: UIColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
+
+    /// The title color used when the item is selected.
     public var selectedTextColor: UIColor = .white
 
+    /// Whether the item is currently selected. Setting this updates the title color.
     public var isSelected: Bool = false {
         didSet {
             if isSelected {

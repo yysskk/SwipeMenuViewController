@@ -2,13 +2,22 @@ import UIKit
 
 // MARK: - TabViewDelegate
 
-/// A main-actor-isolated protocol that responds to `TabView` selection events.
+/// A main-actor-isolated protocol that responds to ``TabView`` selection events.
+///
+/// Both methods are optional; default no-op implementations are provided through a protocol
+/// extension. Because the protocol is `@MainActor`-isolated, every method is called on the main actor.
 @MainActor public protocol TabViewDelegate: AnyObject {
 
-    /// Called before selecting the tab.
+    /// Called before a tab is selected by a tap.
+    /// - Parameters:
+    ///   - tabView: The tab view whose tab is about to be selected.
+    ///   - index: The index of the tab that will be selected.
     func tabView(_ tabView: TabView, willSelectTabAt index: Int)
 
-    /// Called after selecting the tab.
+    /// Called after a tab is selected by a tap.
+    /// - Parameters:
+    ///   - tabView: The tab view whose tab was selected.
+    ///   - index: The index of the selected tab.
     func tabView(_ tabView: TabView, didSelectTabAt index: Int)
 }
 
@@ -20,19 +29,36 @@ extension TabViewDelegate {
 
 // MARK: - TabViewDataSource
 
-/// A main-actor-isolated protocol that provides items and titles to a `TabView`.
+/// A main-actor-isolated protocol that provides items and titles to a ``TabView``.
+///
+/// Because the protocol is `@MainActor`-isolated, every method is called on the main actor.
 @MainActor public protocol TabViewDataSource: AnyObject {
 
-    /// Return the number of Items in `TabView`.
+    /// Returns the number of tab items.
+    /// - Parameter tabView: The tab view requesting the count.
+    /// - Returns: The total number of items.
     func numberOfItems(in tabView: TabView) -> Int
 
-    /// Return strings to be displayed at the tab in `TabView`.
+    /// Returns the title displayed in the tab item at the given index.
+    /// - Parameters:
+    ///   - tabView: The tab view requesting the title.
+    ///   - index: The index of the item.
+    /// - Returns: The title for the item, or `nil` for no title.
     func tabView(_ tabView: TabView, titleForItemAt index: Int) -> String?
 }
 
+/// The scrollable tab bar displayed at the top of a ``SwipeMenuView``.
+///
+/// A `TabView` lays out one tab item per page and draws the selection addition
+/// (underline or circle) configured by ``SwipeMenuViewOptions/TabView``. It is created and
+/// managed by ``SwipeMenuView``; you normally configure it through the options rather than
+/// instantiating it directly.
 open class TabView: UIScrollView {
 
+    /// The delegate that receives tab selection events.
     open weak var tabViewDelegate: TabViewDelegate?
+
+    /// The data source that provides the tab items and their titles.
     open weak var dataSource: TabViewDataSource?
 
     var itemViews: [TabItemView] = []
@@ -106,7 +132,11 @@ open class TabView: UIScrollView {
 
     // MARK: - Setup
 
-    /// Reloads all `TabView` item views with the dataSource and refreshes the display.
+    /// Rebuilds all tab items from the data source and refreshes the display.
+    /// - Parameters:
+    ///   - options: New tab options to apply before reloading. Pass `nil` to keep the current options.
+    ///   - defaultIndex: The tab to select after reloading. Pass `nil` to leave the selection unchanged.
+    ///   - animated: Whether moving to `defaultIndex` is animated. Defaults to `true`.
     public func reloadData(options: SwipeMenuViewOptions.TabView? = nil,
                            default defaultIndex: Int? = nil,
                            animated: Bool = true) {
@@ -341,8 +371,11 @@ open class TabView: UIScrollView {
 
 extension TabView {
 
+    /// The direction in which the selection addition moves as the content scrolls.
     public nonisolated enum Direction: Sendable {
+        /// Moving toward a higher page index (scrolling forward).
         case forward
+        /// Moving toward a lower page index (scrolling in reverse).
         case reverse
     }
 

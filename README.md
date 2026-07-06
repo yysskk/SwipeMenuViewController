@@ -25,8 +25,7 @@ See the following site for instructions.
 - [Adding Package Dependencies to Your App](https://developer.apple.com/documentation/xcode/adding_package_dependencies_to_your_app)
 
 ## Documentation
-- See [Usage](Documentation/Usage.md) documentation for all the various properties and options that can be set
-- See [Versioning](Documentation/Versioning.md) for versioning documentation
+API documentation is available as a DocC catalog. Build it in Xcode with **Product ▸ Build Documentation**, then read the **Getting Started** and **Customizing Appearance** articles for setup and all the available options.
 
 ## Author
 ### Yusuke Morishita

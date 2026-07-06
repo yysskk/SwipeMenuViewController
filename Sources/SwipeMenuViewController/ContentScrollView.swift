@@ -1,15 +1,31 @@
 import UIKit
 
-/// A main-actor-isolated protocol that provides page views to a `ContentScrollView`.
+/// A main-actor-isolated protocol that provides page views to a ``ContentScrollView``.
+///
+/// Because the protocol is `@MainActor`-isolated, every method is called on the main actor.
 @MainActor public protocol ContentScrollViewDataSource: AnyObject {
 
+    /// Returns the number of pages.
+    /// - Parameter contentScrollView: The content scroll view requesting the count.
+    /// - Returns: The total number of pages.
     func numberOfPages(in contentScrollView: ContentScrollView) -> Int
 
+    /// Returns the view displayed for the given page.
+    /// - Parameters:
+    ///   - contentScrollView: The content scroll view requesting the page view.
+    ///   - index: The index of the page.
+    /// - Returns: The view for the page at `index`, or `nil` if none is available.
     func contentScrollView(_ contentScrollView: ContentScrollView, viewForPageAt index: Int) -> UIView?
 }
 
+/// The horizontally paging scroll view that hosts the page views of a ``SwipeMenuView``.
+///
+/// A `ContentScrollView` lays out one page per item supplied by its data source and pages
+/// between them. It is created and managed by ``SwipeMenuView``; you normally do not
+/// instantiate it directly.
 open class ContentScrollView: UIScrollView {
 
+    /// The data source that provides the page views.
     open weak var dataSource: ContentScrollViewDataSource?
 
     fileprivate var pageViews: [UIView] = []
@@ -18,6 +34,11 @@ open class ContentScrollView: UIScrollView {
 
     fileprivate var options: SwipeMenuViewOptions.ContentScrollView = SwipeMenuViewOptions.ContentScrollView()
 
+    /// Creates a content scroll view with the given frame, initial page, and options.
+    /// - Parameters:
+    ///   - frame: The frame rectangle for the view.
+    ///   - defaultIndex: The index of the page shown initially.
+    ///   - options: The appearance and behavior options. Pass `nil` to use the defaults.
     public init(frame: CGRect, default defaultIndex: Int, options: SwipeMenuViewOptions.ContentScrollView? = nil) {
         super.init(frame: frame)
 
@@ -44,15 +65,19 @@ open class ContentScrollView: UIScrollView {
         self.contentSize = CGSize(width: frame.width * CGFloat(pageViews.count), height: frame.height)
     }
 
+    /// Removes all page views and resets the current index to zero.
     public func reset() {
         pageViews = []
         currentIndex = 0
     }
 
+    /// Rebuilds the page views from the data source.
     public func reload() {
         self.didMoveToSuperview()
     }
 
+    /// Updates the tracked current page index without changing the scroll offset.
+    /// - Parameter newIndex: The new current page index.
     public func update(_ newIndex: Int) {
         currentIndex = newIndex
     }
@@ -150,6 +175,10 @@ extension ContentScrollView {
         return nil
     }
 
+    /// Scrolls directly to the page at the given index.
+    /// - Parameters:
+    ///   - index: The index of the page to display.
+    ///   - animated: Whether the scroll is animated.
     public func jump(to index: Int, animated: Bool) {
         update(index)
         self.setContentOffset(CGPoint(x: self.frame.width * CGFloat(currentIndex), y: 0), animated: animated)
