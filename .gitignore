@@ -12,6 +12,9 @@ xcuserdata/
 *.dSYM.zip
 *.dSYM
 
+# The example app's Xcode project is generated from Example/project.yml by XcodeGen.
+*.xcodeproj
+
 # Swift Package Manager
 .build/
 .swiftpm/

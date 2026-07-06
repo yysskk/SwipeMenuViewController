@@ -1,0 +1,55 @@
+# XcodeGen spec for the SwipeMenuViewController example app. Generate the Xcode
+# project with:
+#
+#   brew install xcodegen
+#   cd Example && xcodegen generate && open Example.xcodeproj
+#
+# The generated .xcodeproj is not committed (see the repository .gitignore) — this
+# file is the source of truth for the project configuration.
+name: Example
+options:
+  bundleIdPrefix: cc.yysskk
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+packages:
+  SwipeMenuViewController:
+    path: ".."
+targets:
+  Example:
+    type: application
+    platform: iOS
+    sources:
+      - Example
+    dependencies:
+      - package: SwipeMenuViewController
+        product: SwipeMenuViewController
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: cc.yysskk.Example
+        MARKETING_VERSION: "5.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_VERSION: "6.0"
+        SWIFT_APPROACHABLE_CONCURRENCY: "YES"
+        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+        GENERATE_INFOPLIST_FILE: "YES"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_KEY_UIMainStoryboardFile: Main
+        INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: "YES"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+schemes:
+  Example:
+    build:
+      targets:
+        Example: all
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

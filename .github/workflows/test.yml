@@ -53,6 +53,11 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '^26.0'
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        # The .xcodeproj is not committed; it is generated from Example/project.yml.
+        run: xcodegen generate --spec Example/project.yml
       - name: Build
         run: |
           set -o pipefail
