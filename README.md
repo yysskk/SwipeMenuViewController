@@ -65,7 +65,7 @@ The full API reference and guides are published with DocC:
 - [Getting Started](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/gettingstarted) — set up `SwipeMenuView` or `SwipeMenuViewController`
 - [Customizing Appearance](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/customizingappearance) — every `SwipeMenuViewOptions` field
 
-You can also build the documentation locally in Xcode with **Product ▸ Build Documentation**, or explore the [Example app](./Example) in this repository.
+You can also build the documentation locally in Xcode with **Product ▸ Build Documentation**, or explore the [Example app](./Example) in this repository (its Xcode project is generated with [XcodeGen](https://github.com/yonaskolb/XcodeGen) — see the [Example README](./Example/README.md)).
 
 ## Contributing
 
