@@ -75,8 +75,11 @@ open class ContentScrollView: UIScrollView {
     }
 
     /// Rebuilds the page views from the data source.
+    ///
+    /// The view must already be in a view hierarchy; when it has no superview
+    /// this method does nothing.
     public func reload() {
-        self.didMoveToSuperview()
+        didMoveToSuperview()
     }
 
     /// Updates the tracked current page index without changing the scroll offset.

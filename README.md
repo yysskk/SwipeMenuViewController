@@ -64,9 +64,49 @@ final class MenuViewController: SwipeMenuViewController {
 }
 ```
 
-By default each page is backed by one of the controller's `children`: the page count is `children.count`, each tab title is the child's `title`, and each page shows the child's view. Override the `SwipeMenuViewDataSource` methods for fully custom paging, or embed a `SwipeMenuView` directly when you want the paging UI inside an existing view hierarchy.
+By default each page is backed by one of the controller's `children`: the page count is `children.count`, each tab title is the child's `title`, and each page shows the child's view. Override the `SwipeMenuViewDataSource` methods for fully custom paging.
 
-The delegate and data source callbacks are main-actor isolated, so implement them from your (main-actor) view controllers as usual.
+To place the paging UI inside a view hierarchy you already have, add a `SwipeMenuView` directly, set its `dataSource` (and optional `delegate`), and customize it with `SwipeMenuViewOptions`:
+
+```swift
+import SwipeMenuViewController
+
+final class CatalogViewController: UIViewController {
+
+    private let swipeMenuView = SwipeMenuView(frame: .zero)
+    private let titles = ["Sports", "News", "Weather"]
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        swipeMenuView.frame = view.bounds
+        swipeMenuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        swipeMenuView.dataSource = self
+        view.addSubview(swipeMenuView)
+
+        var options = SwipeMenuViewOptions()
+        options.tabView.style = .segmented
+        swipeMenuView.reloadData(options: options)
+    }
+}
+
+extension CatalogViewController: SwipeMenuViewDataSource {
+
+    func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int { titles.count }
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {
+        titles[index]
+    }
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
+        let page = UIViewController()
+        page.title = titles[index]
+        return page
+    }
+}
+```
+
+The delegate and data source callbacks are main-actor isolated, so implement them from your (main-actor) view controllers as usual. See the [documentation](#documentation) for every `SwipeMenuViewOptions` field.
 
 ## Documentation
 The full API reference and articles are published online with DocC:
