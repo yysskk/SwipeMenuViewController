@@ -28,14 +28,28 @@ optional ``SwipeMenuView/delegate``, and call
 ``SwipeMenuView/reloadData(options:default:isOrientationChange:)`` to build its pages. You can
 pass a ``SwipeMenuViewOptions`` value to customize the appearance.
 
+``SwipeMenuView`` is a plain `UIView`, so it only reads each page's `view` — it cannot establish
+view-controller containment for you. When your pages are view controllers, add them as children
+of the host view controller so they receive the usual appearance and trait-collection callbacks:
+call `addChild(_:)` before `reloadData`, and call `didMove(toParent:)` once `reloadData` has
+added their views.
+
 ```swift
 final class CustomViewController: UIViewController {
 
     private let swipeMenuView = SwipeMenuView(frame: .zero)
-    private let titles = ["Sports", "News", "Weather"]
+
+    private let pages: [UIViewController] = ["Sports", "News", "Weather"].map { title in
+        let page = ContentViewController()
+        page.title = title
+        return page
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // Establish containment: the host view controller owns the pages.
+        pages.forEach { addChild($0) }
 
         swipeMenuView.frame = view.bounds
         swipeMenuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -46,6 +60,9 @@ final class CustomViewController: UIViewController {
         var options = SwipeMenuViewOptions()
         options.tabView.style = .segmented
         swipeMenuView.reloadData(options: options)
+
+        // reloadData added each page's view, so finish containment.
+        pages.forEach { $0.didMove(toParent: self) }
     }
 }
 ```
@@ -56,15 +73,15 @@ Conform to ``SwipeMenuViewDataSource`` to supply the pages and their titles:
 extension CustomViewController: SwipeMenuViewDataSource {
 
     func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
-        return titles.count
+        return pages.count
     }
 
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {
-        return titles[index]
+        return pages[index].title ?? ""
     }
 
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
-        return ContentViewController()
+        return pages[index]
     }
 }
 ```
