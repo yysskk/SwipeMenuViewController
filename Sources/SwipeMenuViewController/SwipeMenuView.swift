@@ -305,6 +305,17 @@ open class SwipeMenuView: UIView {
     open override func didMoveToSuperview() {
         super.didMoveToSuperview()
 
+        // `didMoveToSuperview()` also fires when the view is removed (superview
+        // becomes nil); rebuilding then would emit spurious delegate setup
+        // callbacks and leave stale subviews behind.
+        guard superview != nil else { return }
+
+        // If the view is being re-added after a previous setup, tear the old tab
+        // and content views down first so they are not duplicated.
+        if tabView != nil {
+            reset()
+        }
+
         setup()
     }
 
