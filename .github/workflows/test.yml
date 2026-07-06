@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   package:
-    name: Package build (iOS Simulator)
+    name: Package tests (iOS Simulator)
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v7
@@ -25,12 +25,23 @@ jobs:
         run: |
           xcodebuild -version
           swift --version
-      - name: Build
+      - name: Select simulator
+        id: sim
+        run: |
+          DEVICE=$(xcrun simctl list devices available --json \
+            | jq -r '[.devices | to_entries[] | select(.key|test("iOS")) | .value[] | select(.isAvailable and (.name|startswith("iPhone")))][0].name // empty')
+          if [ -z "$DEVICE" ]; then sudo xcodebuild -downloadPlatform iOS; DEVICE=$(xcrun simctl list devices available --json | jq -r '[.devices|to_entries[]|select(.key|test("iOS"))|.value[]|select(.isAvailable and (.name|startswith("iPhone")))][0].name // empty'); fi
+          if [ -z "$DEVICE" ]; then echo "::error::No available iPhone simulator found" >&2; exit 1; fi
+          echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
+          echo "Using: $DEVICE"
+      - name: Test
         run: |
           set -o pipefail
-          xcodebuild build \
+          # The auto-generated `SwipeMenuViewController` scheme includes the
+          # test target, so it both builds the library and runs the tests.
+          xcodebuild test \
             -scheme SwipeMenuViewController \
-            -destination 'generic/platform=iOS Simulator' \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.device }}" \
             CODE_SIGNING_ALLOWED=NO
 
   example:

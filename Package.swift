@@ -15,6 +15,13 @@ let package = Package(
             swiftSettings: [
                 .defaultIsolation(MainActor.self)
             ]
+        ),
+        .testTarget(
+            name: "SwipeMenuViewControllerTests",
+            dependencies: ["SwipeMenuViewController"],
+            swiftSettings: [
+                .defaultIsolation(MainActor.self)
+            ]
         )
     ]
 )
