@@ -170,6 +170,16 @@ struct TabViewTests {
         return container.subviews.filter { type(of: $0) == UIView.self }.count
     }
 
+    /// Returns the plain (non-`TabItemView`) `UIView` acting as the selection
+    /// indicator inside the container stack view, or `nil` if there is none.
+    /// `additionView` is `fileprivate`, so it is located through the hierarchy.
+    private func additionView(in tabView: TabView) -> UIView? {
+        guard let container = tabView.subviews.first(where: { $0 is UIStackView }) else {
+            return nil
+        }
+        return container.subviews.first { type(of: $0) == UIView.self }
+    }
+
     @Test("Underline addition produces an addition view in the hierarchy")
     func underlineAdditionExists() {
         var options = SwipeMenuViewOptions.TabView()
@@ -210,6 +220,43 @@ struct TabViewTests {
 
         // With `.none`, the addition view is never added to the container.
         #expect(additionViewCount(in: tabView) == 0)
+    }
+
+    // MARK: - Segmented indicator offset (issue #25)
+
+    @Test("Segmented indicator sits inside every tab, inset by the padding")
+    func segmentedIndicatorAlignsWithEachTab() throws {
+        var options = SwipeMenuViewOptions.TabView()
+        options.style = .segmented
+        options.addition = .underline
+        options.margin = 0
+        // Non-zero horizontal padding makes both the offset sign (first tab) and
+        // the per-tab stride (later tabs) observable.
+        options.additionView.padding = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+
+        let titles = ["A", "B", "C"]
+        let (tabView, dataSource) = makeTabView(titles: titles, options: options)
+
+        let window = hostTabView(tabView, width: 375)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        let indicator = try #require(additionView(in: tabView))
+        let padding = options.additionView.padding
+
+        // The indicator should align with the selected tab's frame, inset by the
+        // padding — the same way the flexible style aligns it. Before the fix the
+        // segmented path placed the first tab at `-padding.left` and used the
+        // padding-adjusted width as the per-tab stride, so later tabs drifted left
+        // by `index * padding.horizontal` (issue #25).
+        for index in titles.indices {
+            tabView.jump(to: index)
+            tabView.setNeedsLayout()
+            tabView.layoutIfNeeded()
+
+            let item = tabView.itemViews[index]
+            #expect(abs(indicator.frame.origin.x - (item.frame.origin.x + padding.left)) < 0.5)
+            #expect(abs(indicator.frame.width - (item.frame.width - padding.horizontal)) < 0.5)
+        }
     }
 
     // MARK: - BUG 4: boundary items
