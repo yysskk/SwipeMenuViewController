@@ -1,0 +1,94 @@
+name: Documentation
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+# Allow only one concurrent deployment. Do not cancel in-progress runs, so that
+# a deployment that is already publishing finishes before the next one starts.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: macos-26
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '^26.0'
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Build documentation archive
+        run: |
+          set -o pipefail
+          # `docbuild` produces a `.doccarchive` for the library target. The
+          # archive is written under the derived data path so the next step can
+          # find it deterministically.
+          xcodebuild docbuild \
+            -scheme SwipeMenuViewController \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO
+      - name: Transform archive for static hosting
+        env:
+          # The path the site is served from, as resolved by `Configure Pages`:
+          # `/SwipeMenuViewController` for a project page, or empty for a
+          # user/organization page or a custom domain.
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: |
+          set -euo pipefail
+          archive=$(find "$RUNNER_TEMP/DerivedData" -type d -name '*.doccarchive' | head -n 1)
+          if [ -z "$archive" ]; then
+            echo "::error::No .doccarchive was produced by docbuild" >&2
+            exit 1
+          fi
+          # GitHub Pages serves a project site from a sub-path, so the archive
+          # must be rewritten with a matching base path for its assets and links
+          # to resolve. Pass the base path to DocC only when one is in use, so
+          # the site also works at a domain root (user page or custom domain).
+          base_path="${BASE_PATH#/}"
+          base_path="${base_path%/}"
+          docc_flags=(--output-path _site)
+          if [ -n "$base_path" ]; then
+            docc_flags+=(--hosting-base-path "$base_path")
+          fi
+          "$(xcrun --find docc)" process-archive transform-for-static-hosting "$archive" "${docc_flags[@]}"
+          # Redirect the site root to the package's documentation landing page so
+          # that visitors do not land on an empty page.
+          cat > _site/index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <meta http-equiv="refresh" content="0; url=documentation/swipemenuviewcontroller/">
+              <link rel="canonical" href="documentation/swipemenuviewcontroller/">
+              <title>SwipeMenuViewController</title>
+            </head>
+            <body>
+              <p>
+                Redirecting to
+                <a href="documentation/swipemenuviewcontroller/">the documentation</a>.
+              </p>
+            </body>
+          </html>
+          EOF
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
