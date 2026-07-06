@@ -110,6 +110,20 @@ struct TabViewTests {
         #expect(additionViewCount(in: tabView) == 1)
     }
 
+    @Test("Circle addition produces an addition view in the hierarchy")
+    func circleAdditionExists() {
+        var options = SwipeMenuViewOptions.TabView()
+        options.addition = .circle
+
+        let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: options)
+
+        let window = hostTabView(tabView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        // The circle addition view is added to the container view hierarchy.
+        #expect(additionViewCount(in: tabView) == 1)
+    }
+
     @Test("No addition leaves the addition view out of the hierarchy")
     func noAdditionHasNoAdditionView() {
         var options = SwipeMenuViewOptions.TabView()
@@ -162,6 +176,33 @@ struct TabViewTests {
 
         let actual = lastItem.titleLabel.textColor ?? .clear
         #expect(colorsEqual(actual, expectedColor))
+    }
+
+    @Test("A forward swipe fades the current and next labels by the ratio")
+    func forwardSwipeInterpolatesNeighborColors() {
+        var options = SwipeMenuViewOptions.TabView()
+        options.needsConvertTextColorRatio = true
+        // Use pure black/white endpoints so the midpoint is an unambiguous gray.
+        options.itemView.textColor = .black
+        options.itemView.selectedTextColor = .white
+
+        let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: options)
+
+        let window = hostTabView(tabView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        tabView.jump(to: 0)
+        // Halfway through a forward swipe from item 0 to item 1.
+        tabView.moveAdditionView(index: 0, ratio: 0.5, direction: .forward)
+
+        let midGray = UIColor(white: 0.5, alpha: 1)
+        let current = tabView.itemViews[0].titleLabel.textColor ?? .clear
+        let next = tabView.itemViews[1].titleLabel.textColor ?? .clear
+
+        // The current label fades selected -> text and the next fades text ->
+        // selected; at ratio 0.5 both meet in the middle.
+        #expect(colorsEqual(current, midGray))
+        #expect(colorsEqual(next, midGray))
     }
 
     /// Compares two colors by their RGBA components with a small tolerance.
