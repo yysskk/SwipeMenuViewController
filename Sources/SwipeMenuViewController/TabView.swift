@@ -426,18 +426,22 @@ extension TabView {
         if options.additionView.isAnimationOnSwipeEnable {
             switch direction {
             case .forward:
-                additionView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.additionView.padding.left
-                additionView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.additionView.padding.horizontal
-                if options.needsConvertTextColorRatio {
-                    nextItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
-                    currentItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
+                if let nextItem = nextItem {
+                    additionView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.additionView.padding.left
+                    additionView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.additionView.padding.horizontal
+                    if options.needsConvertTextColorRatio {
+                        nextItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
+                        currentItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
+                    }
                 }
             case .reverse:
-                additionView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.additionView.padding.left
-                additionView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.additionView.padding.horizontal
-                if options.needsConvertTextColorRatio {
-                    previousItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
-                    currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
+                if let previousItem = previousItem {
+                    additionView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.additionView.padding.left
+                    additionView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.additionView.padding.horizontal
+                    if options.needsConvertTextColorRatio {
+                        previousItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
+                        currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
+                    }
                 }
             }
         } else {
@@ -457,18 +461,14 @@ extension TabView {
         return currentIndex < itemViews.count ? itemViews[currentIndex] : nil
     }
 
-    var nextItem: TabItemView {
-        if currentIndex < itemViews.count - 1 {
-            return itemViews[currentIndex + 1]
-        }
-        return itemViews[currentIndex]
+    var nextItem: TabItemView? {
+        guard currentIndex < itemViews.count - 1 else { return nil }
+        return itemViews[currentIndex + 1]
     }
 
-    var previousItem: TabItemView {
-        if currentIndex > 0 {
-            return itemViews[currentIndex - 1]
-        }
-        return itemViews[currentIndex]
+    var previousItem: TabItemView? {
+        guard currentIndex > 0 else { return nil }
+        return itemViews[currentIndex - 1]
     }
 
     func jump(to index: Int) {
