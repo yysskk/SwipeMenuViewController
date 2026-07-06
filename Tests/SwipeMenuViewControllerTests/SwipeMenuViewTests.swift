@@ -97,6 +97,34 @@ struct SwipeMenuViewTests {
         #expect(delegate.events == [.willChange(from: 0, to: 2), .didChange(from: 0, to: 2)])
     }
 
+    @Test("A re-entrant jump keeps willChange/didChange calls paired")
+    func reentrantJumpKeepsDelegatePaired() {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = StubMenuDataSource(titles: ["A", "B", "C", "D"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        let delegate = RecordingMenuDelegate()
+        view.delegate = delegate
+        defer { withExtendedLifetime((window, dataSource, delegate)) {} }
+
+        // Start an animated jump (its end-of-animation callback does not fire in
+        // this synchronous test, so the jump stays "in flight"), then issue a
+        // second jump before the first completes.
+        view.jump(to: 2, animated: true)
+        view.jump(to: 0, animated: false)
+
+        // Each jump contributes exactly one paired willChange/didChange, and the
+        // view lands on the most recent target.
+        #expect(view.currentIndex == 0)
+        #expect(delegate.events == [
+            .willChange(from: 0, to: 2),
+            .didChange(from: 0, to: 2),
+            .willChange(from: 2, to: 0),
+            .didChange(from: 2, to: 0)
+        ])
+    }
+
     @Test("jump(to:) ignores an out-of-range index")
     func jumpIgnoresOutOfRangeIndex() throws {
         let view = SwipeMenuView(frame: .zero)
