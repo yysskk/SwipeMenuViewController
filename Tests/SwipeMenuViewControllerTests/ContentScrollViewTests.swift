@@ -43,6 +43,22 @@ struct ContentScrollViewTests {
         #expect(abs(contentScrollView.contentOffset.x - pageWidth * 1) < 0.5)
     }
 
+    @Test("An out-of-range default index never asks for a nonexistent page")
+    func outOfRangeDefaultIndexDoesNotOverRead() {
+        // A default index past the last page must not make setup request pages
+        // that do not exist; it should still build exactly the real pages.
+        let contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: 0, width: 375, height: 600), default: 10)
+        let dataSource = CountingContentDataSource(pageCount: 3)
+        contentScrollView.dataSource = dataSource
+
+        let window = hostInWindow(contentScrollView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        #expect(dataSource.requestedIndices.allSatisfy { (0..<3).contains($0) })
+        #expect(Set(dataSource.requestedIndices) == Set(0..<3))
+        #expect(abs(contentScrollView.contentSize.width - contentScrollView.frame.width * 3) < 0.5)
+    }
+
     @Test("A non-zero default index sets the matching current page")
     func nonZeroDefaultIndex() throws {
         let baseTag = 500
