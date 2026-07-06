@@ -31,6 +31,7 @@ jobs:
           DEVICE=$(xcrun simctl list devices available --json \
             | jq -r '[.devices | to_entries[] | select(.key|test("iOS")) | .value[] | select(.isAvailable and (.name|startswith("iPhone")))][0].name // empty')
           if [ -z "$DEVICE" ]; then sudo xcodebuild -downloadPlatform iOS; DEVICE=$(xcrun simctl list devices available --json | jq -r '[.devices|to_entries[]|select(.key|test("iOS"))|.value[]|select(.isAvailable and (.name|startswith("iPhone")))][0].name // empty'); fi
+          if [ -z "$DEVICE" ]; then echo "::error::No available iPhone simulator found" >&2; exit 1; fi
           echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
           echo "Using: $DEVICE"
       - name: Test

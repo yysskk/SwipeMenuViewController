@@ -2,9 +2,10 @@ import Testing
 import UIKit
 @testable import SwipeMenuViewController
 
-/// Constructs a `SwipeMenuViewOptions` off the main actor to prove the type is
-/// usable from a `nonisolated` context (i.e. it really is `Sendable`).
-private nonisolated func makeOptionsOffMainActor() -> SwipeMenuViewOptions {
+/// Constructs a `SwipeMenuViewOptions` from a `nonisolated` context. That this
+/// compiles proves the type is usable outside the main actor (i.e. it really is
+/// `Sendable` and not main-actor isolated).
+private nonisolated func makeOptionsFromNonisolatedContext() -> SwipeMenuViewOptions {
     return SwipeMenuViewOptions()
 }
 
@@ -78,8 +79,9 @@ struct SwipeMenuViewOptionsTests {
         let sendable: any Sendable = SwipeMenuViewOptions()
         #expect(sendable is SwipeMenuViewOptions)
 
-        // And that it can be constructed off the main actor.
-        let offMain = makeOptionsOffMainActor()
-        #expect(offMain.tabView.height == 44.0)
+        // Compile-time proof that a nonisolated context can construct the
+        // options (the call itself still runs on the main actor here).
+        let fromNonisolated = makeOptionsFromNonisolatedContext()
+        #expect(fromNonisolated.tabView.height == 44.0)
     }
 }
