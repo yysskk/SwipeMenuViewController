@@ -3,7 +3,7 @@
 [![Platform](https://img.shields.io/badge/platform-iOS-blue.svg?style=for-the-badge)](https://developer.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-6.2-orange.svg?style=for-the-badge)](https://swift.org)
 [![SPM compatible](https://img.shields.io/badge/SPM-compatible-brightgreen.svg?style=for-the-badge)](https://www.swift.org/documentation/package-manager/)
-[![CI](https://img.shields.io/github/actions/workflow/status/yysskk/SwipeMenuViewController/test.yml?branch=master&style=for-the-badge)](https://github.com/yysskk/SwipeMenuViewController/actions/workflows/test.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/yysskk/SwipeMenuViewController/test.yml?branch=main&style=for-the-badge)](https://github.com/yysskk/SwipeMenuViewController/actions/workflows/test.yml)
 [![Documentation](https://img.shields.io/badge/documentation-DocC-blueviolet.svg?style=for-the-badge)](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
