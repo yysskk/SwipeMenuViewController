@@ -67,13 +67,23 @@ jobs:
       - name: Generate Xcode project
         # The .xcodeproj is not committed; it is generated from Example/project.yml.
         run: xcodegen generate --spec Example/project.yml
-      - name: Build
+      - name: Select simulator
+        id: sim
+        run: |
+          DEVICE=$(xcrun simctl list devices available --json \
+            | jq -r '[.devices | to_entries[] | select(.key|test("iOS")) | .value[] | select(.isAvailable and (.name|startswith("iPhone")))][0].name // empty')
+          if [ -z "$DEVICE" ]; then sudo xcodebuild -downloadPlatform iOS; DEVICE=$(xcrun simctl list devices available --json | jq -r '[.devices|to_entries[]|select(.key|test("iOS"))|.value[]|select(.isAvailable and (.name|startswith("iPhone")))][0].name // empty'); fi
+          if [ -z "$DEVICE" ]; then echo "::error::No available iPhone simulator found" >&2; exit 1; fi
+          echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
+          echo "Using: $DEVICE"
+      - name: Build and test
         run: |
           set -o pipefail
-          xcodebuild build \
+          # The Example scheme builds the app and runs its unit tests.
+          xcodebuild test \
             -project Example/Example.xcodeproj \
             -scheme Example \
-            -destination 'generic/platform=iOS Simulator' \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.device }}" \
             CODE_SIGNING_ALLOWED=NO
 
   docc:

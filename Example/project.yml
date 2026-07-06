@@ -10,7 +10,7 @@ name: Example
 options:
   bundleIdPrefix: cc.yysskk
   deploymentTarget:
-    iOS: "16.0"
+    iOS: "26.0"
   createIntermediateGroups: true
 packages:
   SwipeMenuViewController:
@@ -33,20 +33,33 @@ targets:
         SWIFT_VERSION: "6.0"
         SWIFT_APPROACHABLE_CONCURRENCY: "YES"
         SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+        INFOPLIST_FILE: Info.plist
+  ExampleTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - ExampleTests
+    dependencies:
+      - target: Example
+    settings:
+      base:
         GENERATE_INFOPLIST_FILE: "YES"
-        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        INFOPLIST_KEY_UIMainStoryboardFile: Main
-        INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen
-        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: "YES"
-        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
-        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_VERSION: "6.0"
+        SWIFT_APPROACHABLE_CONCURRENCY: "YES"
+        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
 schemes:
   Example:
     build:
       targets:
         Example: all
+        ExampleTests: [test]
     run:
       config: Debug
+    test:
+      config: Debug
+      targets:
+        - ExampleTests
     profile:
       config: Release
     analyze:
