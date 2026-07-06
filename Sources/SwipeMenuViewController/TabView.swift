@@ -257,6 +257,7 @@ open class TabView: UIScrollView {
             if let title = dataSource.tabView(self, titleForItemAt: index) {
                 tabItemView.titleLabel.text = title
                 tabItemView.titleLabel.font = options.itemView.font
+                tabItemView.titleLabel.numberOfLines = options.itemView.numberOfLines
                 tabItemView.textColor = options.itemView.textColor
                 tabItemView.selectedTextColor = options.itemView.selectedTextColor
             }

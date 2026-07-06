@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- `SwipeMenuViewOptions.TabView.ItemView.numberOfLines` to let tab titles wrap onto multiple lines (use `0` for as many lines as the title needs). Defaults to `1`, preserving the previous single-line behavior. Most useful with the `.segmented` style, where a long title would otherwise be truncated.
+
 ## 5.0.0 - 2026-07-05
 
 ### Breaking

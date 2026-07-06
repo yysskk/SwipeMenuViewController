@@ -60,6 +60,7 @@ The `itemView` group configures each individual tab:
 - `clipsToBounds`: whether the item clips its contents. Defaults to `true`.
 - `textColor`: the title color when unselected. Defaults to a gray.
 - `selectedTextColor`: the title color when selected. Defaults to black.
+- `numberOfLines`: the maximum number of lines for the title. Use `0` to allow as many lines as the title needs. Defaults to `1`.
 
 ```swift
 options.tabView.itemView.width = 120
@@ -67,6 +68,15 @@ options.tabView.itemView.margin = 8
 options.tabView.itemView.font = .boldSystemFont(ofSize: 15)
 options.tabView.itemView.textColor = .secondaryLabel
 options.tabView.itemView.selectedTextColor = .label
+options.tabView.itemView.numberOfLines = 2
+```
+
+Multi-line titles are most useful with the `.segmented` style, where every item has a fixed width and
+a long title would otherwise be truncated onto a single line:
+
+```swift
+options.tabView.style = .segmented
+options.tabView.itemView.numberOfLines = 0
 ```
 
 ## Selection indicator

@@ -33,6 +33,7 @@ struct SwipeMenuViewOptionsTests {
         #expect(options.tabView.itemView.margin == 5.0)
         #expect(options.tabView.itemView.font == UIFont.boldSystemFont(ofSize: 14))
         #expect(options.tabView.itemView.clipsToBounds == true)
+        #expect(options.tabView.itemView.numberOfLines == 1)
     }
 
     @Test("AdditionView documented defaults")
