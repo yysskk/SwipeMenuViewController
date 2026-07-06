@@ -28,6 +28,7 @@
 - Fixed `SwipeMenuView.jump(to:animated:)` leaving `currentIndex` and the delegate change callbacks out of sync with the content when jumping across more than one page, and made it ignore out-of-range indices (a negative index previously crashed).
 - Fixed `ContentScrollView` requesting nonexistent pages from its data source when built with an out-of-range initial index (for example `reloadData(default:)` past the last page).
 - Fixed the views rebuilding themselves when removed from their superview (emitting spurious delegate setup callbacks) and duplicating their tab and content subviews when a `SwipeMenuView` was removed and re-added to a view hierarchy.
+- Fixed the tab bar applying safe-area insets even when `isSafeAreaEnabled` is `false`, so a safe-area change (rotation, notch) no longer shifts a tab bar that opted out of safe-area layout.
 
 ## 4.1.0 - 2020-03-12
 - Added `circle` addition style with `cornerRadius` and `maskedCorners` options.

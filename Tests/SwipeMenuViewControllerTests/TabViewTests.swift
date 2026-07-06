@@ -85,6 +85,53 @@ struct TabViewTests {
         #expect(abs(total - tabView.frame.width) < 1.0)
     }
 
+    @Test("With safe area disabled, a safe-area change does not shrink segmented items")
+    func safeAreaDisabledIgnoresInsetChanges() {
+        var options = SwipeMenuViewOptions.TabView()
+        options.style = .segmented
+        options.margin = 0
+        options.isSafeAreaEnabled = false
+
+        let dataSource = StubTabViewDataSource(titles: ["A", "B", "C", "D"])
+        let tabView = TabView(frame: CGRect(x: 0, y: 0, width: 400, height: options.height), options: options)
+        tabView.dataSource = dataSource
+
+        // Host inside a view controller so its safe area can be driven via
+        // additionalSafeAreaInsets (a UIViewController-only property).
+        let viewController = UIViewController()
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 400, height: 667))
+        window.rootViewController = viewController
+        window.makeKeyAndVisible()
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        tabView.translatesAutoresizingMaskIntoConstraints = false
+        viewController.view.addSubview(tabView)
+        NSLayoutConstraint.activate([
+            tabView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
+            tabView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
+            tabView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+            tabView.heightAnchor.constraint(equalToConstant: options.height)
+        ])
+        viewController.view.layoutIfNeeded()
+        // Build the items against the stable frame with no safe area yet.
+        tabView.reloadData()
+        viewController.view.layoutIfNeeded()
+
+        // Now introduce a safe area. This fires safeAreaInsetsDidChange() on the
+        // tab view; with safe area disabled it must not resize the items.
+        viewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        viewController.view.setNeedsLayout()
+        viewController.view.layoutIfNeeded()
+
+        // Precondition: the safe area really reached the tab view, so the
+        // assertion below is meaningful rather than a silent no-op.
+        #expect(tabView.safeAreaInsets.left == 20)
+
+        let total = tabView.itemViews.reduce(0) { $0 + $1.frame.width }
+        // Items still span the full tab width, not width - (left + right).
+        #expect(abs(total - tabView.frame.width) < 1.0)
+    }
+
     /// Counts the plain (non-`TabItemView`) `UIView` subviews inside the tab's
     /// container stack view. The underline/circle addition view is added there
     /// as a plain `UIView`; the item views are `TabItemView`s. `additionView`
