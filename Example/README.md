@@ -2,7 +2,8 @@
 
 A small iOS app that demonstrates `SwipeMenuViewController` and lets you tweak
 `SwipeMenuViewOptions` live. It is written entirely in code — no storyboards —
-with a `UIWindowScene` lifecycle and SF Symbols, and the option-building logic in
+with a `UIWindowScene` lifecycle, SF Symbols, and a Liquid Glass options button,
+and the option-building logic in
 [`SwipeMenuSettings`](./Example/SwipeMenuSettings.swift) is covered by unit tests
 in [`ExampleTests`](./ExampleTests).
 
