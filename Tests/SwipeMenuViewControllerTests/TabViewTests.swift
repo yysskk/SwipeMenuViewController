@@ -222,6 +222,67 @@ struct TabViewTests {
         #expect(additionViewCount(in: tabView) == 0)
     }
 
+    // MARK: - Item fonts
+
+    @Test("The selected item uses selectedFont and the rest use font")
+    func selectedFontIsAppliedToSelectedItemOnly() {
+        var options = SwipeMenuViewOptions.TabView()
+        options.itemView.font = .systemFont(ofSize: 14)
+        options.itemView.selectedFont = .boldSystemFont(ofSize: 20)
+
+        let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: options)
+
+        let window = hostTabView(tabView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        // The first item is selected after reload, so it uses the selected font...
+        #expect(tabView.itemViews[0].titleLabel.font == options.itemView.selectedFont)
+        // ...and every other item uses the base font.
+        #expect(tabView.itemViews.dropFirst().allSatisfy { $0.titleLabel.font == options.itemView.font })
+    }
+
+    @Test("Selecting another tab moves the selected font onto it")
+    func selectedFontFollowsSelection() {
+        var options = SwipeMenuViewOptions.TabView()
+        options.itemView.font = .systemFont(ofSize: 14)
+        options.itemView.selectedFont = .boldSystemFont(ofSize: 20)
+
+        let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: options)
+
+        let window = hostTabView(tabView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        tabView.jump(to: 1)
+
+        #expect(tabView.itemViews[1].titleLabel.font == options.itemView.selectedFont)
+        #expect(tabView.itemViews[0].titleLabel.font == options.itemView.font)
+        #expect(tabView.itemViews[2].titleLabel.font == options.itemView.font)
+    }
+
+    @Test("selectedFont does not affect flexible item widths")
+    func selectedFontDoesNotAffectWidth() {
+        var base = SwipeMenuViewOptions.TabView()
+        base.style = .flexible
+        base.itemView.font = .systemFont(ofSize: 14)
+        base.itemView.selectedFont = .systemFont(ofSize: 14)
+
+        var large = base
+        // A much larger selected font must not widen the selected item, because
+        // widths are measured with `font`.
+        large.itemView.selectedFont = .boldSystemFont(ofSize: 40)
+
+        let (baseTab, baseDS) = makeTabView(titles: ["Selected", "B", "C"], options: base)
+        let baseWindow = hostTabView(baseTab)
+        defer { withExtendedLifetime((baseWindow, baseDS)) {} }
+
+        let (largeTab, largeDS) = makeTabView(titles: ["Selected", "B", "C"], options: large)
+        let largeWindow = hostTabView(largeTab)
+        defer { withExtendedLifetime((largeWindow, largeDS)) {} }
+
+        // Item 0 is selected in both tab views; its width must be identical.
+        #expect(abs(baseTab.itemViews[0].frame.width - largeTab.itemViews[0].frame.width) < 0.5)
+    }
+
     // MARK: - Underline corner radius
 
     @Test("The underline indicator has square corners by default")
