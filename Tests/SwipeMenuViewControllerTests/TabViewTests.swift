@@ -112,6 +112,53 @@ struct TabViewTests {
         #expect(abs(total - tabView.frame.width) < 1.0)
     }
 
+    @Test("Flexible content width includes both horizontal safe-area insets")
+    func flexibleContentWidthIncludesSafeAreaInsets() {
+        var options = SwipeMenuViewOptions.TabView()
+        options.style = .flexible
+        options.margin = 0
+        options.isSafeAreaEnabled = true
+        options.needsAdjustItemViewWidth = false
+        options.itemView.width = 100
+
+        let dataSource = StubTabViewDataSource(titles: ["A", "B", "C"])
+        let tabView = TabView(frame: CGRect(x: 0, y: 0, width: 400, height: options.height), options: options)
+        tabView.dataSource = dataSource
+
+        // Host inside a view controller so its safe area can be driven via
+        // additionalSafeAreaInsets (a UIViewController-only property).
+        let viewController = UIViewController()
+        viewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 400, height: 667))
+        window.rootViewController = viewController
+        window.makeKeyAndVisible()
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        tabView.translatesAutoresizingMaskIntoConstraints = false
+        viewController.view.addSubview(tabView)
+        NSLayoutConstraint.activate([
+            tabView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
+            tabView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
+            tabView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+            tabView.heightAnchor.constraint(equalToConstant: options.height)
+        ])
+        viewController.view.layoutIfNeeded()
+        // Build the items against the stable frame with the safe area in place.
+        tabView.reloadData()
+        viewController.view.layoutIfNeeded()
+
+        // Precondition: the safe area really reached the tab view.
+        #expect(tabView.safeAreaInsets.left == 20)
+        #expect(tabView.safeAreaInsets.right == 20)
+
+        // The container is laid out at leading inset + margin, so the scrollable
+        // width must cover the items plus the margin and inset on *both* sides;
+        // otherwise the last item cannot be scrolled fully into view.
+        let itemsWidth: CGFloat = 100 * 3
+        let expectedWidth = itemsWidth + tabView.safeAreaInsets.left + tabView.safeAreaInsets.right
+        #expect(abs(tabView.contentSize.width - expectedWidth) < 1.0)
+    }
+
     @Test("With safe area disabled, a safe-area change does not shrink segmented items")
     func safeAreaDisabledIgnoresInsetChanges() {
         var options = SwipeMenuViewOptions.TabView()

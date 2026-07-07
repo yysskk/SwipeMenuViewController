@@ -338,7 +338,7 @@ open class TabView: UIScrollView {
                     containerView.widthAnchor.constraint(equalToConstant: containerWidth),
                     heightConstraint
                     ])
-                contentSize.width = containerWidth + options.margin * 2 + safeAreaInsets.left - safeAreaInsets.right
+                contentSize.width = containerWidth + options.margin * 2 + safeAreaInsets.left + safeAreaInsets.right
             } else {
                 leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin)
                 NSLayoutConstraint.activate([
