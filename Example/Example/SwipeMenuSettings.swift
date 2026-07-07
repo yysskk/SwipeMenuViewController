@@ -92,7 +92,7 @@ struct SwipeMenuSettings: Equatable {
         options.tabView.adjustsItemViewWidth = adjustsItemWidthToFit
         options.tabView.itemView.width = itemWidth
         options.tabView.itemView.textColor = .secondaryLabel
-        options.tabView.additionView.backgroundColor = .label
+        options.tabView.indicatorView.backgroundColor = .label
 
         switch style {
         case .flexible: options.tabView.style = .flexible
@@ -101,14 +101,14 @@ struct SwipeMenuSettings: Equatable {
 
         switch tabDecoration {
         case .underline:
-            options.tabView.addition = .underline
+            options.tabView.indicator = .underline
             options.tabView.itemView.selectedTextColor = .label
         case .circle:
-            options.tabView.addition = .circle
+            options.tabView.indicator = .circle
             // The pill is filled with `.label`, so the title inverts to stay legible.
             options.tabView.itemView.selectedTextColor = .systemBackground
         case .none:
-            options.tabView.addition = .none
+            options.tabView.indicator = .none
             options.tabView.itemView.selectedTextColor = .label
         }
 

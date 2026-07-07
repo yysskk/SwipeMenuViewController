@@ -395,7 +395,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
             update(from: currentIndex, to: currentIndex - 1)
         }
 
-        moveAdditionView(by: scrollView)
+        moveIndicatorView(by: scrollView)
     }
 
     public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
@@ -411,18 +411,18 @@ extension SwipeMenuView: UIScrollViewDelegate {
             return
         }
 
-        moveAdditionView(by: scrollView)
+        moveIndicatorView(by: scrollView)
     }
 
-    /// Moves the tab bar's addition view (underline/circle) to track the content scroll position.
-    private func moveAdditionView(by scrollView: UIScrollView) {
+    /// Moves the tab bar's indicator view (underline/circle) to track the content scroll position.
+    private func moveIndicatorView(by scrollView: UIScrollView) {
 
         guard let tabView, let contentScrollView else { return }
 
         let ratio = scrollView.contentOffset.x.truncatingRemainder(dividingBy: contentScrollView.frame.width) / contentScrollView.frame.width
         let direction: TabView.Direction = scrollView.contentOffset.x >= frame.width * CGFloat(currentIndex) ? .forward : .reverse
 
-        tabView.moveAdditionView(index: currentIndex, ratio: ratio, direction: direction)
+        tabView.moveIndicatorView(index: currentIndex, ratio: ratio, direction: direction)
     }
 }
 

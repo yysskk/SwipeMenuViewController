@@ -19,7 +19,7 @@ struct SwipeMenuViewOptionsTests {
         #expect(options.tabView.height == 44.0)
         #expect(options.tabView.margin == 0.0)
         #expect(options.tabView.style == .flexible)
-        #expect(options.tabView.addition == .underline)
+        #expect(options.tabView.indicator == .underline)
         #expect(options.tabView.adjustsItemViewWidth == true)
         #expect(options.tabView.interpolatesTextColorOnSwipe == true)
         #expect(options.tabView.isSafeAreaEnabled == true)
@@ -38,15 +38,15 @@ struct SwipeMenuViewOptionsTests {
         #expect(options.tabView.itemView.numberOfLines == 1)
     }
 
-    @Test("AdditionView documented defaults")
-    func additionViewDefaults() {
+    @Test("IndicatorView documented defaults")
+    func indicatorViewDefaults() {
         let options = SwipeMenuViewOptions()
 
-        #expect(options.tabView.additionView.underline.height == 2.0)
-        #expect(options.tabView.additionView.underline.cornerRadius == 0)
-        #expect(options.tabView.additionView.animationDuration == 0.3)
-        #expect(options.tabView.additionView.isAnimationOnSwipeEnabled == true)
-        #expect(options.tabView.additionView.padding == .zero)
+        #expect(options.tabView.indicatorView.underline.height == 2.0)
+        #expect(options.tabView.indicatorView.underline.cornerRadius == 0)
+        #expect(options.tabView.indicatorView.animationDuration == 0.3)
+        #expect(options.tabView.indicatorView.isAnimationOnSwipeEnabled == true)
+        #expect(options.tabView.indicatorView.padding == .zero)
     }
 
     @Test("ContentScrollView documented defaults")

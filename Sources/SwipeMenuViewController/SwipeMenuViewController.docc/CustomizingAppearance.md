@@ -16,7 +16,7 @@ defaults, so you only override what you need.
 ```swift
 var options = SwipeMenuViewOptions()
 options.tabView.style = .segmented
-options.tabView.addition = .underline
+options.tabView.indicator = .underline
 swipeMenuView.reloadData(options: options)
 ```
 
@@ -33,7 +33,7 @@ top-level `isSafeAreaEnabled` toggles the safe-area behavior of both at once.
 - `backgroundColor`: the bar's background color. Defaults to `.clear`.
 - `clipsToBounds`: whether the bar clips its contents. Defaults to `true`.
 - `style`: `.flexible` (items sized to their content) or `.segmented` (items share the width equally). Defaults to `.flexible`.
-- `addition`: the selection indicator — `.underline`, `.circle`, or `.none`. Defaults to `.underline`.
+- `indicator`: the selection indicator — `.underline`, `.circle`, or `.none`. Defaults to `.underline`.
 - `adjustsItemViewWidth`: whether flexible item widths are adjusted to fit their titles. Defaults to `true`.
 - `interpolatesTextColorOnSwipe`: whether the item text color interpolates toward the selected color as you swipe. Defaults to `true`.
 - `isSafeAreaEnabled`: whether the bar respects the safe area. Defaults to `true`.
@@ -44,7 +44,7 @@ options.tabView.height = 52
 options.tabView.margin = 8
 options.tabView.backgroundColor = .systemBackground
 options.tabView.style = .flexible
-options.tabView.addition = .underline
+options.tabView.indicator = .underline
 options.tabView.adjustsItemViewWidth = true
 options.tabView.interpolatesTextColorOnSwipe = true
 options.tabView.isSafeAreaEnabled = true
@@ -83,7 +83,7 @@ options.tabView.itemView.numberOfLines = 0
 
 ## Selection indicator
 
-The `additionView` group configures the selection indicator drawn behind or beneath the items:
+The `indicatorView` group configures the selection indicator drawn behind or beneath the items:
 
 - `padding`: insets applied to the indicator. Defaults to `.zero`.
 - `backgroundColor`: the indicator color. Defaults to `.black`.
@@ -91,39 +91,39 @@ The `additionView` group configures the selection indicator drawn behind or bene
 - `isAnimationOnSwipeEnabled`: whether the indicator follows your finger continuously while swiping. When `false`, it jumps to the destination tab instead. Defaults to `true`.
 
 ```swift
-options.tabView.addition = .underline
-options.tabView.additionView.padding = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
-options.tabView.additionView.backgroundColor = .systemBlue
-options.tabView.additionView.animationDuration = 0.25
-options.tabView.additionView.isAnimationOnSwipeEnabled = true
+options.tabView.indicator = .underline
+options.tabView.indicatorView.padding = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+options.tabView.indicatorView.backgroundColor = .systemBlue
+options.tabView.indicatorView.animationDuration = 0.25
+options.tabView.indicatorView.isAnimationOnSwipeEnabled = true
 ```
 
 ### Underline
 
-When `addition` is `.underline`, the `underline` group sets the underline thickness. There is no
-top-level height on the addition view — the thickness lives on the underline options:
+When `indicator` is `.underline`, the `underline` group sets the underline thickness. There is no
+top-level height on the indicator view — the thickness lives on the underline options:
 
 - `height`: the underline thickness. Defaults to `2.0`.
 - `cornerRadius`: the underline's corner radius. Defaults to `0` (square corners). Set it to half the height for a pill shape.
 
 ```swift
-options.tabView.addition = .underline
-options.tabView.additionView.underline.height = 3
-options.tabView.additionView.underline.cornerRadius = 1.5
+options.tabView.indicator = .underline
+options.tabView.indicatorView.underline.height = 3
+options.tabView.indicatorView.underline.cornerRadius = 1.5
 ```
 
 ### Circle
 
-When `addition` is `.circle`, the `circle` group shapes the highlight drawn behind the selected item:
+When `indicator` is `.circle`, the `circle` group shapes the highlight drawn behind the selected item:
 
 - `cornerRadius`: the corner radius. When `nil` (the default), it is half the indicator's height, producing a pill.
 - `maskedCorners`: which corners are rounded. Defaults to `nil` (all corners).
 
 ```swift
-options.tabView.addition = .circle
-options.tabView.additionView.backgroundColor = .systemBlue
-options.tabView.additionView.circle.cornerRadius = 8
-options.tabView.additionView.circle.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+options.tabView.indicator = .circle
+options.tabView.indicatorView.backgroundColor = .systemBlue
+options.tabView.indicatorView.circle.cornerRadius = 8
+options.tabView.indicatorView.circle.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
 ```
 
 ## Content area

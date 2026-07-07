@@ -11,7 +11,7 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
             // TODO: case infinity
         }
 
-        public nonisolated enum Addition: Sendable {
+        public nonisolated enum Indicator: Sendable {
             case underline
             case circle
             case none
@@ -51,37 +51,37 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
             public var numberOfLines: Int = 1
         }
 
-        public nonisolated struct AdditionView: Sendable {
+        public nonisolated struct IndicatorView: Sendable {
 
             public nonisolated struct Underline: Sendable {
-                /// Underline height if addition style select `.underline`. Defaults to `2.0`.
+                /// The underline thickness when the indicator is `.underline`. Defaults to `2.0`.
                 public var height: CGFloat = 2.0
 
-                /// Corner radius of the underline if addition style select `.underline`.
+                /// The corner radius of the underline when the indicator is `.underline`.
                 /// Defaults to `0` (square corners). Set it to half of `height` for a pill shape.
                 public var cornerRadius: CGFloat = 0
             }
 
             public nonisolated struct Circle: Sendable {
-                /// Circle cornerRadius if addition style select `.circle`. Defaults to `nil`.
-                /// `AdditionView.height / 2` in the case of nil.
+                /// The corner radius of the highlight when the indicator is `.circle`.
+                /// Defaults to `nil`, which uses half the highlight's height (a capsule).
                 public var cornerRadius: CGFloat? = nil
 
-                /// Circle maskedCorners if addition style select `.circle`. Defaults to `nil`.
-                /// It helps to make specific corners rounded.
+                /// The corners rounded by `cornerRadius` when the indicator is `.circle`.
+                /// Defaults to `nil`, which rounds all four corners.
                 public var maskedCorners: CACornerMask? = nil
             }
 
-            /// AdditionView paddings. Defaults to `.zero`.
+            /// The padding around the indicator view. Defaults to `.zero`.
             public var padding: UIEdgeInsets = .zero
 
-            /// AdditionView backgroundColor. Defaults to `.black`.
+            /// The indicator view's background color. Defaults to `.black`.
             public var backgroundColor: UIColor = .black
 
-            /// AdditionView animating duration. Defaults to `0.3`.
+            /// The duration of the indicator's move animation, in seconds. Defaults to `0.3`.
             public var animationDuration: Double = 0.3
 
-            /// Whether the addition view continuously tracks the finger while the content is
+            /// Whether the indicator view continuously tracks the finger while the content is
             /// swiped. When `false`, it animates to the destination tab once the page changes
             /// instead. Defaults to `true`.
             public var isAnimationOnSwipeEnabled: Bool = true
@@ -108,8 +108,9 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
         /// TabView style. Defaults to `.flexible`. Style type has [`.flexible` , `.segmented`].
         public var style: Style = .flexible
 
-        /// TabView addition. Defaults to `.underline`. Addition type has [`.underline`, `.circle`, `.none`].
-        public var addition: Addition = .underline
+        /// The selection indicator drawn on the selected tab: `.underline`, `.circle`,
+        /// or `.none`. Defaults to `.underline`.
+        public var indicator: Indicator = .underline
 
         /// Whether each `.flexible` item is sized to fit its title (plus ``ItemView/margin``
         /// on both sides) instead of using the fixed ``ItemView/width``. Defaults to `true`.
@@ -126,8 +127,8 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
         /// ItemView options
         public var itemView = ItemView()
 
-        /// AdditionView options
-        public var additionView = AdditionView()
+        /// IndicatorView options
+        public var indicatorView = IndicatorView()
 
         public init() { }
     }

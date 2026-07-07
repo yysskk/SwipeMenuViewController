@@ -3,18 +3,23 @@
 ## Unreleased
 
 ### Breaking
+- Renamed the "addition" terminology to "indicator" throughout `SwipeMenuViewOptions`, matching UIKit's selection-indicator vocabulary. The old names have been removed:
+  - `TabView.Addition` → `TabView.Indicator` (the `.underline` / `.circle` / `.none` cases are unchanged)
+  - `TabView.addition` → `TabView.indicator`
+  - `TabView.AdditionView` → `TabView.IndicatorView`
+  - `TabView.additionView` → `TabView.indicatorView`
 - Renamed three `SwipeMenuViewOptions` properties to follow Swift API naming conventions. The old spellings have been removed:
   - `TabView.needsAdjustItemViewWidth` → `TabView.adjustsItemViewWidth`
   - `TabView.needsConvertTextColorRatio` → `TabView.interpolatesTextColorOnSwipe`
-  - `TabView.AdditionView.isAnimationOnSwipeEnable` → `TabView.AdditionView.isAnimationOnSwipeEnabled`
+  - `TabView.AdditionView.isAnimationOnSwipeEnable` → `TabView.IndicatorView.isAnimationOnSwipeEnabled`
 
 ### Added
 - `SwipeMenuViewOptions.TabView.ItemView.selectedFont` to use a different title font while a tab is selected. Defaults to the same 14 pt bold system font as `font`, so the title font does not change on selection unless you set it. It affects the selected title's appearance only; in the `.flexible` style item widths are still measured with `font`.
 - `SwipeMenuViewOptions.TabView.ItemView.numberOfLines` to let tab titles wrap onto multiple lines (use `0` for as many lines as the title needs). Defaults to `1`, preserving the previous single-line behavior. Most useful with the `.segmented` style, where a long title would otherwise be truncated.
-- `SwipeMenuViewOptions.TabView.AdditionView.Underline.cornerRadius` to round the corners of the underline indicator (set it to half the underline height for a pill shape). Defaults to `0`, preserving the previous square corners.
+- `SwipeMenuViewOptions.TabView.IndicatorView.Underline.cornerRadius` to round the corners of the underline indicator (set it to half the underline height for a pill shape). Defaults to `0`, preserving the previous square corners.
 
 ### Fixed
-- The `.segmented` tab style mispositioned the selection indicator when `additionView.padding` had non-zero horizontal insets: the first tab's indicator spilled off the leading edge, and each later tab drifted increasingly to the left. The indicator now aligns with every tab, inset by the padding, consistent with the other tab styles (issue #25).
+- The `.segmented` tab style mispositioned the selection indicator when `indicatorView.padding` had non-zero horizontal insets: the first tab's indicator spilled off the leading edge, and each later tab drifted increasingly to the left. The indicator now aligns with every tab, inset by the padding, consistent with the other tab styles (issue #25).
 - The `.flexible` tab style computed its scrollable width by subtracting the right safe-area inset instead of adding it, so on devices with a non-zero right inset (for example landscape with the notch on the left) the last tab could not be scrolled fully into view.
 - `ContentScrollView.reload()` left the previous page views in the view hierarchy while building the new ones, stacking a duplicate set of pages on every call. It now replaces the pages and preserves the current page index.
 
