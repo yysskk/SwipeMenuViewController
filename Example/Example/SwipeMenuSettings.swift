@@ -89,7 +89,7 @@ struct SwipeMenuSettings: Equatable {
         var options = SwipeMenuViewOptions()
 
         options.tabView.margin = tabMargin
-        options.tabView.needsAdjustItemViewWidth = adjustsItemWidthToFit
+        options.tabView.adjustsItemViewWidth = adjustsItemWidthToFit
         options.tabView.itemView.width = itemWidth
         options.tabView.itemView.textColor = .secondaryLabel
         options.tabView.additionView.backgroundColor = .label

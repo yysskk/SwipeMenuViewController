@@ -81,8 +81,10 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
             /// AdditionView animating duration. Defaults to `0.3`.
             public var animationDuration: Double = 0.3
 
-            /// AdditionView swipe animation disable feature. Defaults to 'true'
-            public var isAnimationOnSwipeEnable: Bool = true
+            /// Whether the addition view continuously tracks the finger while the content is
+            /// swiped. When `false`, it animates to the destination tab once the page changes
+            /// instead. Defaults to `true`.
+            public var isAnimationOnSwipeEnabled: Bool = true
 
             /// Underline style options.
             public var underline = Underline()
@@ -109,11 +111,14 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
         /// TabView addition. Defaults to `.underline`. Addition type has [`.underline`, `.circle`, `.none`].
         public var addition: Addition = .underline
 
-        /// TabView adjust width or not. Defaults to `true`.
-        public var needsAdjustItemViewWidth: Bool = true
+        /// Whether each `.flexible` item is sized to fit its title (plus ``ItemView/margin``
+        /// on both sides) instead of using the fixed ``ItemView/width``. Defaults to `true`.
+        public var adjustsItemViewWidth: Bool = true
 
-        /// Convert the text color of ItemView to selected text color by scroll rate of ContentScrollView. Defaults to `true`.
-        public var needsConvertTextColorRatio: Bool = true
+        /// Whether tab titles crossfade between ``ItemView/textColor`` and
+        /// ``ItemView/selectedTextColor`` in proportion to the swipe progress. When `false`,
+        /// titles switch color only when the selection changes. Defaults to `true`.
+        public var interpolatesTextColorOnSwipe: Bool = true
 
         /// TabView enable safeAreaLayout. Defaults to `true`.
         public var isSafeAreaEnabled: Bool = true
