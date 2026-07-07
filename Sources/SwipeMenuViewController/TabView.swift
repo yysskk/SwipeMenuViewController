@@ -74,6 +74,12 @@ open class TabView: UIScrollView {
     private var leftMarginConstraint: NSLayoutConstraint = .init()
     private var widthConstraint: NSLayoutConstraint = .init()
 
+    /// The safe-area insets the layout honors: the view's real insets when
+    /// safe-area layout is enabled through the options, `.zero` otherwise.
+    private var layoutSafeAreaInsets: UIEdgeInsets {
+        return options.isSafeAreaEnabled ? safeAreaInsets : .zero
+    }
+
     public init(frame: CGRect, options: SwipeMenuViewOptions.TabView? = nil) {
         super.init(frame: frame)
 
@@ -109,7 +115,7 @@ open class TabView: UIScrollView {
 
         leftMarginConstraint.constant = options.margin + safeAreaInsets.left
         if options.style == .segmented {
-            widthConstraint.constant = options.margin * -2 - safeAreaInsets.left - safeAreaInsets.right
+            widthConstraint.constant = -(options.margin * 2 + safeAreaInsets.left + safeAreaInsets.right)
         }
 
         layoutIfNeeded()
@@ -119,16 +125,9 @@ open class TabView: UIScrollView {
 
         if options.style == .segmented { return }
 
-        let offset: CGFloat
-        let contentWidth: CGFloat
-
-        if options.isSafeAreaEnabled {
-            offset = target.center.x + options.margin + safeAreaInsets.left - self.frame.width / 2
-            contentWidth = containerView.frame.width + options.margin * 2 + safeAreaInsets.left + safeAreaInsets.right
-        } else {
-            offset = target.center.x + options.margin - self.frame.width / 2
-            contentWidth = containerView.frame.width + options.margin * 2
-        }
+        let inset = layoutSafeAreaInsets
+        let offset = target.center.x + options.margin + inset.left - self.frame.width / 2
+        let contentWidth = containerView.frame.width + options.margin * 2 + inset.horizontal
 
         if offset < 0 || self.frame.width > contentWidth {
             self.setContentOffset(CGPoint(x: 0, y: 0), animated: animated)
@@ -218,24 +217,19 @@ open class TabView: UIScrollView {
             containerHeight = frame.height
         }
 
+        // The container frame is provisional: layout(containerView:containerWidth:)
+        // replaces it with constraints. Its size still matters before that pass,
+        // because the item views measure themselves against it.
+        let inset = layoutSafeAreaInsets
+
         switch options.style {
         case .flexible:
             let containerWidth = options.itemView.width * CGFloat(itemCount)
-            if options.isSafeAreaEnabled {
-                contentSize = CGSize(width: containerWidth + options.margin * 2 + safeAreaInsets.left + safeAreaInsets.right, height: options.height)
-                containerView.frame = CGRect(x: 0, y: options.margin + safeAreaInsets.left, width: containerWidth, height: containerHeight)
-            } else {
-                contentSize = CGSize(width: containerWidth + options.margin * 2, height: options.height)
-                containerView.frame = CGRect(x: 0, y: options.margin, width: containerWidth, height: containerHeight)
-            }
+            contentSize = CGSize(width: containerWidth + options.margin * 2 + inset.horizontal, height: options.height)
+            containerView.frame = CGRect(x: 0, y: options.margin, width: containerWidth, height: containerHeight)
         case .segmented:
-            if options.isSafeAreaEnabled {
-                contentSize = CGSize(width: frame.width, height: options.height)
-                containerView.frame = CGRect(x: 0, y: options.margin + safeAreaInsets.left, width: frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right, height: containerHeight)
-            } else {
-                contentSize = CGSize(width: frame.width, height: options.height)
-                containerView.frame = CGRect(x: 0, y: options.margin, width: frame.width - options.margin * 2, height: containerHeight)
-            }
+            contentSize = CGSize(width: frame.width, height: options.height)
+            containerView.frame = CGRect(x: 0, y: options.margin, width: frame.width - options.margin * 2 - inset.horizontal, height: containerHeight)
         }
 
         containerView.backgroundColor = .clear
@@ -266,30 +260,17 @@ open class TabView: UIScrollView {
             switch options.style {
             case .flexible:
                 if options.needsAdjustItemViewWidth {
-                    var adjustCellSize = tabItemView.frame.size
-                    adjustCellSize.width = tabItemView.titleLabel.sizeThatFits(containerView.frame.size).width + options.itemView.margin * 2
-                    tabItemView.frame.size = adjustCellSize
-
-                    containerView.addArrangedSubview(tabItemView)
-
-                    NSLayoutConstraint.activate([
-                        tabItemView.widthAnchor.constraint(equalToConstant: adjustCellSize.width)
-                        ])
-                } else {
-                    containerView.addArrangedSubview(tabItemView)
-
-                    NSLayoutConstraint.activate([
-                        tabItemView.widthAnchor.constraint(equalToConstant: options.itemView.width)
-                        ])
+                    tabItemView.frame.size.width = tabItemView.titleLabel.sizeThatFits(containerView.frame.size).width + options.itemView.margin * 2
                 }
+
+                containerView.addArrangedSubview(tabItemView)
+
+                NSLayoutConstraint.activate([
+                    tabItemView.widthAnchor.constraint(equalToConstant: tabItemView.frame.width)
+                    ])
             case .segmented:
-                let adjustCellSize: CGSize
-                if options.isSafeAreaEnabled {
-                    adjustCellSize = CGSize(width: (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(itemCount), height: tabItemView.frame.size.height)
-                } else {
-                    adjustCellSize = CGSize(width: (frame.width - options.margin * 2) / CGFloat(itemCount), height: tabItemView.frame.size.height)
-                }
-                tabItemView.frame.size = adjustCellSize
+                let inset = layoutSafeAreaInsets
+                tabItemView.frame.size.width = (frame.width - options.margin * 2 - inset.horizontal) / CGFloat(itemCount)
 
                 containerView.addArrangedSubview(tabItemView)
             }
@@ -327,48 +308,26 @@ open class TabView: UIScrollView {
             heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height)
         }
 
+        let inset = layoutSafeAreaInsets
+        leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin + inset.left)
+
         switch options.style {
         case .flexible:
-            if options.isSafeAreaEnabled {
-                leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin + safeAreaInsets.left)
-
-                NSLayoutConstraint.activate([
-                    containerView.topAnchor.constraint(equalTo: self.topAnchor),
-                    leftMarginConstraint,
-                    containerView.widthAnchor.constraint(equalToConstant: containerWidth),
-                    heightConstraint
-                    ])
-                contentSize.width = containerWidth + options.margin * 2 + safeAreaInsets.left + safeAreaInsets.right
-            } else {
-                leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin)
-                NSLayoutConstraint.activate([
-                    containerView.topAnchor.constraint(equalTo: self.topAnchor),
-                    leftMarginConstraint,
-                    containerView.widthAnchor.constraint(equalToConstant: containerWidth),
-                    heightConstraint
-                    ])
-                contentSize.width = containerWidth + options.margin * 2
-            }
+            NSLayoutConstraint.activate([
+                containerView.topAnchor.constraint(equalTo: self.topAnchor),
+                leftMarginConstraint,
+                containerView.widthAnchor.constraint(equalToConstant: containerWidth),
+                heightConstraint
+                ])
+            contentSize.width = containerWidth + options.margin * 2 + inset.horizontal
         case .segmented:
-            if options.isSafeAreaEnabled {
-                leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin + safeAreaInsets.left)
-                widthConstraint = containerView.widthAnchor.constraint(equalTo: self.widthAnchor, constant: options.margin * -2 - safeAreaInsets.left - safeAreaInsets.right)
-                NSLayoutConstraint.activate([
-                    containerView.topAnchor.constraint(equalTo: self.topAnchor),
-                    leftMarginConstraint,
-                    widthConstraint,
-                    heightConstraint
-                    ])
-            } else {
-                leftMarginConstraint = containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: options.margin)
-                widthConstraint = containerView.widthAnchor.constraint(equalTo: self.widthAnchor, constant: options.margin * -2)
-                NSLayoutConstraint.activate([
-                    containerView.topAnchor.constraint(equalTo: self.topAnchor),
-                    leftMarginConstraint,
-                    widthConstraint,
-                    heightConstraint
-                    ])
-            }
+            widthConstraint = containerView.widthAnchor.constraint(equalTo: self.widthAnchor, constant: -(options.margin * 2 + inset.horizontal))
+            NSLayoutConstraint.activate([
+                containerView.topAnchor.constraint(equalTo: self.topAnchor),
+                leftMarginConstraint,
+                widthConstraint,
+                heightConstraint
+                ])
 
             contentSize = .zero
         }
@@ -446,12 +405,8 @@ extension TabView {
         // that width is the indicator's per-tab stride. The indicator itself is
         // inset by the horizontal padding. Using the padding-adjusted width as the
         // stride would drift the indicator left by `index * padding.horizontal`.
-        let cellWidth: CGFloat
-        if options.isSafeAreaEnabled && safeAreaInsets != .zero {
-            cellWidth = (frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right) / CGFloat(dataSource.numberOfItems(in: self))
-        } else {
-            cellWidth = (frame.width - options.margin * 2) / CGFloat(dataSource.numberOfItems(in: self))
-        }
+        let inset = layoutSafeAreaInsets
+        let cellWidth = (frame.width - options.margin * 2 - inset.horizontal) / CGFloat(dataSource.numberOfItems(in: self))
 
         additionView.frame.origin.x = cellWidth * CGFloat(index) + options.additionView.padding.left
         additionView.frame.size.width = cellWidth - options.additionView.padding.horizontal
