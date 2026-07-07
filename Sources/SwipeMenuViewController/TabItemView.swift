@@ -4,30 +4,30 @@ import UIKit
 final class TabItemView: UIView {
 
     /// The label that displays the tab's title.
-    private(set) var titleLabel: UILabel = UILabel()
+    let titleLabel = UILabel()
 
     /// The title color used when the item is not selected.
-    public var textColor: UIColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
+    var textColor: UIColor = UIColor(red: 140 / 255, green: 140 / 255, blue: 140 / 255, alpha: 1.0)
 
     /// The title color used when the item is selected.
-    public var selectedTextColor: UIColor = .white
+    var selectedTextColor: UIColor = .white
 
     /// The title font used when the item is not selected.
-    public var font: UIFont = UIFont.boldSystemFont(ofSize: 14) {
+    var font: UIFont = UIFont.boldSystemFont(ofSize: 14) {
         didSet {
             if !isSelected { titleLabel.font = font }
         }
     }
 
     /// The title font used when the item is selected.
-    public var selectedFont: UIFont = UIFont.boldSystemFont(ofSize: 14) {
+    var selectedFont: UIFont = UIFont.boldSystemFont(ofSize: 14) {
         didSet {
             if isSelected { titleLabel.font = selectedFont }
         }
     }
 
     /// Whether the item is currently selected. Setting this updates the title color and font.
-    public var isSelected: Bool = false {
+    var isSelected: Bool = false {
         didSet {
             if isSelected {
                 titleLabel.textColor = selectedTextColor
@@ -39,26 +39,21 @@ final class TabItemView: UIView {
         }
     }
 
-    public override init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
 
         setupLabel()
     }
 
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-
-    override public func layoutSubviews() {
-        super.layoutSubviews()
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     private func setupLabel() {
-        titleLabel = UILabel(frame: bounds)
         titleLabel.textAlignment = .center
         titleLabel.font = font
-        titleLabel.textColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
-        titleLabel.backgroundColor = UIColor.clear
+        titleLabel.textColor = textColor
+        titleLabel.backgroundColor = .clear
         addSubview(titleLabel)
         layoutLabel()
     }
@@ -67,10 +62,10 @@ final class TabItemView: UIView {
 
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: self.topAnchor),
-            titleLabel.widthAnchor.constraint(equalTo: self.widthAnchor),
-            titleLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            titleLabel.topAnchor.constraint(equalTo: topAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 }

@@ -59,6 +59,34 @@ struct ContentScrollViewTests {
         #expect(abs(contentScrollView.contentSize.width - contentScrollView.frame.width * 3) < 0.5)
     }
 
+    @Test("reload() rebuilds the pages from the data source when hosted")
+    func reloadRebuildsPages() {
+        let contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: 0, width: 375, height: 600), default: 0)
+        let dataSource = CountingContentDataSource(pageCount: 3)
+        contentScrollView.dataSource = dataSource
+
+        let window = hostInWindow(contentScrollView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        #expect(dataSource.requestedIndices == [0, 1, 2])
+
+        contentScrollView.reload()
+
+        #expect(dataSource.requestedIndices == [0, 1, 2, 0, 1, 2])
+    }
+
+    @Test("reload() without a superview does nothing")
+    func reloadWithoutSuperviewDoesNothing() {
+        let contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: 0, width: 375, height: 600), default: 0)
+        let dataSource = CountingContentDataSource(pageCount: 3)
+        contentScrollView.dataSource = dataSource
+        defer { withExtendedLifetime(dataSource) {} }
+
+        contentScrollView.reload()
+
+        #expect(dataSource.requestedIndices.isEmpty)
+    }
+
     @Test("A non-zero default index sets the matching current page")
     func nonZeroDefaultIndex() throws {
         let baseTag = 500

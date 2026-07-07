@@ -162,7 +162,7 @@ struct TabViewTests {
     /// Counts the plain (non-`TabItemView`) `UIView` subviews inside the tab's
     /// container stack view. The underline/circle addition view is added there
     /// as a plain `UIView`; the item views are `TabItemView`s. `additionView`
-    /// itself is `fileprivate`, so we detect it through the view hierarchy.
+    /// itself is `private`, so we detect it through the view hierarchy.
     private func additionViewCount(in tabView: TabView) -> Int {
         guard let container = tabView.subviews.first(where: { $0 is UIStackView }) else {
             return 0
@@ -172,7 +172,7 @@ struct TabViewTests {
 
     /// Returns the plain (non-`TabItemView`) `UIView` acting as the selection
     /// indicator inside the container stack view, or `nil` if there is none.
-    /// `additionView` is `fileprivate`, so it is located through the hierarchy.
+    /// `additionView` is `private`, so it is located through the hierarchy.
     private func additionView(in tabView: TabView) -> UIView? {
         guard let container = tabView.subviews.first(where: { $0 is UIStackView }) else {
             return nil

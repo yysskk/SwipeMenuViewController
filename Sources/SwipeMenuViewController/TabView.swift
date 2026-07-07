@@ -63,13 +63,13 @@ open class TabView: UIScrollView {
 
     var itemViews: [TabItemView] = []
 
-    fileprivate let containerView: UIStackView = UIStackView()
+    private let containerView = UIStackView()
 
-    fileprivate var additionView: UIView = .init()
+    private var additionView = UIView()
 
-    fileprivate var currentIndex: Int = 0
+    private var currentIndex: Int = 0
 
-    fileprivate(set) var options: SwipeMenuViewOptions.TabView = SwipeMenuViewOptions.TabView()
+    private(set) var options: SwipeMenuViewOptions.TabView = SwipeMenuViewOptions.TabView()
 
     private var leftMarginConstraint: NSLayoutConstraint = .init()
     private var widthConstraint: NSLayoutConstraint = .init()
@@ -115,7 +115,7 @@ open class TabView: UIScrollView {
         layoutIfNeeded()
     }
 
-    fileprivate func focus(on target: UIView, animated: Bool = true) {
+    private func focus(on target: UIView, animated: Bool = true) {
 
         if options.style == .segmented { return }
 
@@ -185,7 +185,7 @@ open class TabView: UIScrollView {
         updateSelectedItem(by: currentIndex)
     }
 
-    fileprivate func setupScrollView() {
+    private func setupScrollView() {
         backgroundColor = options.backgroundColor
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
@@ -197,7 +197,7 @@ open class TabView: UIScrollView {
         translatesAutoresizingMaskIntoConstraints = false
     }
 
-    fileprivate func setupContainerView(dataSource: TabViewDataSource) {
+    private func setupContainerView(dataSource: TabViewDataSource) {
 
         containerView.alignment = .leading
 
@@ -231,10 +231,10 @@ open class TabView: UIScrollView {
         case .segmented:
             if options.isSafeAreaEnabled {
                 contentSize = CGSize(width: frame.width, height: options.height)
-                containerView .frame = CGRect(x: 0, y: options.margin + safeAreaInsets.left, width: frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right, height: containerHeight)
+                containerView.frame = CGRect(x: 0, y: options.margin + safeAreaInsets.left, width: frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right, height: containerHeight)
             } else {
                 contentSize = CGSize(width: frame.width, height: options.height)
-                containerView .frame = CGRect(x: 0, y: options.margin, width: frame.width - options.margin * 2, height: containerHeight)
+                containerView.frame = CGRect(x: 0, y: options.margin, width: frame.width - options.margin * 2, height: containerHeight)
             }
         }
 
@@ -242,7 +242,7 @@ open class TabView: UIScrollView {
         addSubview(containerView)
     }
 
-    fileprivate func setupTabItemViews(dataSource: TabViewDataSource) {
+    private func setupTabItemViews(dataSource: TabViewDataSource) {
 
         itemViews = []
 
@@ -393,7 +393,7 @@ extension TabView {
         case reverse
     }
 
-    fileprivate func setupAdditionView() {
+    private func setupAdditionView() {
         if itemViews.isEmpty { return }
 
         switch options.addition {
@@ -437,7 +437,7 @@ extension TabView {
         focus(on: target)
     }
 
-    fileprivate func resetAdditionViewPosition(index: Int) {
+    private func resetAdditionViewPosition(index: Int) {
         guard options.style == .segmented,
             let dataSource,
             dataSource.numberOfItems(in: self) > 0 else { return }
@@ -457,7 +457,7 @@ extension TabView {
         additionView.frame.size.width = cellWidth - options.additionView.padding.horizontal
     }
 
-    fileprivate func animateAdditionView(index: Int, animated: Bool, completion: ((Bool) -> Swift.Void)? = nil) {
+    private func animateAdditionView(index: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
 
         update(index)
 
@@ -511,7 +511,7 @@ extension TabView {
 
 extension TabView {
     var currentItem: TabItemView? {
-        return currentIndex < itemViews.count ? itemViews[currentIndex] : nil
+        return itemViews.indices.contains(currentIndex) ? itemViews[currentIndex] : nil
     }
 
     var nextItem: TabItemView? {
@@ -542,20 +542,20 @@ extension TabView {
 
 extension TabView {
 
-    fileprivate var tapGestureRecognizer: UITapGestureRecognizer {
+    private func makeTapGestureRecognizer() -> UITapGestureRecognizer {
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapItemView(_:)))
         gestureRecognizer.numberOfTapsRequired = 1
         gestureRecognizer.cancelsTouchesInView = false
         return gestureRecognizer
     }
 
-    fileprivate func addTabItemGestures() {
+    private func addTabItemGestures() {
         itemViews.forEach {
-            $0.addGestureRecognizer(tapGestureRecognizer)
+            $0.addGestureRecognizer(makeTapGestureRecognizer())
         }
     }
 
-    @objc func tapItemView(_ recognizer: UITapGestureRecognizer) {
+    @objc private func tapItemView(_ recognizer: UITapGestureRecognizer) {
         guard let itemView = recognizer.view as? TabItemView,
             let index: Int = itemViews.firstIndex(of: itemView),
             currentIndex != index else { return }

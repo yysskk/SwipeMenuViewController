@@ -32,6 +32,32 @@ final class StubMenuDataSource: SwipeMenuViewDataSource {
     }
 }
 
+/// A `SwipeMenuViewDataSource` that records every page index it is asked to
+/// provide a view controller for, so tests can assert how often pages are
+/// (re)built.
+final class CountingMenuDataSource: SwipeMenuViewDataSource {
+
+    var titles: [String]
+    private(set) var requestedPageIndices: [Int] = []
+
+    init(titles: [String]) {
+        self.titles = titles
+    }
+
+    func numberOfPages(in swipeMenuView: SwipeMenuView) -> Int {
+        return titles.count
+    }
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, titleForPageAt index: Int) -> String {
+        return titles[index]
+    }
+
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
+        requestedPageIndices.append(index)
+        return UIViewController()
+    }
+}
+
 /// A `SwipeMenuViewDelegate` that records an ordered log of the lifecycle and
 /// paging callbacks it receives.
 final class RecordingMenuDelegate: SwipeMenuViewDelegate {

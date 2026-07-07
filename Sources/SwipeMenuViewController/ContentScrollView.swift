@@ -28,11 +28,11 @@ open class ContentScrollView: UIScrollView {
     /// The data source that provides the page views.
     open weak var dataSource: ContentScrollViewDataSource?
 
-    fileprivate var pageViews: [UIView] = []
+    private var pageViews: [UIView] = []
 
-    fileprivate var currentIndex: Int = 0
+    private var currentIndex: Int = 0
 
-    fileprivate var options: SwipeMenuViewOptions.ContentScrollView = SwipeMenuViewOptions.ContentScrollView()
+    private var options: SwipeMenuViewOptions.ContentScrollView = SwipeMenuViewOptions.ContentScrollView()
 
     /// Creates a content scroll view with the given frame, initial page, and options.
     /// - Parameters:
@@ -79,7 +79,8 @@ open class ContentScrollView: UIScrollView {
     /// The view must already be in a view hierarchy; when it has no superview
     /// this method does nothing.
     public func reload() {
-        didMoveToSuperview()
+        guard superview != nil else { return }
+        setup()
     }
 
     /// Updates the tracked current page index without changing the scroll offset.
@@ -90,16 +91,16 @@ open class ContentScrollView: UIScrollView {
 
     // MARK: - Setup
 
-    fileprivate func setup() {
+    private func setup() {
 
-        guard let dataSource else { return }
-        if dataSource.numberOfPages(in: self) <= 0 { return }
+        guard let dataSource,
+              dataSource.numberOfPages(in: self) > 0 else { return }
 
         setupScrollView()
         setupPages()
     }
 
-    fileprivate func setupScrollView() {
+    private func setupScrollView() {
         backgroundColor = options.backgroundColor
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
@@ -145,30 +146,17 @@ open class ContentScrollView: UIScrollView {
 extension ContentScrollView {
 
     var currentPage: UIView? {
-
-        if currentIndex < pageViews.count && currentIndex >= 0 {
-            return pageViews[currentIndex]
-        }
-
-        return nil
+        return pageViews.indices.contains(currentIndex) ? pageViews[currentIndex] : nil
     }
 
     var nextPage: UIView? {
-
-        if currentIndex < pageViews.count - 1 {
-            return pageViews[currentIndex + 1]
-        }
-
-        return nil
+        guard currentIndex < pageViews.count - 1 else { return nil }
+        return pageViews[currentIndex + 1]
     }
 
     var previousPage: UIView? {
-
-        if currentIndex > 0 {
-            return pageViews[currentIndex - 1]
-        }
-
-        return nil
+        guard currentIndex > 0 else { return nil }
+        return pageViews[currentIndex - 1]
     }
 
     /// Scrolls directly to the page at the given index.
