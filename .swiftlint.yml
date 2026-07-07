@@ -1,0 +1,40 @@
+# SwiftLint configuration for SwipeMenuViewController.
+#
+# CI runs `swiftlint lint --strict`, so every warning fails the build. The
+# thresholds below are deliberate deviations from the defaults, chosen to match
+# how this codebase is organized rather than to silence real problems.
+
+included:
+  - Sources
+  - Tests
+  - Example/Example
+  - Example/ExampleTests
+
+# SwipeMenuViewOptions groups its option structs by component
+# (TabView.IndicatorView.Underline, ...); the nesting is the API design.
+nesting:
+  type_level: 3
+
+# Allow idiomatic two-letter names such as `vc` in tests, and the
+# conventional color-component names in the UIColor tests.
+identifier_name:
+  min_length: 2
+  excluded:
+    - r
+    - g
+    - b
+    - a
+
+line_length:
+  warning: 160
+  ignores_urls: true
+
+file_length:
+  warning: 600
+
+type_body_length:
+  warning: 350
+
+# Tests keep windows/data sources alive with withExtendedLifetime((a, b, c)).
+large_tuple:
+  warning: 4

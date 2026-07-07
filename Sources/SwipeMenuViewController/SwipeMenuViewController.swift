@@ -87,7 +87,10 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
     /// than crashing. Override to provide pages that are not backed by `children`.
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
         guard children.indices.contains(index) else {
-            assertionFailure("SwipeMenuViewController: requested a page at \(index) but only \(children.count) child view controllers exist. Override the data source to provide the missing pages.")
+            assertionFailure("""
+                SwipeMenuViewController: requested a page at \(index) but only \(children.count) \
+                child view controllers exist. Override the data source to provide the missing pages.
+                """)
             // Return a detached placeholder rather than crashing. It is
             // intentionally not added via `addChild(_:)`: the default
             // `numberOfPages(in:)` counts `children`, so adding children on this
