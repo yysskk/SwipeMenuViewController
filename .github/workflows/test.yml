@@ -6,6 +6,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: test-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
@@ -14,6 +17,7 @@ jobs:
   package:
     name: Package tests (iOS Simulator)
     runs-on: macos-26
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - name: Select Xcode
@@ -26,13 +30,7 @@ jobs:
           swift --version
       - name: Select simulator
         id: sim
-        run: |
-          DEVICE=$(xcrun simctl list devices available --json \
-            | jq -r '[.devices | to_entries[] | select(.key|test("iOS")) | .value[] | select(.isAvailable and (.name|startswith("iPhone")))][0].name // empty')
-          if [ -z "$DEVICE" ]; then sudo xcodebuild -downloadPlatform iOS; DEVICE=$(xcrun simctl list devices available --json | jq -r '[.devices|to_entries[]|select(.key|test("iOS"))|.value[]|select(.isAvailable and (.name|startswith("iPhone")))][0].name // empty'); fi
-          if [ -z "$DEVICE" ]; then echo "::error::No available iPhone simulator found" >&2; exit 1; fi
-          echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
-          echo "Using: $DEVICE"
+        uses: ./.github/actions/select-simulator
       - name: Test
         run: |
           set -o pipefail
@@ -41,11 +39,26 @@ jobs:
           xcodebuild test \
             -scheme SwipeMenuViewController \
             -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.device }}" \
+            -enableCodeCoverage YES \
+            -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO
+      - name: Report code coverage
+        run: |
+          set -euo pipefail
+          {
+            echo "### Code coverage"
+            echo ""
+            echo "| Target | Line coverage |"
+            echo "|---|---|"
+            # List the library targets only; the test bundle's own coverage is noise.
+            xcrun xccov view --report --json TestResults.xcresult \
+              | jq -r '.targets[] | select(((.name | endswith(".xctest")) or (.name | endswith("Tests"))) | not) | "| \(.name) | \((.lineCoverage * 10000 | round) / 100)% |"'
+          } >> "$GITHUB_STEP_SUMMARY"
 
   example:
     name: Example app build
     runs-on: macos-26
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - name: Select Xcode
@@ -68,13 +81,7 @@ jobs:
         run: xcodegen generate --spec Example/project.yml
       - name: Select simulator
         id: sim
-        run: |
-          DEVICE=$(xcrun simctl list devices available --json \
-            | jq -r '[.devices | to_entries[] | select(.key|test("iOS")) | .value[] | select(.isAvailable and (.name|startswith("iPhone")))][0].name // empty')
-          if [ -z "$DEVICE" ]; then sudo xcodebuild -downloadPlatform iOS; DEVICE=$(xcrun simctl list devices available --json | jq -r '[.devices|to_entries[]|select(.key|test("iOS"))|.value[]|select(.isAvailable and (.name|startswith("iPhone")))][0].name // empty'); fi
-          if [ -z "$DEVICE" ]; then echo "::error::No available iPhone simulator found" >&2; exit 1; fi
-          echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
-          echo "Using: $DEVICE"
+        uses: ./.github/actions/select-simulator
       - name: Build and test
         run: |
           set -o pipefail
@@ -88,6 +95,7 @@ jobs:
   docc:
     name: Documentation build
     runs-on: macos-26
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - name: Select Xcode

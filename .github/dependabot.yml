@@ -1,0 +1,12 @@
+# Keep the GitHub Actions used by the workflows up to date. The library has no
+# package dependencies, so actions are the only ecosystem to watch.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns:
+          - "*"
