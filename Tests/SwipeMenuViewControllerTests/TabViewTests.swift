@@ -250,10 +250,10 @@ struct TabViewTests {
     }
 
     /// Counts the plain (non-`TabItemView`) `UIView` subviews inside the tab's
-    /// container stack view. The underline/circle addition view is added there
-    /// as a plain `UIView`; the item views are `TabItemView`s. `additionView`
+    /// container stack view. The underline/circle indicator view is added there
+    /// as a plain `UIView`; the item views are `TabItemView`s. `indicatorView`
     /// itself is `private`, so we detect it through the view hierarchy.
-    private func additionViewCount(in tabView: TabView) -> Int {
+    private func indicatorViewCount(in tabView: TabView) -> Int {
         guard let container = tabView.subviews.first(where: { $0 is UIStackView }) else {
             return 0
         }
@@ -262,54 +262,54 @@ struct TabViewTests {
 
     /// Returns the plain (non-`TabItemView`) `UIView` acting as the selection
     /// indicator inside the container stack view, or `nil` if there is none.
-    /// `additionView` is `private`, so it is located through the hierarchy.
-    private func additionView(in tabView: TabView) -> UIView? {
+    /// `indicatorView` is `private`, so it is located through the hierarchy.
+    private func indicatorView(in tabView: TabView) -> UIView? {
         guard let container = tabView.subviews.first(where: { $0 is UIStackView }) else {
             return nil
         }
         return container.subviews.first { type(of: $0) == UIView.self }
     }
 
-    @Test("Underline addition produces an addition view in the hierarchy")
-    func underlineAdditionExists() {
+    @Test("Underline indicator produces an indicator view in the hierarchy")
+    func underlineIndicatorExists() {
         var options = SwipeMenuViewOptions.TabView()
-        options.addition = .underline
+        options.indicator = .underline
 
         let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: options)
 
         let window = hostTabView(tabView)
         defer { withExtendedLifetime((window, dataSource)) {} }
 
-        // The underline addition view is added to the container view hierarchy.
-        #expect(additionViewCount(in: tabView) == 1)
+        // The underline indicator view is added to the container view hierarchy.
+        #expect(indicatorViewCount(in: tabView) == 1)
     }
 
-    @Test("Circle addition produces an addition view in the hierarchy")
-    func circleAdditionExists() {
+    @Test("Circle indicator produces an indicator view in the hierarchy")
+    func circleIndicatorExists() {
         var options = SwipeMenuViewOptions.TabView()
-        options.addition = .circle
+        options.indicator = .circle
 
         let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: options)
 
         let window = hostTabView(tabView)
         defer { withExtendedLifetime((window, dataSource)) {} }
 
-        // The circle addition view is added to the container view hierarchy.
-        #expect(additionViewCount(in: tabView) == 1)
+        // The circle indicator view is added to the container view hierarchy.
+        #expect(indicatorViewCount(in: tabView) == 1)
     }
 
-    @Test("No addition leaves the addition view out of the hierarchy")
-    func noAdditionHasNoAdditionView() {
+    @Test("No indicator leaves the indicator view out of the hierarchy")
+    func noIndicatorHasNoIndicatorView() {
         var options = SwipeMenuViewOptions.TabView()
-        options.addition = .none
+        options.indicator = .none
 
         let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: options)
 
         let window = hostTabView(tabView)
         defer { withExtendedLifetime((window, dataSource)) {} }
 
-        // With `.none`, the addition view is never added to the container.
-        #expect(additionViewCount(in: tabView) == 0)
+        // With `.none`, the indicator view is never added to the container.
+        #expect(indicatorViewCount(in: tabView) == 0)
     }
 
     // MARK: - Item fonts
@@ -378,31 +378,31 @@ struct TabViewTests {
     @Test("The underline indicator has square corners by default")
     func underlineCornerRadiusDefaultsToSquare() throws {
         var options = SwipeMenuViewOptions.TabView()
-        options.addition = .underline
+        options.indicator = .underline
 
         let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: options)
 
         let window = hostTabView(tabView)
         defer { withExtendedLifetime((window, dataSource)) {} }
 
-        let indicator = try #require(additionView(in: tabView))
+        let indicator = try #require(indicatorView(in: tabView))
         #expect(indicator.layer.cornerRadius == 0)
     }
 
     @Test("underline.cornerRadius is applied to the indicator layer")
     func underlineCornerRadiusIsApplied() throws {
         var options = SwipeMenuViewOptions.TabView()
-        options.addition = .underline
-        options.additionView.underline.height = 4
+        options.indicator = .underline
+        options.indicatorView.underline.height = 4
         // Half the height rounds the underline into a pill.
-        options.additionView.underline.cornerRadius = 2
+        options.indicatorView.underline.cornerRadius = 2
 
         let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: options)
 
         let window = hostTabView(tabView)
         defer { withExtendedLifetime((window, dataSource)) {} }
 
-        let indicator = try #require(additionView(in: tabView))
+        let indicator = try #require(indicatorView(in: tabView))
         #expect(indicator.layer.cornerRadius == 2)
     }
 
@@ -412,11 +412,11 @@ struct TabViewTests {
     func segmentedIndicatorAlignsWithEachTab() throws {
         var options = SwipeMenuViewOptions.TabView()
         options.style = .segmented
-        options.addition = .underline
+        options.indicator = .underline
         options.margin = 0
         // Non-zero horizontal padding makes both the offset sign (first tab) and
         // the per-tab stride (later tabs) observable.
-        options.additionView.padding = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        options.indicatorView.padding = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
 
         let titles = ["A", "B", "C"]
         let (tabView, dataSource) = makeTabView(titles: titles, options: options)
@@ -424,8 +424,8 @@ struct TabViewTests {
         let window = hostTabView(tabView, width: 375)
         defer { withExtendedLifetime((window, dataSource)) {} }
 
-        let indicator = try #require(additionView(in: tabView))
-        let padding = options.additionView.padding
+        let indicator = try #require(indicatorView(in: tabView))
+        let padding = options.indicatorView.padding
 
         // The indicator should align with the selected tab's frame, inset by the
         // padding — the same way the flexible style aligns it. Before the fix the
@@ -477,7 +477,7 @@ struct TabViewTests {
         // `nextItem` returned the current item and its label was overwritten
         // with an interpolated (mid-fade) color, causing a flicker. Post-fix the
         // branch is skipped, so the label keeps the selected color.
-        tabView.moveAdditionView(index: 2, ratio: 0.3, direction: .forward)
+        tabView.moveIndicatorView(index: 2, ratio: 0.3, direction: .forward)
 
         let actual = lastItem.titleLabel.textColor ?? .clear
         #expect(colorsEqual(actual, expectedColor))
@@ -498,7 +498,7 @@ struct TabViewTests {
 
         tabView.jump(to: 0)
         // Halfway through a forward swipe from item 0 to item 1.
-        tabView.moveAdditionView(index: 0, ratio: 0.5, direction: .forward)
+        tabView.moveIndicatorView(index: 0, ratio: 0.5, direction: .forward)
 
         let midGray = UIColor(white: 0.5, alpha: 1)
         let current = tabView.itemViews[0].titleLabel.textColor ?? .clear

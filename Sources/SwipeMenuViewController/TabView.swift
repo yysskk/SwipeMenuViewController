@@ -49,7 +49,7 @@ extension TabViewDelegate {
 
 /// The scrollable tab bar displayed at the top of a ``SwipeMenuView``.
 ///
-/// A `TabView` lays out one tab item per page and draws the selection addition
+/// A `TabView` lays out one tab item per page and draws the selection indicator
 /// (underline or circle) configured by ``SwipeMenuViewOptions/TabView``. It is created and
 /// managed by ``SwipeMenuView``; you normally configure it through the options rather than
 /// instantiating it directly.
@@ -65,7 +65,7 @@ open class TabView: UIScrollView {
 
     private let containerView = UIStackView()
 
-    private var additionView = UIView()
+    private var indicatorView = UIView()
 
     private var currentIndex: Int = 0
 
@@ -101,7 +101,7 @@ open class TabView: UIScrollView {
 
     open override func layoutSubviews() {
         super.layoutSubviews()
-        resetAdditionViewPosition(index: currentIndex)
+        resetIndicatorViewPosition(index: currentIndex)
     }
 
     open override func safeAreaInsetsDidChange() {
@@ -161,7 +161,7 @@ open class TabView: UIScrollView {
         setupScrollView()
         setupContainerView(dataSource: dataSource)
         setupTabItemViews(dataSource: dataSource)
-        setupAdditionView()
+        setupIndicatorView()
 
         if let defaultIndex {
             moveTabItem(index: defaultIndex, animated: animated)
@@ -171,7 +171,7 @@ open class TabView: UIScrollView {
     func reset() {
         currentIndex = 0
         itemViews.forEach { $0.removeFromSuperview() }
-        additionView.removeFromSuperview()
+        indicatorView.removeFromSuperview()
         containerView.removeFromSuperview()
         itemViews = []
     }
@@ -210,9 +210,9 @@ open class TabView: UIScrollView {
         let itemCount = dataSource.numberOfItems(in: self)
         var containerHeight: CGFloat = 0.0
 
-        switch options.addition {
+        switch options.indicator {
         case .underline:
-            containerHeight = frame.height - options.additionView.underline.height - options.additionView.padding.bottom
+            containerHeight = frame.height - options.indicatorView.underline.height - options.indicatorView.padding.bottom
         case .none, .circle:
             containerHeight = frame.height
         }
@@ -292,7 +292,7 @@ open class TabView: UIScrollView {
 
         layout(containerView: containerView, containerWidth: xPosition)
         addTabItemGestures()
-        animateAdditionView(index: currentIndex, animated: false)
+        animateIndicatorView(index: currentIndex, animated: false)
     }
 
     private func layout(containerView: UIView, containerWidth: CGFloat) {
@@ -301,9 +301,9 @@ open class TabView: UIScrollView {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         
         let heightConstraint: NSLayoutConstraint
-        switch options.addition {
+        switch options.indicator {
         case .underline:
-            heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height - options.additionView.underline.height - options.additionView.padding.bottom)
+            heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height - options.indicatorView.underline.height - options.indicatorView.padding.bottom)
         case .circle, .none:
             heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height)
         }
@@ -340,11 +340,11 @@ open class TabView: UIScrollView {
     }
 }
 
-// MARK: - AdditionView
+// MARK: - IndicatorView
 
 extension TabView {
 
-    /// The direction in which the selection addition moves as the content scrolls.
+    /// The direction in which the selection indicator moves as the content scrolls.
     public nonisolated enum Direction: Sendable {
         /// Moving toward a higher page index (scrolling forward).
         case forward
@@ -352,51 +352,51 @@ extension TabView {
         case reverse
     }
 
-    private func setupAdditionView() {
+    private func setupIndicatorView() {
         if itemViews.isEmpty { return }
 
-        switch options.addition {
+        switch options.indicator {
         case .underline:
             let itemView = itemViews[currentIndex]
-            additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.padding.left, y: itemView.frame.height - options.additionView.padding.vertical, width: itemView.frame.width - options.additionView.padding.horizontal, height: options.additionView.underline.height))
-            additionView.layer.cornerRadius = options.additionView.underline.cornerRadius
-            additionView.backgroundColor = options.additionView.backgroundColor
-            containerView.addSubview(additionView)
+            indicatorView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.indicatorView.padding.left, y: itemView.frame.height - options.indicatorView.padding.vertical, width: itemView.frame.width - options.indicatorView.padding.horizontal, height: options.indicatorView.underline.height))
+            indicatorView.layer.cornerRadius = options.indicatorView.underline.cornerRadius
+            indicatorView.backgroundColor = options.indicatorView.backgroundColor
+            containerView.addSubview(indicatorView)
         case .circle:
             let itemView = itemViews[currentIndex]
-            let height = itemView.bounds.height - options.additionView.padding.vertical
-            additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.padding.left, y: 0, width: itemView.frame.width - options.additionView.padding.horizontal, height: height))
-            additionView.layer.position.y = itemView.layer.position.y
-            additionView.layer.cornerRadius = options.additionView.circle.cornerRadius ?? additionView.frame.height / 2
-            additionView.backgroundColor = options.additionView.backgroundColor
+            let height = itemView.bounds.height - options.indicatorView.padding.vertical
+            indicatorView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.indicatorView.padding.left, y: 0, width: itemView.frame.width - options.indicatorView.padding.horizontal, height: height))
+            indicatorView.layer.position.y = itemView.layer.position.y
+            indicatorView.layer.cornerRadius = options.indicatorView.circle.cornerRadius ?? indicatorView.frame.height / 2
+            indicatorView.backgroundColor = options.indicatorView.backgroundColor
             
-            if let m = options.additionView.circle.maskedCorners {
-                additionView.layer.maskedCorners = m
+            if let m = options.indicatorView.circle.maskedCorners {
+                indicatorView.layer.maskedCorners = m
             }
 
-            containerView.addSubview(additionView)
-            containerView.sendSubviewToBack(additionView)
+            containerView.addSubview(indicatorView)
+            containerView.sendSubviewToBack(indicatorView)
         case .none:
-            additionView.backgroundColor = .clear
+            indicatorView.backgroundColor = .clear
         }
 
         jump(to: currentIndex)
     }
 
-    private func updateAdditionViewPosition(index: Int) {
+    private func updateIndicatorViewPosition(index: Int) {
         guard let target = currentItem else { return }
 
-        additionView.frame.origin.x = target.frame.origin.x + options.additionView.padding.left
+        indicatorView.frame.origin.x = target.frame.origin.x + options.indicatorView.padding.left
 
         if options.adjustsItemViewWidth {
             let cellWidth = itemViews[index].frame.width
-            additionView.frame.size.width = cellWidth - options.additionView.padding.horizontal
+            indicatorView.frame.size.width = cellWidth - options.indicatorView.padding.horizontal
         }
 
         focus(on: target)
     }
 
-    private func resetAdditionViewPosition(index: Int) {
+    private func resetIndicatorViewPosition(index: Int) {
         guard options.style == .segmented,
             let dataSource,
             dataSource.numberOfItems(in: self) > 0 else { return }
@@ -408,35 +408,35 @@ extension TabView {
         let inset = layoutSafeAreaInsets
         let cellWidth = (frame.width - options.margin * 2 - inset.horizontal) / CGFloat(dataSource.numberOfItems(in: self))
 
-        additionView.frame.origin.x = cellWidth * CGFloat(index) + options.additionView.padding.left
-        additionView.frame.size.width = cellWidth - options.additionView.padding.horizontal
+        indicatorView.frame.origin.x = cellWidth * CGFloat(index) + options.indicatorView.padding.left
+        indicatorView.frame.size.width = cellWidth - options.indicatorView.padding.horizontal
     }
 
-    private func animateAdditionView(index: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
+    private func animateIndicatorView(index: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
 
         update(index)
 
         if animated {
-            UIView.animate(withDuration: options.additionView.animationDuration, animations: {
-                self.updateAdditionViewPosition(index: index)
+            UIView.animate(withDuration: options.indicatorView.animationDuration, animations: {
+                self.updateIndicatorViewPosition(index: index)
             }, completion: completion)
         } else {
-            updateAdditionViewPosition(index: index)
+            updateIndicatorViewPosition(index: index)
         }
     }
 
-    func moveAdditionView(index: Int, ratio: CGFloat, direction: Direction) {
+    func moveIndicatorView(index: Int, ratio: CGFloat, direction: Direction) {
 
         update(index)
 
         guard let currentItem else { return }
 
-        if options.additionView.isAnimationOnSwipeEnabled {
+        if options.indicatorView.isAnimationOnSwipeEnabled {
             switch direction {
             case .forward:
                 if let nextItem {
-                    additionView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.additionView.padding.left
-                    additionView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.additionView.padding.horizontal
+                    indicatorView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.indicatorView.padding.left
+                    indicatorView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.indicatorView.padding.horizontal
                     if options.interpolatesTextColorOnSwipe {
                         nextItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
                         currentItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
@@ -444,8 +444,8 @@ extension TabView {
                 }
             case .reverse:
                 if let previousItem {
-                    additionView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.additionView.padding.left
-                    additionView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.additionView.padding.horizontal
+                    indicatorView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.indicatorView.padding.left
+                    indicatorView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.indicatorView.padding.horizontal
                     if options.interpolatesTextColorOnSwipe {
                         previousItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
                         currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
@@ -460,7 +460,7 @@ extension TabView {
             updateSelectedItem(by: currentIndex)
         }
 
-        focus(on: additionView, animated: false)
+        focus(on: indicatorView, animated: false)
     }
 }
 
@@ -484,9 +484,9 @@ extension TabView {
 
         guard let currentItem else { return }
 
-        if options.addition == .underline {
-            additionView.frame.origin.x = currentItem.frame.origin.x + options.additionView.padding.left
-            additionView.frame.size.width = currentItem.frame.size.width - options.additionView.padding.horizontal
+        if options.indicator == .underline {
+            indicatorView.frame.origin.x = currentItem.frame.origin.x + options.indicatorView.padding.left
+            indicatorView.frame.size.width = currentItem.frame.size.width - options.indicatorView.padding.horizontal
         }
 
         focus(on: currentItem, animated: false)
@@ -522,9 +522,9 @@ extension TabView {
 
     private func moveTabItem(index: Int, animated: Bool) {
 
-        switch options.addition {
+        switch options.indicator {
         case .underline, .circle:
-            animateAdditionView(index: index, animated: animated, completion: nil)
+            animateIndicatorView(index: index, animated: animated, completion: nil)
         case .none:
             update(index)
         }

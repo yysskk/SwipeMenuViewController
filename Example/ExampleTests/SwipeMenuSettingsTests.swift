@@ -11,7 +11,7 @@ struct SwipeMenuSettingsTests {
         let options = SwipeMenuSettings().makeOptions()
 
         #expect(options.tabView.style == .flexible)
-        #expect(options.tabView.addition == .underline)
+        #expect(options.tabView.indicator == .underline)
         #expect(options.tabView.margin == 0)
         #expect(options.tabView.adjustsItemViewWidth)
         #expect(options.tabView.itemView.width == 100)
@@ -59,23 +59,23 @@ struct SwipeMenuSettingsTests {
         #expect(settings.makeOptions().tabView.style == .segmented)
     }
 
-    @Test("Each decoration maps to its addition and a legible selected color")
-    func decorationMapsToAdditionAndColor() {
+    @Test("Each decoration maps to its indicator and a legible selected color")
+    func decorationMapsToIndicatorAndColor() {
         var settings = SwipeMenuSettings()
 
         settings.tabDecoration = .underline
         var options = settings.makeOptions()
-        #expect(options.tabView.addition == .underline)
+        #expect(options.tabView.indicator == .underline)
         #expect(options.tabView.itemView.selectedTextColor == UIColor.label)
 
         settings.tabDecoration = .circle
         options = settings.makeOptions()
-        #expect(options.tabView.addition == .circle)
+        #expect(options.tabView.indicator == .circle)
         #expect(options.tabView.itemView.selectedTextColor == UIColor.systemBackground)
 
         settings.tabDecoration = .none
         options = settings.makeOptions()
-        #expect(options.tabView.addition == .none)
+        #expect(options.tabView.indicator == .none)
         #expect(options.tabView.itemView.selectedTextColor == UIColor.label)
     }
 
