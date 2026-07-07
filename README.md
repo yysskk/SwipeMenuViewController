@@ -69,7 +69,11 @@ You can also build the documentation locally in Xcode with **Product ▸ Build D
 
 ## Contributing
 
-Bug reports and pull requests are welcome. Please open an issue using one of the templates, and make sure the test suite passes (`xcodebuild test -scheme SwipeMenuViewController -destination 'platform=iOS Simulator,name=iPhone 16'`).
+Bug reports and pull requests are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to build, test, format, and document your changes, then open an issue using one of the templates. Make sure the test suite passes before submitting:
+
+```sh
+xcodebuild test -scheme SwipeMenuViewController -destination 'platform=iOS Simulator,name=iPhone 16'
+```
 
 ## Changelog
 
