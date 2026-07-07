@@ -1,5 +1,6 @@
 import Testing
 import UIKit
+
 @testable import SwipeMenuViewController
 
 // MARK: - SwipeMenuView stubs
@@ -194,7 +195,7 @@ func hostTabView(_ tabView: TabView, width: CGFloat = 375) -> UIWindow {
         tabView.topAnchor.constraint(equalTo: container.topAnchor),
         tabView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
         tabView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-        tabView.heightAnchor.constraint(equalToConstant: height)
+        tabView.heightAnchor.constraint(equalToConstant: height),
     ])
 
     container.setNeedsLayout()

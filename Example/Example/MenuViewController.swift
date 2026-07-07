@@ -1,5 +1,5 @@
-import UIKit
 import SwipeMenuViewController
+import UIKit
 
 /// The example's root screen.
 ///
@@ -10,7 +10,7 @@ final class MenuViewController: SwipeMenuViewController {
 
     private let pageTitles = [
         "Bulbasaur", "Caterpie", "Golem", "Jynx",
-        "Marshtomp", "Salamence", "Riolu", "Araquanid"
+        "Marshtomp", "Salamence", "Riolu", "Araquanid",
     ]
 
     private var settings = SwipeMenuSettings()
@@ -22,9 +22,11 @@ final class MenuViewController: SwipeMenuViewController {
         configuration.image = UIImage(systemName: "gearshape")
         configuration.cornerStyle = .capsule
         configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
-        let button = UIButton(configuration: configuration, primaryAction: UIAction { [weak self] _ in
-            self?.presentOptions()
-        })
+        let button = UIButton(
+            configuration: configuration,
+            primaryAction: UIAction { [weak self] _ in
+                self?.presentOptions()
+            })
         button.accessibilityLabel = "Options"
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -33,7 +35,9 @@ final class MenuViewController: SwipeMenuViewController {
     private static let settingsButtonDiameter: CGFloat = 56
 
     override func viewDidLoad() {
-        pageTitles.forEach { addChild(PageViewController(title: $0)) }
+        for pageTitle in pageTitles {
+            addChild(PageViewController(title: pageTitle))
+        }
 
         super.viewDidLoad()
 
@@ -62,7 +66,7 @@ final class MenuViewController: SwipeMenuViewController {
             settingsButton.widthAnchor.constraint(equalToConstant: Self.settingsButtonDiameter),
             settingsButton.heightAnchor.constraint(equalToConstant: Self.settingsButtonDiameter),
             settingsButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            settingsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+            settingsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
         ])
     }
 

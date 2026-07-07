@@ -1,5 +1,6 @@
 import Testing
 import UIKit
+
 @testable import SwipeMenuViewController
 
 /// Constructs a `SwipeMenuViewOptions` from a `nonisolated` context. That this

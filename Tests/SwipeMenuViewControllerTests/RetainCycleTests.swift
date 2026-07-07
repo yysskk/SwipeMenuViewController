@@ -1,5 +1,6 @@
 import Testing
 import UIKit
+
 @testable import SwipeMenuViewController
 
 @MainActor
@@ -30,7 +31,7 @@ struct RetainCycleTests {
             let container = UIView(frame: CGRect(x: 0, y: 0, width: 375, height: 667))
             let view = SwipeMenuView(frame: container.bounds)
             view.dataSource = dataSource
-            container.addSubview(view)      // triggers setup -> contentScrollView.dataSource = self
+            container.addSubview(view)  // triggers setup -> contentScrollView.dataSource = self
             view.layoutIfNeeded()
             weakView = view
             view.removeFromSuperview()

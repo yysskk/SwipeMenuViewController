@@ -129,7 +129,7 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
         /// IndicatorView options
         public var indicatorView = IndicatorView()
 
-        public init() { }
+        public init() {}
     }
 
     public nonisolated struct ContentScrollView: Sendable {
@@ -161,5 +161,5 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
     /// ContentScrollView options
     public var contentScrollView = ContentScrollView()
 
-    public init() { }
+    public init() {}
 }

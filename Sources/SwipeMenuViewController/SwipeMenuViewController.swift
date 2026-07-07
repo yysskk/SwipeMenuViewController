@@ -39,30 +39,31 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
         // The top anchor is chosen once from the initial options. Toggling
         // `options.tabView.isSafeAreaEnabled` at runtime does not re-pin the
         // view, so configure the safe area behavior before the view loads.
-        let topAnchor = swipeMenuView.options.tabView.isSafeAreaEnabled
+        let topAnchor =
+            swipeMenuView.options.tabView.isSafeAreaEnabled
             ? view.safeAreaLayoutGuide.topAnchor
             : view.topAnchor
         NSLayoutConstraint.activate([
             swipeMenuView.topAnchor.constraint(equalTo: topAnchor),
             swipeMenuView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             swipeMenuView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            swipeMenuView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            swipeMenuView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 
     // MARK: - SwipeMenuViewDelegate
 
     /// Called before the swipe menu view sets up its views. The default implementation does nothing; override to react.
-    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) { }
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) {}
 
     /// Called after the swipe menu view has set up its views. The default implementation does nothing; override to react.
-    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) { }
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) {}
 
     /// Called before the front page changes. The default implementation does nothing; override to react.
-    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) {}
 
     /// Called after the front page has changed. The default implementation does nothing; override to react.
-    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
+    open func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int) {}
 
     // MARK: - SwipeMenuViewDataSource
 
@@ -87,7 +88,8 @@ open class SwipeMenuViewController: UIViewController, SwipeMenuViewDelegate, Swi
     /// than crashing. Override to provide pages that are not backed by `children`.
     open func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewControllerForPageAt index: Int) -> UIViewController {
         guard children.indices.contains(index) else {
-            assertionFailure("""
+            assertionFailure(
+                """
                 SwipeMenuViewController: requested a page at \(index) but only \(children.count) \
                 child view controllers exist. Override the data source to provide the missing pages.
                 """)

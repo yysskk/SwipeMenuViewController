@@ -79,7 +79,7 @@ final class OptionsViewController: UIViewController {
             adjustWidthRow,
             itemWidthRow,
             makeSliderRow(title: "Tab margin", valueLabel: tabMarginValueLabel, slider: tabMarginSlider),
-            makeToggleRow(title: "Swipe between pages", toggle: contentScrollSwitch)
+            makeToggleRow(title: "Swipe between pages", toggle: contentScrollSwitch),
         ]
 
         let contentStack = UIStackView(arrangedSubviews: rows)
@@ -104,59 +104,66 @@ final class OptionsViewController: UIViewController {
             contentStack.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
             contentStack.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
             contentStack.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
-            contentStack.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
+            contentStack.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
         ])
     }
 
     // MARK: - Actions
 
     private func setUpActions() {
-        pageCountStepper.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            settings.pageCount = Int(pageCountStepper.value)
-            pageCountValueLabel.text = "\(settings.pageCount)"
-            notifyChange()
-        }, for: .valueChanged)
+        pageCountStepper.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                settings.pageCount = Int(pageCountStepper.value)
+                pageCountValueLabel.text = "\(settings.pageCount)"
+                notifyChange()
+            }, for: .valueChanged)
 
-        styleControl.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            settings.setStyle(styleControl.selectedSegmentIndex == 0 ? .flexible : .segmented)
-            updateControls()
-            notifyChange()
-        }, for: .valueChanged)
+        styleControl.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                settings.setStyle(styleControl.selectedSegmentIndex == 0 ? .flexible : .segmented)
+                updateControls()
+                notifyChange()
+            }, for: .valueChanged)
 
-        decorationControl.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            settings.tabDecoration = SwipeMenuSettings.TabDecoration.allCases[decorationControl.selectedSegmentIndex]
-            notifyChange()
-        }, for: .valueChanged)
+        decorationControl.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                settings.tabDecoration = SwipeMenuSettings.TabDecoration.allCases[decorationControl.selectedSegmentIndex]
+                notifyChange()
+            }, for: .valueChanged)
 
-        adjustWidthSwitch.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            settings.adjustsItemWidthToFit = adjustWidthSwitch.isOn
-            updateControls()
-            notifyChange()
-        }, for: .valueChanged)
+        adjustWidthSwitch.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                settings.adjustsItemWidthToFit = adjustWidthSwitch.isOn
+                updateControls()
+                notifyChange()
+            }, for: .valueChanged)
 
-        itemWidthSlider.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            settings.itemWidth = CGFloat(itemWidthSlider.value)
-            itemWidthValueLabel.text = Self.format(settings.itemWidth)
-        }, for: .valueChanged)
+        itemWidthSlider.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                settings.itemWidth = CGFloat(itemWidthSlider.value)
+                itemWidthValueLabel.text = Self.format(settings.itemWidth)
+            }, for: .valueChanged)
         itemWidthSlider.addAction(UIAction { [weak self] _ in self?.notifyChange() }, for: [.touchUpInside, .touchUpOutside])
 
-        tabMarginSlider.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            settings.tabMargin = CGFloat(tabMarginSlider.value)
-            tabMarginValueLabel.text = Self.format(settings.tabMargin)
-        }, for: .valueChanged)
+        tabMarginSlider.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                settings.tabMargin = CGFloat(tabMarginSlider.value)
+                tabMarginValueLabel.text = Self.format(settings.tabMargin)
+            }, for: .valueChanged)
         tabMarginSlider.addAction(UIAction { [weak self] _ in self?.notifyChange() }, for: [.touchUpInside, .touchUpOutside])
 
-        contentScrollSwitch.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            settings.isContentScrollEnabled = contentScrollSwitch.isOn
-            notifyChange()
-        }, for: .valueChanged)
+        contentScrollSwitch.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                settings.isContentScrollEnabled = contentScrollSwitch.isOn
+                notifyChange()
+            }, for: .valueChanged)
     }
 
     private func reset() {

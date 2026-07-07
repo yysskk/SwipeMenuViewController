@@ -14,6 +14,28 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  format:
+    name: swift-format
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Select Xcode
+        # Use the same toolchain as the build jobs so the bundled swift-format
+        # version matches what contributors run locally.
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '^26.0'
+      - name: Lint
+        run: swift format lint --strict --recursive --parallel Sources Tests Example/Example Example/ExampleTests Package.swift
+      - name: Verify formatting
+        run: |
+          set -euo pipefail
+          swift format --in-place --recursive --parallel Sources Tests Example/Example Example/ExampleTests Package.swift
+          # Fail if the formatter produced any change, and surface the diff so
+          # the required fix is obvious from the log.
+          git diff --exit-code
+
   package:
     name: Package tests (iOS Simulator)
     runs-on: macos-26

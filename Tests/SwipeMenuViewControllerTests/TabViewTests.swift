@@ -1,5 +1,6 @@
 import Testing
 import UIKit
+
 @testable import SwipeMenuViewController
 
 @MainActor
@@ -140,7 +141,7 @@ struct TabViewTests {
             tabView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
             tabView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
             tabView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-            tabView.heightAnchor.constraint(equalToConstant: options.height)
+            tabView.heightAnchor.constraint(equalToConstant: options.height),
         ])
         viewController.view.layoutIfNeeded()
         // Build the items against the stable frame with the safe area in place.
@@ -185,7 +186,7 @@ struct TabViewTests {
             tabView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
             tabView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
             tabView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-            tabView.heightAnchor.constraint(equalToConstant: options.height)
+            tabView.heightAnchor.constraint(equalToConstant: options.height),
         ])
         viewController.view.layoutIfNeeded()
         // Build the items against the stable frame with the safe area in place.
@@ -227,7 +228,7 @@ struct TabViewTests {
             tabView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
             tabView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
             tabView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-            tabView.heightAnchor.constraint(equalToConstant: options.height)
+            tabView.heightAnchor.constraint(equalToConstant: options.height),
         ])
         viewController.view.layoutIfNeeded()
         // Build the items against the stable frame with no safe area yet.
@@ -512,8 +513,14 @@ struct TabViewTests {
 
     /// Compares two colors by their RGBA components with a small tolerance.
     private func colorsEqual(_ lhs: UIColor, _ rhs: UIColor, tolerance: CGFloat = 0.01) -> Bool {
-        var lr: CGFloat = 0, lg: CGFloat = 0, lb: CGFloat = 0, la: CGFloat = 0
-        var rr: CGFloat = 0, rg: CGFloat = 0, rb: CGFloat = 0, ra: CGFloat = 0
+        var lr: CGFloat = 0
+        var lg: CGFloat = 0
+        var lb: CGFloat = 0
+        var la: CGFloat = 0
+        var rr: CGFloat = 0
+        var rg: CGFloat = 0
+        var rb: CGFloat = 0
+        var ra: CGFloat = 0
         lhs.getRed(&lr, green: &lg, blue: &lb, alpha: &la)
         rhs.getRed(&rr, green: &rg, blue: &rb, alpha: &ra)
         return abs(lr - rr) < tolerance && abs(lg - rg) < tolerance

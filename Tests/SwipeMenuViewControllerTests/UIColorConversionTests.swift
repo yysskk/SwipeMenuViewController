@@ -1,5 +1,6 @@
 import Testing
 import UIKit
+
 @testable import SwipeMenuViewController
 
 @MainActor
@@ -8,7 +9,10 @@ struct UIColorConversionTests {
 
     /// Extracts the RGBA components of a color for comparison.
     private func rgba(_ color: UIColor) -> (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
-        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
         color.getRed(&r, green: &g, blue: &b, alpha: &a)
         return (r, g, b, a)
     }

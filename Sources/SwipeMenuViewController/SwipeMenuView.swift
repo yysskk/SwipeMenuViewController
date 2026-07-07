@@ -37,10 +37,10 @@ import UIKit
 }
 
 extension SwipeMenuViewDelegate {
-    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) { }
-    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) { }
-    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
-    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
+    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewWillSetupAt currentIndex: Int) {}
+    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) {}
+    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) {}
+    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int) {}
 }
 
 // MARK: - SwipeMenuViewDataSource
@@ -299,10 +299,11 @@ open class SwipeMenuView: UIView {
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         tabView?.clipsToBounds = options.tabView.clipsToBounds
 
-        let contentFrame = CGRect(x: 0,
-                                  y: options.tabView.height,
-                                  width: frame.width,
-                                  height: frame.height - options.tabView.height)
+        let contentFrame = CGRect(
+            x: 0,
+            y: options.tabView.height,
+            width: frame.width,
+            height: frame.height - options.tabView.height)
         contentScrollView = ContentScrollView(frame: contentFrame, default: defaultIndex, options: options.contentScrollView)
         contentScrollView?.clipsToBounds = options.contentScrollView.clipsToBounds
 
@@ -321,8 +322,8 @@ open class SwipeMenuView: UIView {
             tabView.topAnchor.constraint(equalTo: self.topAnchor),
             tabView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             tabView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            tabView.heightAnchor.constraint(equalToConstant: options.tabView.height)
-            ])
+            tabView.heightAnchor.constraint(equalToConstant: options.tabView.height),
+        ])
     }
 
     private func layout(contentScrollView: ContentScrollView) {
@@ -333,8 +334,8 @@ open class SwipeMenuView: UIView {
             contentScrollView.topAnchor.constraint(equalTo: self.topAnchor, constant: options.tabView.height),
             contentScrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             contentScrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            contentScrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
-            ])
+            contentScrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+        ])
     }
 
     private func reset() {

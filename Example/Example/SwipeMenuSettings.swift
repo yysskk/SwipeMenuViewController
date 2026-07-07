@@ -1,5 +1,5 @@
-import UIKit
 import SwipeMenuViewController
+import UIKit
 
 /// The user-adjustable configuration behind the example's swipe menu.
 ///

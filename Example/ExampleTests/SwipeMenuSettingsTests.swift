@@ -1,6 +1,7 @@
+import SwipeMenuViewController
 import Testing
 import UIKit
-import SwipeMenuViewController
+
 @testable import Example
 
 @Suite("SwipeMenuSettings")

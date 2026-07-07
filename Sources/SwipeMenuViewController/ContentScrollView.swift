@@ -82,7 +82,9 @@ open class ContentScrollView: UIScrollView {
         guard superview != nil else { return }
         // Discard the previous pages first so a reload replaces them instead of
         // stacking a second set of page views into the hierarchy.
-        pageViews.forEach { $0.removeFromSuperview() }
+        for pageView in pageViews {
+            pageView.removeFromSuperview()
+        }
         pageViews = []
         setup()
     }
@@ -98,7 +100,8 @@ open class ContentScrollView: UIScrollView {
     private func setup() {
 
         guard let dataSource,
-              dataSource.numberOfPages(in: self) > 0 else { return }
+            dataSource.numberOfPages(in: self) > 0
+        else { return }
 
         setupScrollView()
         setupPages()
@@ -141,7 +144,7 @@ open class ContentScrollView: UIScrollView {
                 pageView.topAnchor.constraint(equalTo: self.topAnchor),
                 pageView.widthAnchor.constraint(equalTo: self.widthAnchor),
                 pageView.heightAnchor.constraint(equalTo: self.heightAnchor),
-                pageView.leadingAnchor.constraint(equalTo: leadingAnchor)
+                pageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             ])
         }
     }
