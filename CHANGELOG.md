@@ -9,6 +9,8 @@
 
 ### Fixed
 - The `.segmented` tab style mispositioned the selection indicator when `additionView.padding` had non-zero horizontal insets: the first tab's indicator spilled off the leading edge, and each later tab drifted increasingly to the left. The indicator now aligns with every tab, inset by the padding, consistent with the other tab styles (issue #25).
+- The `.flexible` tab style computed its scrollable width by subtracting the right safe-area inset instead of adding it, so on devices with a non-zero right inset (for example landscape with the notch on the left) the last tab could not be scrolled fully into view.
+- `ContentScrollView.reload()` left the previous page views in the view hierarchy while building the new ones, stacking a duplicate set of pages on every call. It now replaces the pages and preserves the current page index.
 
 ## 5.0.0 - 2026-07-05
 

@@ -76,10 +76,14 @@ open class ContentScrollView: UIScrollView {
 
     /// Rebuilds the page views from the data source.
     ///
-    /// The view must already be in a view hierarchy; when it has no superview
-    /// this method does nothing.
+    /// The current page index is preserved. The view must already be in a view
+    /// hierarchy; when it has no superview this method does nothing.
     public func reload() {
         guard superview != nil else { return }
+        // Discard the previous pages first so a reload replaces them instead of
+        // stacking a second set of page views into the hierarchy.
+        pageViews.forEach { $0.removeFromSuperview() }
+        pageViews = []
         setup()
     }
 

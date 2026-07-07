@@ -75,6 +75,29 @@ struct ContentScrollViewTests {
         #expect(dataSource.requestedIndices == [0, 1, 2, 0, 1, 2])
     }
 
+    @Test("reload() replaces the page views instead of stacking them")
+    func reloadReplacesPageViews() {
+        let baseTag = 700
+        let contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: 0, width: 375, height: 600), default: 0)
+        let dataSource = StubContentDataSource(pageCount: 3, baseTag: baseTag)
+        contentScrollView.dataSource = dataSource
+
+        let window = hostInWindow(contentScrollView)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        // Page views are identified by their tag (baseTag + index).
+        func hostedPageViewCount() -> Int {
+            contentScrollView.subviews.count { $0.tag >= baseTag }
+        }
+
+        #expect(hostedPageViewCount() == 3)
+
+        contentScrollView.reload()
+
+        // The previous pages must be gone; only the freshly built set remains.
+        #expect(hostedPageViewCount() == 3)
+    }
+
     @Test("reload() without a superview does nothing")
     func reloadWithoutSuperviewDoesNothing() {
         let contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: 0, width: 375, height: 600), default: 0)
