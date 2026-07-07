@@ -1,0 +1,30 @@
+name: Select iOS simulator
+description: >
+  Finds the first available iPhone simulator, downloading the iOS platform
+  first if none is installed, and exposes its name as the `device` output.
+outputs:
+  device:
+    description: The name of the selected iPhone simulator.
+    value: ${{ steps.select.outputs.device }}
+runs:
+  using: composite
+  steps:
+    - id: select
+      shell: bash
+      run: |
+        set -euo pipefail
+        find_device() {
+          xcrun simctl list devices available --json \
+            | jq -r '[.devices | to_entries[] | select(.key|test("iOS")) | .value[] | select(.isAvailable and (.name|startswith("iPhone")))][0].name // empty'
+        }
+        DEVICE=$(find_device)
+        if [ -z "$DEVICE" ]; then
+          sudo xcodebuild -downloadPlatform iOS
+          DEVICE=$(find_device)
+        fi
+        if [ -z "$DEVICE" ]; then
+          echo "::error::No available iPhone simulator found" >&2
+          exit 1
+        fi
+        echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
+        echo "Using: $DEVICE"
