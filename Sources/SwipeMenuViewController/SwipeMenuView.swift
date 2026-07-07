@@ -93,7 +93,7 @@ open class SwipeMenuView: UIView {
     open weak var dataSource: SwipeMenuViewDataSource?
 
     /// The tab bar displayed above the content, or `nil` before the view is set up.
-    open fileprivate(set) var tabView: TabView? {
+    open private(set) var tabView: TabView? {
         didSet {
             guard let tabView else { return }
             tabView.dataSource = self
@@ -104,7 +104,7 @@ open class SwipeMenuView: UIView {
     }
 
     /// The horizontally paging scroll view that hosts the page views, or `nil` before the view is set up.
-    open fileprivate(set) var contentScrollView: ContentScrollView? {
+    open private(set) var contentScrollView: ContentScrollView? {
         didSet {
             guard let contentScrollView else { return }
             contentScrollView.delegate = self
@@ -117,14 +117,13 @@ open class SwipeMenuView: UIView {
     /// The options that control the appearance and behavior of the tab bar and content area.
     public var options: SwipeMenuViewOptions
 
-    fileprivate var isLayoutingSubviews: Bool = false
+    private var isLayoutingSubviews: Bool = false
 
-    fileprivate var pageCount: Int {
+    private var pageCount: Int {
         return dataSource?.numberOfPages(in: self) ?? 0
     }
 
-    fileprivate var isJumping: Bool = false
-    fileprivate var isPortrait: Bool = true
+    private var isJumping: Bool = false
 
     /// The index of the front page in `SwipeMenuView` (read only).
     open private(set) var currentIndex: Int = 0
@@ -136,11 +135,7 @@ open class SwipeMenuView: UIView {
     ///   - options: The appearance and behavior options. Pass `nil` to use the defaults.
     public init(frame: CGRect, options: SwipeMenuViewOptions? = nil) {
 
-        if let options {
-            self.options = options
-        } else {
-            self.options = .init()
-        }
+        self.options = options ?? SwipeMenuViewOptions()
 
         super.init(frame: frame)
     }
@@ -276,7 +271,7 @@ open class SwipeMenuView: UIView {
         setNeedsLayout()
     }
 
-    fileprivate func update(from fromIndex: Int, to toIndex: Int) {
+    private func update(from fromIndex: Int, to toIndex: Int) {
 
         if !isLayoutingSubviews {
             delegate?.swipeMenuView(self, willChangeIndexFrom: fromIndex, to: toIndex)
@@ -376,7 +371,7 @@ extension SwipeMenuView: TabViewDelegate, TabViewDataSource {
         update(from: currentIndex, to: index)
     }
 
-    public func numberOfItems(in menuView: TabView) -> Int {
+    public func numberOfItems(in tabView: TabView) -> Int {
         return dataSource?.numberOfPages(in: self) ?? 0
     }
 
@@ -400,7 +395,7 @@ extension SwipeMenuView: UIScrollViewDelegate {
             update(from: currentIndex, to: currentIndex - 1)
         }
 
-        updateTabViewAddition(by: scrollView)
+        moveAdditionView(by: scrollView)
     }
 
     public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
@@ -416,30 +411,18 @@ extension SwipeMenuView: UIScrollViewDelegate {
             return
         }
 
-        updateTabViewAddition(by: scrollView)
+        moveAdditionView(by: scrollView)
     }
 
-    /// update addition in tab view
-    private func updateTabViewAddition(by scrollView: UIScrollView) {
-        moveAdditionView(scrollView: scrollView)
-    }
+    /// Moves the tab bar's addition view (underline/circle) to track the content scroll position.
+    private func moveAdditionView(by scrollView: UIScrollView) {
 
-    /// update underbar position
-    private func moveAdditionView(scrollView: UIScrollView) {
+        guard let tabView, let contentScrollView else { return }
 
-        if let tabView, let contentScrollView {
+        let ratio = scrollView.contentOffset.x.truncatingRemainder(dividingBy: contentScrollView.frame.width) / contentScrollView.frame.width
+        let direction: TabView.Direction = scrollView.contentOffset.x >= frame.width * CGFloat(currentIndex) ? .forward : .reverse
 
-            let ratio = scrollView.contentOffset.x.truncatingRemainder(dividingBy: contentScrollView.frame.width) / contentScrollView.frame.width
-
-            switch scrollView.contentOffset.x {
-            case let offset where offset >= frame.width * CGFloat(currentIndex):
-                tabView.moveAdditionView(index: currentIndex, ratio: ratio, direction: .forward)
-            case let offset where offset < frame.width * CGFloat(currentIndex):
-                tabView.moveAdditionView(index: currentIndex, ratio: ratio, direction: .reverse)
-            default:
-                break
-            }
-        }
+        tabView.moveAdditionView(index: currentIndex, ratio: ratio, direction: direction)
     }
 }
 

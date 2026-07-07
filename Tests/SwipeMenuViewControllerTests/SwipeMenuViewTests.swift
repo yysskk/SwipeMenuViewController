@@ -22,7 +22,7 @@ struct SwipeMenuViewTests {
         let contentScrollView = try #require(view.contentScrollView)
 
         #expect(tabView.itemViews.count == 3)
-        // `pageViews` is fileprivate; verify the page count via the content
+        // `pageViews` is private; verify the page count via the content
         // width (one page-width per page) instead.
         #expect(abs(contentScrollView.contentSize.width - contentScrollView.frame.width * 3) < 0.5)
     }
@@ -280,6 +280,35 @@ struct SwipeMenuViewTests {
         #expect(view.subviews.compactMap { $0 as? TabView }.count == 1)
         #expect(view.subviews.compactMap { $0 as? ContentScrollView }.count == 1)
         #expect(view.tabView?.itemViews.count == 3)
+    }
+
+    @Test("Initial setup builds each page exactly once")
+    func setupBuildsEachPageOnce() {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = CountingMenuDataSource(titles: ["A", "B", "C"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        // Hosting plus the initial layout passes must ask the data source for
+        // every page exactly once; the layout-driven relayout path must not
+        // rebuild the pages a second time (issue #79).
+        #expect(dataSource.requestedPageIndices == [0, 1, 2])
+    }
+
+    @Test("An explicit reloadData() builds each page exactly once more")
+    func reloadDataBuildsEachPageOnceMore() {
+        let view = SwipeMenuView(frame: .zero)
+        let dataSource = CountingMenuDataSource(titles: ["A", "B", "C"])
+        view.dataSource = dataSource
+
+        let window = hostInWindow(view)
+        defer { withExtendedLifetime((window, dataSource)) {} }
+
+        view.reloadData()
+
+        #expect(dataSource.requestedPageIndices == [0, 1, 2, 0, 1, 2])
     }
 
     @Test("Removal does not emit setup callbacks")
