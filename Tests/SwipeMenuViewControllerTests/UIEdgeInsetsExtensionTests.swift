@@ -1,5 +1,6 @@
 import Testing
 import UIKit
+
 @testable import SwipeMenuViewController
 
 @MainActor
@@ -20,8 +21,8 @@ struct UIEdgeInsetsExtensionTests {
     func pairedSums() {
         let insets = UIEdgeInsets(top: 1, left: 2, bottom: 3, right: 4)
 
-        #expect(insets.horizontal == 6)   // left + right
-        #expect(insets.vertical == 4)     // top + bottom
+        #expect(insets.horizontal == 6)  // left + right
+        #expect(insets.vertical == 4)  // top + bottom
     }
 
     @Test("zero insets have zero sums")

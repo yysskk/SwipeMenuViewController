@@ -1,5 +1,6 @@
 import Testing
 import UIKit
+
 @testable import SwipeMenuViewController
 
 @MainActor
@@ -75,14 +76,15 @@ struct SwipeMenuViewControllerTests {
         // Find the constraint that pins swipeMenuView.topAnchor and confirm its
         // other end is the view's safe-area layout guide (not the view itself).
         let topConstraint = vc.view.constraints.first { constraint in
-            (constraint.firstItem === vc.swipeMenuView && constraint.firstAttribute == .top) ||
-            (constraint.secondItem === vc.swipeMenuView && constraint.secondAttribute == .top)
+            (constraint.firstItem === vc.swipeMenuView && constraint.firstAttribute == .top)
+                || (constraint.secondItem === vc.swipeMenuView && constraint.secondAttribute == .top)
         }
 
         #expect(topConstraint != nil)
 
         if let topConstraint {
-            let otherItem: AnyObject? = (topConstraint.firstItem === vc.swipeMenuView)
+            let otherItem: AnyObject? =
+                (topConstraint.firstItem === vc.swipeMenuView)
                 ? topConstraint.secondItem
                 : topConstraint.firstItem
             #expect(otherItem === vc.view.safeAreaLayoutGuide)

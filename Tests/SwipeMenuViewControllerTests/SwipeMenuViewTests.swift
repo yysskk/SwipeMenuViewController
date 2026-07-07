@@ -1,5 +1,6 @@
 import Testing
 import UIKit
+
 @testable import SwipeMenuViewController
 
 @MainActor
@@ -117,12 +118,13 @@ struct SwipeMenuViewTests {
         // Each jump contributes exactly one paired willChange/didChange, and the
         // view lands on the most recent target.
         #expect(view.currentIndex == 0)
-        #expect(delegate.events == [
-            .willChange(from: 0, to: 2),
-            .didChange(from: 0, to: 2),
-            .willChange(from: 2, to: 0),
-            .didChange(from: 2, to: 0)
-        ])
+        #expect(
+            delegate.events == [
+                .willChange(from: 0, to: 2),
+                .didChange(from: 0, to: 2),
+                .willChange(from: 2, to: 0),
+                .didChange(from: 2, to: 0),
+            ])
     }
 
     @Test("Selecting a tab during an in-flight jump keeps delegate calls paired")

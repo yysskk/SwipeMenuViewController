@@ -8,7 +8,6 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
         public nonisolated enum Style: Sendable {
             case flexible
             case segmented
-            // TODO: case infinity
         }
 
         public nonisolated enum Indicator: Sendable {
@@ -65,11 +64,11 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
             public nonisolated struct Circle: Sendable {
                 /// The corner radius of the highlight when the indicator is `.circle`.
                 /// Defaults to `nil`, which uses half the highlight's height (a capsule).
-                public var cornerRadius: CGFloat? = nil
+                public var cornerRadius: CGFloat?
 
                 /// The corners rounded by `cornerRadius` when the indicator is `.circle`.
                 /// Defaults to `nil`, which rounds all four corners.
-                public var maskedCorners: CACornerMask? = nil
+                public var maskedCorners: CACornerMask?
             }
 
             /// The padding around the indicator view. Defaults to `.zero`.
@@ -130,7 +129,7 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
         /// IndicatorView options
         public var indicatorView = IndicatorView()
 
-        public init() { }
+        public init() {}
     }
 
     public nonisolated struct ContentScrollView: Sendable {
@@ -162,5 +161,5 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
     /// ContentScrollView options
     public var contentScrollView = ContentScrollView()
 
-    public init() { }
+    public init() {}
 }

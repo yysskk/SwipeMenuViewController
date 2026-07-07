@@ -22,6 +22,6 @@ let package = Package(
             swiftSettings: [
                 .defaultIsolation(MainActor.self)
             ]
-        )
+        ),
     ]
 )

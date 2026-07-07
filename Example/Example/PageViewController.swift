@@ -35,7 +35,7 @@ final class PageViewController: UIViewController {
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             label.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16)
+            label.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
         ])
     }
 }

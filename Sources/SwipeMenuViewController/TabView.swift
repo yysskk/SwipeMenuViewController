@@ -145,9 +145,11 @@ open class TabView: UIScrollView {
     ///   - options: New tab options to apply before reloading. Pass `nil` to keep the current options.
     ///   - defaultIndex: The tab to select after reloading. Pass `nil` to leave the selection unchanged.
     ///   - animated: Whether moving to `defaultIndex` is animated. Defaults to `true`.
-    public func reloadData(options: SwipeMenuViewOptions.TabView? = nil,
-                           default defaultIndex: Int? = nil,
-                           animated: Bool = true) {
+    public func reloadData(
+        options: SwipeMenuViewOptions.TabView? = nil,
+        default defaultIndex: Int? = nil,
+        animated: Bool = true
+    ) {
 
         if let options {
             self.options = options
@@ -156,7 +158,8 @@ open class TabView: UIScrollView {
         reset()
 
         guard let dataSource,
-            dataSource.numberOfItems(in: self) > 0 else { return }
+            dataSource.numberOfItems(in: self) > 0
+        else { return }
 
         setupScrollView()
         setupContainerView(dataSource: dataSource)
@@ -170,7 +173,9 @@ open class TabView: UIScrollView {
 
     func reset() {
         currentIndex = 0
-        itemViews.forEach { $0.removeFromSuperview() }
+        for itemView in itemViews {
+            itemView.removeFromSuperview()
+        }
         indicatorView.removeFromSuperview()
         containerView.removeFromSuperview()
         itemViews = []
@@ -267,7 +272,7 @@ open class TabView: UIScrollView {
 
                 NSLayoutConstraint.activate([
                     tabItemView.widthAnchor.constraint(equalToConstant: tabItemView.frame.width)
-                    ])
+                ])
             case .segmented:
                 let inset = layoutSafeAreaInsets
                 tabItemView.frame.size.width = (frame.width - options.margin * 2 - inset.horizontal) / CGFloat(itemCount)
@@ -284,8 +289,8 @@ open class TabView: UIScrollView {
 
             NSLayoutConstraint.activate([
                 tabItemView.topAnchor.constraint(equalTo: containerView.topAnchor),
-                tabItemView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-                ])
+                tabItemView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            ])
 
             xPosition += tabItemView.frame.size.width
         }
@@ -299,11 +304,12 @@ open class TabView: UIScrollView {
 
         containerView.frame.size.width = containerWidth
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         let heightConstraint: NSLayoutConstraint
         switch options.indicator {
         case .underline:
-            heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height - options.indicatorView.underline.height - options.indicatorView.padding.bottom)
+            let height = options.height - options.indicatorView.underline.height - options.indicatorView.padding.bottom
+            heightConstraint = containerView.heightAnchor.constraint(equalToConstant: height)
         case .circle, .none:
             heightConstraint = containerView.heightAnchor.constraint(equalToConstant: options.height)
         }
@@ -317,8 +323,8 @@ open class TabView: UIScrollView {
                 containerView.topAnchor.constraint(equalTo: self.topAnchor),
                 leftMarginConstraint,
                 containerView.widthAnchor.constraint(equalToConstant: containerWidth),
-                heightConstraint
-                ])
+                heightConstraint,
+            ])
             contentSize.width = containerWidth + options.margin * 2 + inset.horizontal
         case .segmented:
             widthConstraint = containerView.widthAnchor.constraint(equalTo: self.widthAnchor, constant: -(options.margin * 2 + inset.horizontal))
@@ -326,16 +332,16 @@ open class TabView: UIScrollView {
                 containerView.topAnchor.constraint(equalTo: self.topAnchor),
                 leftMarginConstraint,
                 widthConstraint,
-                heightConstraint
-                ])
+                heightConstraint,
+            ])
 
             contentSize = .zero
         }
     }
 
     private func updateSelectedItem(by newIndex: Int) {
-        for (i, itemView) in itemViews.enumerated() {
-            itemView.isSelected = i == newIndex
+        for (index, itemView) in itemViews.enumerated() {
+            itemView.isSelected = index == newIndex
         }
     }
 }
@@ -358,20 +364,31 @@ extension TabView {
         switch options.indicator {
         case .underline:
             let itemView = itemViews[currentIndex]
-            indicatorView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.indicatorView.padding.left, y: itemView.frame.height - options.indicatorView.padding.vertical, width: itemView.frame.width - options.indicatorView.padding.horizontal, height: options.indicatorView.underline.height))
+            let padding = options.indicatorView.padding
+            indicatorView = UIView(
+                frame: CGRect(
+                    x: itemView.frame.origin.x + padding.left,
+                    y: itemView.frame.height - padding.vertical,
+                    width: itemView.frame.width - padding.horizontal,
+                    height: options.indicatorView.underline.height))
             indicatorView.layer.cornerRadius = options.indicatorView.underline.cornerRadius
             indicatorView.backgroundColor = options.indicatorView.backgroundColor
             containerView.addSubview(indicatorView)
         case .circle:
             let itemView = itemViews[currentIndex]
-            let height = itemView.bounds.height - options.indicatorView.padding.vertical
-            indicatorView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.indicatorView.padding.left, y: 0, width: itemView.frame.width - options.indicatorView.padding.horizontal, height: height))
+            let padding = options.indicatorView.padding
+            indicatorView = UIView(
+                frame: CGRect(
+                    x: itemView.frame.origin.x + padding.left,
+                    y: 0,
+                    width: itemView.frame.width - padding.horizontal,
+                    height: itemView.bounds.height - padding.vertical))
             indicatorView.layer.position.y = itemView.layer.position.y
             indicatorView.layer.cornerRadius = options.indicatorView.circle.cornerRadius ?? indicatorView.frame.height / 2
             indicatorView.backgroundColor = options.indicatorView.backgroundColor
-            
-            if let m = options.indicatorView.circle.maskedCorners {
-                indicatorView.layer.maskedCorners = m
+
+            if let maskedCorners = options.indicatorView.circle.maskedCorners {
+                indicatorView.layer.maskedCorners = maskedCorners
             }
 
             containerView.addSubview(indicatorView)
@@ -399,7 +416,8 @@ extension TabView {
     private func resetIndicatorViewPosition(index: Int) {
         guard options.style == .segmented,
             let dataSource,
-            dataSource.numberOfItems(in: self) > 0 else { return }
+            dataSource.numberOfItems(in: self) > 0
+        else { return }
 
         // Each `.segmented` tab item spans the full (unadjusted) cell width, so
         // that width is the indicator's per-tab stride. The indicator itself is
@@ -417,9 +435,11 @@ extension TabView {
         update(index)
 
         if animated {
-            UIView.animate(withDuration: options.indicatorView.animationDuration, animations: {
-                self.updateIndicatorViewPosition(index: index)
-            }, completion: completion)
+            UIView.animate(
+                withDuration: options.indicatorView.animationDuration,
+                animations: {
+                    self.updateIndicatorViewPosition(index: index)
+                }, completion: completion)
         } else {
             updateIndicatorViewPosition(index: index)
         }
@@ -432,11 +452,18 @@ extension TabView {
         guard let currentItem else { return }
 
         if options.indicatorView.isAnimationOnSwipeEnabled {
+            let padding = options.indicatorView.padding
             switch direction {
             case .forward:
                 if let nextItem {
-                    indicatorView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.indicatorView.padding.left
-                    indicatorView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.indicatorView.padding.horizontal
+                    indicatorView.frame.origin.x =
+                        currentItem.frame.origin.x
+                        + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio
+                        + padding.left
+                    indicatorView.frame.size.width =
+                        currentItem.frame.size.width
+                        + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio
+                        - padding.horizontal
                     if options.interpolatesTextColorOnSwipe {
                         nextItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
                         currentItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
@@ -444,8 +471,14 @@ extension TabView {
                 }
             case .reverse:
                 if let previousItem {
-                    indicatorView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.indicatorView.padding.left
-                    indicatorView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.indicatorView.padding.horizontal
+                    indicatorView.frame.origin.x =
+                        previousItem.frame.origin.x
+                        + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio
+                        + padding.left
+                    indicatorView.frame.size.width =
+                        previousItem.frame.size.width
+                        + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio
+                        - padding.horizontal
                     if options.interpolatesTextColorOnSwipe {
                         previousItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
                         currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
@@ -505,15 +538,16 @@ extension TabView {
     }
 
     private func addTabItemGestures() {
-        itemViews.forEach {
-            $0.addGestureRecognizer(makeTapGestureRecognizer())
+        for itemView in itemViews {
+            itemView.addGestureRecognizer(makeTapGestureRecognizer())
         }
     }
 
     @objc private func tapItemView(_ recognizer: UITapGestureRecognizer) {
         guard let itemView = recognizer.view as? TabItemView,
             let index: Int = itemViews.firstIndex(of: itemView),
-            currentIndex != index else { return }
+            currentIndex != index
+        else { return }
         tabViewDelegate?.tabView(self, willSelectTabAt: index)
         moveTabItem(index: index, animated: true)
         update(index)
@@ -530,4 +564,3 @@ extension TabView {
         }
     }
 }
-
