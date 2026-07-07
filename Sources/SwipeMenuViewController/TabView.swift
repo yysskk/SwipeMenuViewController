@@ -256,13 +256,12 @@ open class TabView: UIScrollView {
             tabItemView.clipsToBounds = options.clipsToBounds
             if let title = dataSource.tabView(self, titleForItemAt: index) {
                 tabItemView.titleLabel.text = title
-                tabItemView.titleLabel.font = options.itemView.font
                 tabItemView.titleLabel.numberOfLines = options.itemView.numberOfLines
+                tabItemView.font = options.itemView.font
+                tabItemView.selectedFont = options.itemView.selectedFont
                 tabItemView.textColor = options.itemView.textColor
                 tabItemView.selectedTextColor = options.itemView.selectedTextColor
             }
-
-            tabItemView.isSelected = index == currentIndex
 
             switch options.style {
             case .flexible:
@@ -294,6 +293,11 @@ open class TabView: UIScrollView {
 
                 containerView.addArrangedSubview(tabItemView)
             }
+
+            // Apply selection after the width calc above so each item is measured
+            // with `font`. Setting `isSelected` swaps in `selectedFont`, which must
+            // not influence layout.
+            tabItemView.isSelected = index == currentIndex
 
             itemViews.append(tabItemView)
 

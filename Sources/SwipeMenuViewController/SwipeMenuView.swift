@@ -27,6 +27,13 @@ public nonisolated struct SwipeMenuViewOptions: Sendable {
             /// ItemView font. Defaults to `14 pt as bold SystemFont`.
             public var font: UIFont = UIFont.boldSystemFont(ofSize: 14)
 
+            /// ItemView font used while the item is selected. Defaults to `14 pt as bold SystemFont`,
+            /// matching `font` so the title font does not change on selection unless you set this.
+            ///
+            /// This changes the selected title's appearance only; in the `.flexible` style each item's
+            /// width is still measured with `font`, so a larger `selectedFont` may be truncated.
+            public var selectedFont: UIFont = UIFont.boldSystemFont(ofSize: 14)
+
             /// ItemView clipsToBounds. Defaults to `true`.
             public var clipsToBounds: Bool = true
 

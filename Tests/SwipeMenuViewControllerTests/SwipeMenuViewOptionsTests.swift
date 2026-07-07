@@ -32,6 +32,8 @@ struct SwipeMenuViewOptionsTests {
         #expect(options.tabView.itemView.width == 100.0)
         #expect(options.tabView.itemView.margin == 5.0)
         #expect(options.tabView.itemView.font == UIFont.boldSystemFont(ofSize: 14))
+        // Defaults to the same font as `font`, so selection does not change the title font by default.
+        #expect(options.tabView.itemView.selectedFont == UIFont.boldSystemFont(ofSize: 14))
         #expect(options.tabView.itemView.clipsToBounds == true)
         #expect(options.tabView.itemView.numberOfLines == 1)
     }

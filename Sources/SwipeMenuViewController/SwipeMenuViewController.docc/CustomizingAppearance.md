@@ -56,7 +56,8 @@ The `itemView` group configures each individual tab:
 
 - `width`: the item width, used when `needsAdjustItemViewWidth` is `false`. Defaults to `100.0`.
 - `margin`: the horizontal padding added around the title. Defaults to `5.0`.
-- `font`: the title font. Defaults to a 14 pt bold system font.
+- `font`: the title font when unselected. Defaults to a 14 pt bold system font.
+- `selectedFont`: the title font when selected. Defaults to the same 14 pt bold system font as `font`, so the title font does not change on selection unless you set this. It affects the selected title's appearance only; in the `.flexible` style each item's width is measured with `font`, so a much larger `selectedFont` may be truncated.
 - `clipsToBounds`: whether the item clips its contents. Defaults to `true`.
 - `textColor`: the title color when unselected. Defaults to a gray.
 - `selectedTextColor`: the title color when selected. Defaults to black.
@@ -65,7 +66,8 @@ The `itemView` group configures each individual tab:
 ```swift
 options.tabView.itemView.width = 120
 options.tabView.itemView.margin = 8
-options.tabView.itemView.font = .boldSystemFont(ofSize: 15)
+options.tabView.itemView.font = .systemFont(ofSize: 15)
+options.tabView.itemView.selectedFont = .boldSystemFont(ofSize: 15)
 options.tabView.itemView.textColor = .secondaryLabel
 options.tabView.itemView.selectedTextColor = .label
 options.tabView.itemView.numberOfLines = 2

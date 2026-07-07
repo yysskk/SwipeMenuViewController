@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- `SwipeMenuViewOptions.TabView.ItemView.selectedFont` to use a different title font while a tab is selected. Defaults to the same 14 pt bold system font as `font`, so the title font does not change on selection unless you set it. It affects the selected title's appearance only; in the `.flexible` style item widths are still measured with `font`.
 - `SwipeMenuViewOptions.TabView.ItemView.numberOfLines` to let tab titles wrap onto multiple lines (use `0` for as many lines as the title needs). Defaults to `1`, preserving the previous single-line behavior. Most useful with the `.segmented` style, where a long title would otherwise be truncated.
 - `SwipeMenuViewOptions.TabView.AdditionView.Underline.cornerRadius` to round the corners of the underline indicator (set it to half the underline height for a pill shape). Defaults to `0`, preserving the previous square corners.
 
