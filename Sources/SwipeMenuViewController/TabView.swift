@@ -259,7 +259,7 @@ open class TabView: UIScrollView {
 
             switch options.style {
             case .flexible:
-                if options.needsAdjustItemViewWidth {
+                if options.adjustsItemViewWidth {
                     tabItemView.frame.size.width = tabItemView.titleLabel.sizeThatFits(containerView.frame.size).width + options.itemView.margin * 2
                 }
 
@@ -388,7 +388,7 @@ extension TabView {
 
         additionView.frame.origin.x = target.frame.origin.x + options.additionView.padding.left
 
-        if options.needsAdjustItemViewWidth {
+        if options.adjustsItemViewWidth {
             let cellWidth = itemViews[index].frame.width
             additionView.frame.size.width = cellWidth - options.additionView.padding.horizontal
         }
@@ -431,13 +431,13 @@ extension TabView {
 
         guard let currentItem else { return }
 
-        if options.additionView.isAnimationOnSwipeEnable {
+        if options.additionView.isAnimationOnSwipeEnabled {
             switch direction {
             case .forward:
                 if let nextItem {
                     additionView.frame.origin.x = currentItem.frame.origin.x + (nextItem.frame.origin.x - currentItem.frame.origin.x) * ratio + options.additionView.padding.left
                     additionView.frame.size.width = currentItem.frame.size.width + (nextItem.frame.size.width - currentItem.frame.size.width) * ratio - options.additionView.padding.horizontal
-                    if options.needsConvertTextColorRatio {
+                    if options.interpolatesTextColorOnSwipe {
                         nextItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
                         currentItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
                     }
@@ -446,7 +446,7 @@ extension TabView {
                 if let previousItem {
                     additionView.frame.origin.x = previousItem.frame.origin.x + (currentItem.frame.origin.x - previousItem.frame.origin.x) * ratio + options.additionView.padding.left
                     additionView.frame.size.width = previousItem.frame.size.width + (currentItem.frame.size.width - previousItem.frame.size.width) * ratio - options.additionView.padding.horizontal
-                    if options.needsConvertTextColorRatio {
+                    if options.interpolatesTextColorOnSwipe {
                         previousItem.titleLabel.textColor = options.itemView.selectedTextColor.convert(to: options.itemView.textColor, multiplier: ratio)
                         currentItem.titleLabel.textColor = options.itemView.textColor.convert(to: options.itemView.selectedTextColor, multiplier: ratio)
                     }

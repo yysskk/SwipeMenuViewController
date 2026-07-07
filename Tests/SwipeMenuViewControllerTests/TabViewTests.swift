@@ -73,7 +73,7 @@ struct TabViewTests {
     func flexibleFixedWidth() {
         var options = SwipeMenuViewOptions.TabView()
         options.style = .flexible
-        options.needsAdjustItemViewWidth = false
+        options.adjustsItemViewWidth = false
         options.itemView.width = 100
 
         let (tabView, dataSource) = makeTabView(titles: ["A", "B", "C"], options: options)
@@ -118,7 +118,7 @@ struct TabViewTests {
         options.style = .flexible
         options.margin = 0
         options.isSafeAreaEnabled = true
-        options.needsAdjustItemViewWidth = false
+        options.adjustsItemViewWidth = false
         options.itemView.width = 100
 
         let dataSource = StubTabViewDataSource(titles: ["A", "B", "C"])
@@ -486,7 +486,7 @@ struct TabViewTests {
     @Test("A forward swipe fades the current and next labels by the ratio")
     func forwardSwipeInterpolatesNeighborColors() {
         var options = SwipeMenuViewOptions.TabView()
-        options.needsConvertTextColorRatio = true
+        options.interpolatesTextColorOnSwipe = true
         // Use pure black/white endpoints so the midpoint is an unambiguous gray.
         options.itemView.textColor = .black
         options.itemView.selectedTextColor = .white

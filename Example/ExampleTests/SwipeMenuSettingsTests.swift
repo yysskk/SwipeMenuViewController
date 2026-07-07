@@ -13,7 +13,7 @@ struct SwipeMenuSettingsTests {
         #expect(options.tabView.style == .flexible)
         #expect(options.tabView.addition == .underline)
         #expect(options.tabView.margin == 0)
-        #expect(options.tabView.needsAdjustItemViewWidth)
+        #expect(options.tabView.adjustsItemViewWidth)
         #expect(options.tabView.itemView.width == 100)
         #expect(options.contentScrollView.isScrollEnabled)
     }
@@ -91,7 +91,7 @@ struct SwipeMenuSettingsTests {
 
         #expect(options.tabView.margin == 12)
         #expect(options.tabView.itemView.width == 220)
-        #expect(!options.tabView.needsAdjustItemViewWidth)
+        #expect(!options.tabView.adjustsItemViewWidth)
         #expect(!options.contentScrollView.isScrollEnabled)
     }
 

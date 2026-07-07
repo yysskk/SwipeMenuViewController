@@ -20,8 +20,8 @@ struct SwipeMenuViewOptionsTests {
         #expect(options.tabView.margin == 0.0)
         #expect(options.tabView.style == .flexible)
         #expect(options.tabView.addition == .underline)
-        #expect(options.tabView.needsAdjustItemViewWidth == true)
-        #expect(options.tabView.needsConvertTextColorRatio == true)
+        #expect(options.tabView.adjustsItemViewWidth == true)
+        #expect(options.tabView.interpolatesTextColorOnSwipe == true)
         #expect(options.tabView.isSafeAreaEnabled == true)
     }
 
@@ -45,7 +45,7 @@ struct SwipeMenuViewOptionsTests {
         #expect(options.tabView.additionView.underline.height == 2.0)
         #expect(options.tabView.additionView.underline.cornerRadius == 0)
         #expect(options.tabView.additionView.animationDuration == 0.3)
-        #expect(options.tabView.additionView.isAnimationOnSwipeEnable == true)
+        #expect(options.tabView.additionView.isAnimationOnSwipeEnabled == true)
         #expect(options.tabView.additionView.padding == .zero)
     }
 

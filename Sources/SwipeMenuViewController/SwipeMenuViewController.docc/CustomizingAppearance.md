@@ -34,8 +34,8 @@ top-level `isSafeAreaEnabled` toggles the safe-area behavior of both at once.
 - `clipsToBounds`: whether the bar clips its contents. Defaults to `true`.
 - `style`: `.flexible` (items sized to their content) or `.segmented` (items share the width equally). Defaults to `.flexible`.
 - `addition`: the selection indicator — `.underline`, `.circle`, or `.none`. Defaults to `.underline`.
-- `needsAdjustItemViewWidth`: whether flexible item widths are adjusted to fit their titles. Defaults to `true`.
-- `needsConvertTextColorRatio`: whether the item text color interpolates toward the selected color as you swipe. Defaults to `true`.
+- `adjustsItemViewWidth`: whether flexible item widths are adjusted to fit their titles. Defaults to `true`.
+- `interpolatesTextColorOnSwipe`: whether the item text color interpolates toward the selected color as you swipe. Defaults to `true`.
 - `isSafeAreaEnabled`: whether the bar respects the safe area. Defaults to `true`.
 
 ```swift
@@ -45,8 +45,8 @@ options.tabView.margin = 8
 options.tabView.backgroundColor = .systemBackground
 options.tabView.style = .flexible
 options.tabView.addition = .underline
-options.tabView.needsAdjustItemViewWidth = true
-options.tabView.needsConvertTextColorRatio = true
+options.tabView.adjustsItemViewWidth = true
+options.tabView.interpolatesTextColorOnSwipe = true
 options.tabView.isSafeAreaEnabled = true
 ```
 
@@ -54,7 +54,7 @@ options.tabView.isSafeAreaEnabled = true
 
 The `itemView` group configures each individual tab:
 
-- `width`: the item width, used when `needsAdjustItemViewWidth` is `false`. Defaults to `100.0`.
+- `width`: the item width, used when `adjustsItemViewWidth` is `false`. Defaults to `100.0`.
 - `margin`: the horizontal padding added around the title. Defaults to `5.0`.
 - `font`: the title font when unselected. Defaults to a 14 pt bold system font.
 - `selectedFont`: the title font when selected. Defaults to the same 14 pt bold system font as `font`, so the title font does not change on selection unless you set this. It affects the selected title's appearance only; in the `.flexible` style each item's width is measured with `font`, so a much larger `selectedFont` may be truncated.
@@ -88,14 +88,14 @@ The `additionView` group configures the selection indicator drawn behind or bene
 - `padding`: insets applied to the indicator. Defaults to `.zero`.
 - `backgroundColor`: the indicator color. Defaults to `.black`.
 - `animationDuration`: the duration used when animating the indicator to a tapped tab. Defaults to `0.3`.
-- `isAnimationOnSwipeEnable`: whether the indicator follows your finger continuously while swiping. When `false`, it jumps to the destination tab instead. Defaults to `true`.
+- `isAnimationOnSwipeEnabled`: whether the indicator follows your finger continuously while swiping. When `false`, it jumps to the destination tab instead. Defaults to `true`.
 
 ```swift
 options.tabView.addition = .underline
 options.tabView.additionView.padding = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
 options.tabView.additionView.backgroundColor = .systemBlue
 options.tabView.additionView.animationDuration = 0.25
-options.tabView.additionView.isAnimationOnSwipeEnable = true
+options.tabView.additionView.isAnimationOnSwipeEnabled = true
 ```
 
 ### Underline
