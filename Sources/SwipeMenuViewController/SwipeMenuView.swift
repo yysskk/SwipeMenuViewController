@@ -299,7 +299,11 @@ open class SwipeMenuView: UIView {
         tabView = TabView(frame: CGRect(x: 0, y: 0, width: frame.width, height: options.tabView.height), options: options.tabView)
         tabView?.clipsToBounds = options.tabView.clipsToBounds
 
-        contentScrollView = ContentScrollView(frame: CGRect(x: 0, y: options.tabView.height, width: frame.width, height: frame.height - options.tabView.height), default: defaultIndex, options: options.contentScrollView)
+        let contentFrame = CGRect(x: 0,
+                                  y: options.tabView.height,
+                                  width: frame.width,
+                                  height: frame.height - options.tabView.height)
+        contentScrollView = ContentScrollView(frame: contentFrame, default: defaultIndex, options: options.contentScrollView)
         contentScrollView?.clipsToBounds = options.contentScrollView.clipsToBounds
 
         tabView?.update(defaultIndex)
