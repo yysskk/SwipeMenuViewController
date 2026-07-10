@@ -1,3 +1,4 @@
+import SwiftUI
 import SwipeMenuViewController
 import UIKit
 
@@ -6,6 +7,8 @@ import UIKit
 /// A ``SwipeMenuViewController`` whose pages come from a fixed list of names, with a
 /// floating button that presents the live ``OptionsViewController``. Changing an
 /// option rebuilds the menu through `SwipeMenuView.reloadData(options:default:)`.
+/// A second floating button presents ``SwiftUIMenuView``, the same demo built on
+/// the SwiftUI ``SwipeMenu``.
 final class MenuViewController: SwipeMenuViewController {
 
     private let pageTitles = [
@@ -32,6 +35,21 @@ final class MenuViewController: SwipeMenuViewController {
         return button
     }()
 
+    private lazy var swiftUIButton: UIButton = {
+        var configuration = UIButton.Configuration.glass()
+        configuration.image = UIImage(systemName: "swift")
+        configuration.cornerStyle = .capsule
+        configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
+        let button = UIButton(
+            configuration: configuration,
+            primaryAction: UIAction { [weak self] _ in
+                self?.presentSwiftUIExample()
+            })
+        button.accessibilityLabel = "SwiftUI Example"
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     private static let settingsButtonDiameter: CGFloat = 56
 
     override func viewDidLoad() {
@@ -49,7 +67,7 @@ final class MenuViewController: SwipeMenuViewController {
         // The container sets the menu up with default options; apply ours so the
         // initial appearance matches `settings` (including dark-mode colors).
         swipeMenuView.reloadData(options: settings.makeOptions())
-        setUpSettingsButton()
+        setUpFloatingButtons()
     }
 
     // MARK: - SwipeMenuViewDataSource
@@ -60,13 +78,19 @@ final class MenuViewController: SwipeMenuViewController {
 
     // MARK: - Options
 
-    private func setUpSettingsButton() {
+    private func setUpFloatingButtons() {
         view.addSubview(settingsButton)
+        view.addSubview(swiftUIButton)
         NSLayoutConstraint.activate([
             settingsButton.widthAnchor.constraint(equalToConstant: Self.settingsButtonDiameter),
             settingsButton.heightAnchor.constraint(equalToConstant: Self.settingsButtonDiameter),
             settingsButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             settingsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+
+            swiftUIButton.widthAnchor.constraint(equalToConstant: Self.settingsButtonDiameter),
+            swiftUIButton.heightAnchor.constraint(equalToConstant: Self.settingsButtonDiameter),
+            swiftUIButton.centerXAnchor.constraint(equalTo: settingsButton.centerXAnchor),
+            swiftUIButton.bottomAnchor.constraint(equalTo: settingsButton.topAnchor, constant: -12),
         ])
     }
 
@@ -82,6 +106,12 @@ final class MenuViewController: SwipeMenuViewController {
             sheet.prefersGrabberVisible = true
         }
         present(navigationController, animated: true)
+    }
+
+    private func presentSwiftUIExample() {
+        let hostingController = UIHostingController(rootView: SwiftUIMenuView())
+        hostingController.modalPresentationStyle = .fullScreen
+        present(hostingController, animated: true)
     }
 
     private func apply(_ settings: SwipeMenuSettings) {

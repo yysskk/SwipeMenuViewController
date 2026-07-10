@@ -11,7 +11,8 @@ protocols modeled on UIKit's, and you tune its appearance with ``SwipeMenuViewOp
 
 Use ``SwipeMenuView`` when you want to embed the paging UI inside an existing view hierarchy, or
 subclass ``SwipeMenuViewController`` to get a container view controller that drives the paging
-from its child view controllers.
+from its child view controllers. In SwiftUI, use ``SwipeMenu`` (iOS 18+), which drives the same
+UI from a selection binding and is configured with ``SwipeMenuOptions``.
 
 ## Topics
 
@@ -19,6 +20,7 @@ from its child view controllers.
 
 - <doc:GettingStarted>
 - <doc:CustomizingAppearance>
+- <doc:SwipeMenuInSwiftUI>
 
 ### Menu View
 
@@ -30,6 +32,11 @@ from its child view controllers.
 ### View Controller
 
 - ``SwipeMenuViewController``
+
+### SwiftUI
+
+- ``SwipeMenu``
+- ``SwipeMenuOptions``
 
 ### Tabs
 
