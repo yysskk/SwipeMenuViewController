@@ -142,17 +142,26 @@ public struct SwipeMenu<Page: View>: View {
     /// Commits the page the content scroll settled on, firing the paging callbacks
     /// exactly once per move — whether the move came from a swipe, a tab tap, or a
     /// change to the selection binding.
+    ///
+    /// When a drag interrupts a programmatic scroll, the move's `onDidChangeIndex`
+    /// reports the page the content actually landed on, which can differ from the
+    /// destination its `onWillChangeIndex` announced.
     private func commitScrollEnd() {
         guard let landed = SwipeMenuGeometry.landedPage(position: progress, pageCount: titles.count) else { return }
 
         if let from = pendingFromIndex {
+            // A tap- or binding-driven move settled. A drag can interrupt the
+            // programmatic scroll and land elsewhere, so commit and report the
+            // landed page rather than claiming the intended selection was reached.
             pendingFromIndex = nil
-            onDidChangeIndex?(from, selection)
-            // A drag can interrupt the programmatic scroll and land elsewhere.
-            guard landed != selection else { return }
-        } else if landed == selection {
+            if selection != landed {
+                selection = landed
+            }
+            onDidChangeIndex?(from, landed)
             return
         }
+
+        guard landed != selection else { return }
 
         onWillChangeIndex?(selection, landed)
         let from = selection
