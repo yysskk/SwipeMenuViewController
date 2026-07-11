@@ -7,7 +7,7 @@
 [![Documentation](https://img.shields.io/badge/documentation-DocC-blueviolet.svg?style=for-the-badge)](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-Swipe-based paging UI for iOS: a scrollable tab bar sits above a horizontally paging content area, and swiping the content keeps the tab selection in sync. You populate it through data source and delegate protocols modeled on UIKit's own, and tune its appearance with `SwipeMenuViewOptions`.
+Swipe-based paging UI for iOS: a scrollable tab bar sits above a horizontally paging content area, and swiping the content keeps the tab selection in sync. Use it from UIKit through data source and delegate protocols, or from SwiftUI (iOS 18+) as `SwipeMenu` with a selection binding.
 
 | Segmented Tab & Underline | Flexible Tab & Underline | Flexible Tab & Circle |
 |:---:|:---:|:---:|
@@ -15,7 +15,7 @@ Swipe-based paging UI for iOS: a scrollable tab bar sits above a horizontally pa
 
 ## Requirements
 
-- iOS 16.0+
+- iOS 16.0+ (the SwiftUI `SwipeMenu` requires iOS 18.0+)
 - Xcode 26.0+ / Swift 6.2+
 
 > Need an older toolchain or deployment target? Use the [4.x releases](https://github.com/yysskk/SwipeMenuViewController/releases).
@@ -31,6 +31,8 @@ dependencies: [
 ```
 
 ## Quick Start
+
+### UIKit
 
 Subclass `SwipeMenuViewController` and add your pages as child view controllers. Each child becomes a page: its `title` is the tab title and its view is the page content.
 
@@ -56,6 +58,31 @@ final class MenuViewController: SwipeMenuViewController {
 
 To embed the paging UI in a view hierarchy you already have, add a `SwipeMenuView` directly and drive it through `SwipeMenuViewDataSource` — the [Getting Started](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/gettingstarted) article walks through both approaches.
 
+### SwiftUI
+
+On iOS 18 and later, use `SwipeMenu` to drive the same UI from SwiftUI. The selected page is a binding — setting it is the equivalent of `jump(to:animated:)` — pages come from a view builder, and the appearance is configured with `SwipeMenuOptions`:
+
+```swift
+import SwiftUI
+import SwipeMenuViewController
+
+struct ContentView: View {
+
+    @State private var selection = 0
+
+    private let titles = ["First", "Second"]
+
+    var body: some View {
+        SwipeMenu(selection: $selection, titles: titles) { index in
+            Text(titles[index])
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+}
+```
+
+The [SwipeMenu in SwiftUI](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/swipemenuinswiftui) article covers the options, the paging callbacks, and the differences from the UIKit view.
+
 ## Documentation
 
 The full API reference and guides are published with DocC:
@@ -64,6 +91,7 @@ The full API reference and guides are published with DocC:
 
 - [Getting Started](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/gettingstarted) — set up `SwipeMenuView` or `SwipeMenuViewController`
 - [Customizing Appearance](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/customizingappearance) — every `SwipeMenuViewOptions` field
+- [SwipeMenu in SwiftUI](https://yysskk.github.io/SwipeMenuViewController/documentation/swipemenuviewcontroller/swipemenuinswiftui) — drive the same UI from SwiftUI with a selection binding
 
 You can also build the documentation locally in Xcode with **Product ▸ Build Documentation**, or explore the [Example app](./Example) in this repository (its Xcode project is generated with [XcodeGen](https://github.com/yonaskolb/XcodeGen) — see the [Example README](./Example/README.md)).
 

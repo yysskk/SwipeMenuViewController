@@ -2,10 +2,15 @@
 
 A small iOS app that demonstrates `SwipeMenuViewController` and lets you tweak
 `SwipeMenuViewOptions` live. It is written entirely in code — no storyboards —
-with a `UIWindowScene` lifecycle, SF Symbols, and a Liquid Glass options button,
-and the option-building logic in
-[`SwipeMenuSettings`](./Example/SwipeMenuSettings.swift) is covered by unit tests
-in [`ExampleTests`](./ExampleTests).
+with a `UIWindowScene` lifecycle, SF Symbols, and Liquid Glass floating buttons.
+The Swift-bird button opens the same demo rebuilt on the SwiftUI `SwipeMenu`
+([`SwiftUIMenuView`](./Example/SwiftUIMenuView.swift)), whose options are edited
+in a SwiftUI form ([`SwiftUIOptionsView`](./Example/SwiftUIOptionsView.swift)).
+
+Both demos share one settings model: the option-building logic in
+[`SwipeMenuSettings`](./Example/SwipeMenuSettings.swift) and its SwiftUI mapping
+in [`SwipeMenuSettings+SwiftUI`](./Example/SwipeMenuSettings+SwiftUI.swift) are
+covered by unit tests in [`ExampleTests`](./ExampleTests).
 
 The Xcode project is generated from [`project.yml`](./project.yml) with
 [XcodeGen](https://github.com/yonaskolb/XcodeGen), so `Example.xcodeproj` is not
